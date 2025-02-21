@@ -5,5 +5,6 @@ public class Main {
         System.out.println("what is your name?");
         String name = sc.nextLine();
         System.out.format("hello %s" , name);
+
     }
 }
