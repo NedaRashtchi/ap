@@ -1,7 +1,9 @@
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
-        System.out.println("hello");
+        Scanner sc = new Scanner(System.in);
+        System.out.println("what is your name?");
+        String name = sc.nextLine();
+        System.out.format("hello %s" , name);
     }
 }
