@@ -12,10 +12,10 @@ public class E5_2 {
             System.out.println("The number is negative");
         }
         if(number < 1) {
-            System.out.println("Its a small number");
+            System.out.println("It's a small number");
         }
         if(number > 1000000) {
-            System.out.println("Its a large number");
+            System.out.println("It's a large number");
         }
 
     }
