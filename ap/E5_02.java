@@ -1,3 +1,5 @@
+package ap;
+
 import java.util.Scanner;
 public class E5_02 {
     public static void main(String[] args){
