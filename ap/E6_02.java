@@ -1,3 +1,5 @@
+package ap;
+
 import java.util.Scanner;
 
 public class E6_02 {
@@ -12,10 +14,10 @@ public class E6_02 {
             if(seq[i]==0) break;
         }
 
-        maxMin(seq , len);
-        oddEven(seq , len);
-        cumulative(seq , len);
-        dupl(seq , len);
+        maxMin(seq , len); // a
+        oddEven(seq , len); // b
+        cumulative(seq , len); // c
+        dupl(seq , len); //d
     }
     static void maxMin(int [] seq , int len){ // part (a)
         int max = seq[0];
