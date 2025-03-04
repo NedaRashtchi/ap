@@ -1,3 +1,5 @@
+package ap;
+
 import java.util.Scanner;
 
 public class E6_01_e {
