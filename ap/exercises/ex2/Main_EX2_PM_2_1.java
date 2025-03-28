@@ -17,15 +17,7 @@ public class Main_EX2_PM_2_1 {
         play(board);
     }
     public static void board(char[][] board , int k){
-        for(int i = 0; i < k+2; i++){
-            for(int j = 0; j < k+2; j++){
-                if(i==0 || j==0 || j==k+1 || i==k+1){
-                    board[i][j] = '*';
-                }
-                else board[i][j] = ' ';
-            }
-        }
-        board[1][1] = 'X';
+        Main_EX2_PM_1_5.board(board, k);
     }
     static void printBoard(char[][] board){
         for(char []b : board){
