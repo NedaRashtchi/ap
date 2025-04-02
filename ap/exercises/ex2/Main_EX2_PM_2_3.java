@@ -18,14 +18,13 @@ public class Main_EX2_PM_2_3 {
         int choice = in.nextInt();
 
         char[][] board;
-        int winScore;
         if (choice == 1) {
             System.out.print("Enter k : ");
             int k = in.nextInt();
             board = new char[k+2][k+2];
-            winScore = mygame.board(board , k);
+            mygame.board(board , k);
             mygame.printBoard(board);
-            mygame.play(board,winScore);
+            mygame.play(board);
         }else if (choice == 2) {
             File file = new File("mygame.txt");
             if (!file.exists()) {
@@ -38,21 +37,19 @@ public class Main_EX2_PM_2_3 {
             reader.close();
             try {
                 mygame.readFromFile(board , k);
-                winScore = mygame.getWinScore(board);
                 mygame.printBoard(board);
-                mygame.play(board, mygame.getWinScore(board));
+                mygame.play(board);
             } catch (FileNotFoundException e) {
                 System.out.println("No saved game found.\nStarting a new game...");
                 System.out.print("Enter k: ");
                 k = in.nextInt();
                 board = new char[k + 2][k + 2];
-                winScore = mygame.board(board, k);
+                mygame.board(board, k);
                 mygame.printBoard(board);
-                mygame.play(board,mygame.getWinScore(board));
+                mygame.play(board);
             }
         } else {
             System.out.println("Invalid choice.Exiting...");
-            return;
         }
     }
     private void saveToFile(char[][] board) throws FileNotFoundException {
@@ -101,7 +98,7 @@ public class Main_EX2_PM_2_3 {
         }
         return count;
     }
-    private int board(char[][] board , int k) {
+    private void board(char[][] board , int k) {
         for(int i = 0; i < k+2; i++){
             for(int j = 0; j < k+2; j++){
                 if(i==0 || j==0 || j==k+1 || i==k+1){
@@ -112,11 +109,10 @@ public class Main_EX2_PM_2_3 {
         }
         board[1][1] = 'X';
         Scanner in = new Scanner(System.in);
-        int c , winScore;
+        int c ;
         System.out.print("Enter c : ");
         do{
             c = in.nextInt();
-            winScore = c;
             if(c > Math.pow(k,2)){
                 System.out.println("Error");
             }
@@ -131,7 +127,6 @@ public class Main_EX2_PM_2_3 {
                 c--;
             }
         }
-        return winScore;
     }
     private void printBoard(char[][] board){
         for(char []b : board){
@@ -140,7 +135,7 @@ public class Main_EX2_PM_2_3 {
         }
         System.out.println("score : "+score);
     }
-    private void play(char[][] board , int winScore) throws FileNotFoundException {
+    private void play(char[][] board) throws FileNotFoundException {
         long start = System.currentTimeMillis();
         long finish , timeElapsed;
         Scanner in = new Scanner(System.in);
