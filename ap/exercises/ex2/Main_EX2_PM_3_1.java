@@ -122,7 +122,10 @@ public class Main_EX2_PM_3_1 extends JFrame implements KeyListener {
     }
 
     private void handleCrossBorder() {
-        //
+        if (pacmanPoint.x < 0) pacmanPoint.x = 1;
+        if (pacmanPoint.x >= width / boxSize) pacmanPoint.x = (width / boxSize) - 2;
+        if (pacmanPoint.y < 0) pacmanPoint.y = 1;
+        if (pacmanPoint.y >= height / boxSize) pacmanPoint.y = (height / boxSize) - 2;
     }
 
 
