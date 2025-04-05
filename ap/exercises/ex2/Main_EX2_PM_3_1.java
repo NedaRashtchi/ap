@@ -14,12 +14,14 @@ public class Main_EX2_PM_3_1 extends JFrame implements KeyListener {
     final int LEFT = 1, RIGHT = 2, TOP = 3, BOTTOM = 4;
     Point dotPoint = new Point();
     static int score = 0;
+    long start;
 
     public Main_EX2_PM_3_1() {
         addKeyListener(this);
         pacmanPoint.setLocation((width / boxSize) / 2, (height / boxSize) / 2);
         getNewDotPointLocation();
         setSize(width, height);
+        start = System.currentTimeMillis();
     }
 
     @Override
@@ -47,12 +49,29 @@ public class Main_EX2_PM_3_1 extends JFrame implements KeyListener {
         g2d.setColor(Color.BLACK);
         String s = "Score: " + score;
         g2d.drawString(s, 25, 50);
+
+        long timeElapsed = System.currentTimeMillis() - start;
+        long remainingTime = (60000 - timeElapsed) / 1000;
+        String timeMessage = "Time Left: " + (remainingTime > 0 ? (long)remainingTime : 0) + "s";
+        g2d.drawString(timeMessage, 25, 70);
     }
 
     private void logic() {
+        long timeElapsed = System.currentTimeMillis() - start;
+        if (timeElapsed >= 60000) {
+            System.out.println("You are out of time");
+            JOptionPane.showMessageDialog(this, "You are out of time", "Game Over", JOptionPane.INFORMATION_MESSAGE);
+            System.exit(0);
+        }
         if (dotPoint.x == pacmanPoint.x && dotPoint.y == pacmanPoint.y) {
             score++;
             System.out.println("Score: " + score);
+
+            if (score >= 10) {
+                System.out.println("You Win");
+                JOptionPane.showMessageDialog(this, "You reached maximum score", "You Win", JOptionPane.INFORMATION_MESSAGE);
+                System.exit(0);
+            }
             getNewDotPointLocation();
         }
         movePacman();
