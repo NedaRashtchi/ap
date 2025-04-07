@@ -3,6 +3,7 @@ package ap.exercises.ex3;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 public class Main_EX3_LM_1_2{
@@ -30,47 +31,69 @@ public class Main_EX3_LM_1_2{
 
         System.out.println("------Students------");
         printStudent(studentFile);
-        System.out.println("-------Books-------");
+        System.out.println("------Books------");
         printBook(bookFile);
 
     }
-    static void writeStudent(EX3_LM_STUDENT []student) throws FileNotFoundException {
-        PrintWriter writer = new PrintWriter("students.txt");
-        for (EX3_LM_STUDENT std : student) {
-            writer.println(std.getFirstName());
-            writer.println(std.getLastName());
-            writer.println(std.getStdNumber());
-            writer.println(std.getMajor());
+    static void writeStudent(EX3_LM_STUDENT []student) {
+        try{
+            PrintWriter writer = new PrintWriter("students.txt");
+            for (EX3_LM_STUDENT std : student) {
+                writer.println(std.getFirstName());
+                writer.println(std.getLastName());
+                writer.println(std.getStdNumber());
+                writer.println(std.getMajor());
+            }
+            writer.close();
+        }catch(FileNotFoundException e){
+            System.err.println("Error: unable to write to file.");
         }
-        writer.close();
     }
-    static void writeBook(EX3_LM_BOOKS []book) throws FileNotFoundException {
-        PrintWriter writer = new PrintWriter("books.txt");
-        for (EX3_LM_BOOKS bk : book) {
-            writer.println(bk.getName());
-            writer.println(bk.getAuthor());
-            writer.println(bk.getPublishYear());
-            writer.println(bk.getPages());
+    static void writeBook(EX3_LM_BOOKS []book) {
+        PrintWriter writer = null;
+        try {
+            writer = new PrintWriter("books.txt");
+            for (EX3_LM_BOOKS bk : book) {
+                writer.println(bk.getName());
+                writer.println(bk.getAuthor());
+                writer.println(bk.getPublishYear());
+                writer.println(bk.getPages());
+            }
+            writer.close();
+        } catch (FileNotFoundException e) {
+            System.err.println("Error: unable to write to file.");
         }
-        writer.close();
     }
-    static void readStudent(EX3_LM_STUDENT []student) throws FileNotFoundException {
-        Scanner reader = new Scanner(new File("students.txt"));
-        for (int i = 0; i < student.length; i++) {
-            student[i] = new EX3_LM_STUDENT(reader.nextLine() , reader.nextLine(),
-                                    Integer.parseInt(reader.nextLine()) , reader.nextLine());
+    static void readStudent(EX3_LM_STUDENT []student){
+
+        try {
+            Scanner reader = new Scanner(new File("students.txt"));
+            for (int i = 0; i < student.length; i++) {
+                student[i] = new EX3_LM_STUDENT(reader.nextLine() , reader.nextLine(),
+                        Integer.parseInt(reader.nextLine()) , reader.nextLine());
+            }
+            reader.close();
+            System.out.println("Student info loaded");
+        } catch (FileNotFoundException e) {
+            System.err.println("Error: file not found.");
+        } catch (NoSuchElementException e) {
+            System.err.println("Error: incomplete data.");
         }
-        reader.close();
-        System.out.println("Student info loaded");
     }
-    static void readBook(EX3_LM_BOOKS []book) throws FileNotFoundException {
-        Scanner reader = new Scanner(new File("books.txt"));
-        for (int i = 0; i < book.length; i++) {
-            book[i] = new EX3_LM_BOOKS(reader.nextLine() , reader.nextLine(),
-                            Integer.parseInt(reader.nextLine()) , Integer.parseInt(reader.nextLine()));
+    static void readBook(EX3_LM_BOOKS []book){
+        try{
+            Scanner reader = new Scanner(new File("books.txt"));
+            for (int i = 0; i < book.length; i++) {
+                book[i] = new EX3_LM_BOOKS(reader.nextLine() , reader.nextLine(),
+                        Integer.parseInt(reader.nextLine()) , Integer.parseInt(reader.nextLine()));
+            }
+            reader.close();
+            System.out.println("Book info loaded");
+        }catch (FileNotFoundException e) {
+            System.err.println("Error: file not found.");
+        } catch (NoSuchElementException e) {
+            System.err.println("Error: incomplete data.");
         }
-        reader.close();
-        System.out.println("Book info loaded");
     }
     static void printStudent(EX3_LM_STUDENT []student) {
         for (EX3_LM_STUDENT std : student) {
@@ -91,4 +114,3 @@ public class Main_EX3_LM_1_2{
         }
     }
 }
-
