@@ -21,6 +21,18 @@ public class Main_EX3_LM_1_2{
 
         writeStudent(students);
         writeBook(books);
+
+        EX3_LM_STUDENT [] studentFile = new EX3_LM_STUDENT[3];
+        readStudent(studentFile);
+
+        EX3_LM_BOOKS [] bookFile = new EX3_LM_BOOKS[4];
+        readBook(bookFile);
+
+        System.out.println("------Students------");
+        printStudent(studentFile);
+        System.out.println("-------Books-------");
+        printBook(bookFile);
+
     }
     static void writeStudent(EX3_LM_STUDENT []student) throws FileNotFoundException {
         PrintWriter writer = new PrintWriter("students.txt");
@@ -59,6 +71,24 @@ public class Main_EX3_LM_1_2{
         }
         reader.close();
         System.out.println("Book info loaded");
+    }
+    static void printStudent(EX3_LM_STUDENT []student) {
+        for (EX3_LM_STUDENT std : student) {
+            System.out.println("Name :" + std.getFirstName() + " " + std.getLastName());
+            System.out.println("Student Number: " + std.getStdNumber());
+            System.out.println("Major : " +std.getMajor());
+            System.out.println("------------------");
+        }
+
+    }
+    static void printBook(EX3_LM_BOOKS []book) {
+        for (EX3_LM_BOOKS bk : book) {
+            System.out.println("Title : " +bk.getName());
+            System.out.println("Author : " +bk.getAuthor());
+            System.out.println("Publish Year: "+bk.getPublishYear());
+            System.out.println("Number Of Pages: " + bk.getPages());
+            System.out.println("------------------");
+        }
     }
 }
 
