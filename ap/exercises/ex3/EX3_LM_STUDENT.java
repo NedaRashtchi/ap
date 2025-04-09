@@ -12,28 +12,28 @@ public class EX3_LM_STUDENT {
         this.stdNumber = stdNumber;
         this.major = major;
     }
-    public String getFirstName() {
+    String getFirstName() {
         return firstName;
     }
-    public void setFirstName(String firstName) {
+    void setFirstName(String firstName) {
         this.firstName = firstName;
     }
-    public String getLastName() {
+    String getLastName() {
         return lastName;
     }
-    public void setLastName(String lastName) {
+    void setLastName(String lastName) {
         this.lastName = lastName;
     }
-    public int getStdNumber() {
+    int getStdNumber() {
         return stdNumber;
     }
-    public void setStdNumber(int stdNumber) {
+    void setStdNumber(int stdNumber) {
         this.stdNumber = stdNumber;
     }
-    public String getMajor() {
+    String getMajor() {
         return major;
     }
-    public void setMajor(String major) {
+    void setMajor(String major) {
         this.major = major;
     }
 }
