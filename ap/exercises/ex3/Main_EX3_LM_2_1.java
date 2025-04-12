@@ -23,15 +23,29 @@ public class Main_EX3_LM_2_1 {
         books[3] = new EX3_LM_BOOKS("Java:The Complete Reference","Herbert Schildt",2020,1248);
 
         EX3_LM_BORROW [] borrows = new EX3_LM_BORROW[2];
-        borrows[0] = new EX3_LM_BORROW("Big Java",140301,"1404/1/20","1404/1/27");
-        borrows[1] = new EX3_LM_BORROW("Discrete Mathematics",140305,"1404/1/22","1404/1/29");
+        borrows[0] = new EX3_LM_BORROW("Discrete Mathematics",140305,"1404/1/22","1404/1/29");
 
-        writeBorrowed(borrows);
+        Scanner in = new Scanner(System.in);
+        System.out.print("Enter student number: ");
+        int studentNumber = in.nextInt();
+        in.nextLine();
+        if(search(studentNumber,students)){
+            System.out.print("Enter book title: ");
+            String bookName = in.nextLine();
+            System.out.println("Borrow date : ");
+            String borrowDate = in.nextLine();
+            System.out.println("Return date : ");
+            String returnDate = in.nextLine();
+
+            borrows[1] = new EX3_LM_BORROW(bookName,studentNumber,borrowDate,returnDate);
+            writeBorrowed(borrows);
+        }
 
         EX3_LM_BORROW [] borrowsFile = new EX3_LM_BORROW[2];
-        readBorrowed(borrowsFile);
+       readBorrowed(borrowsFile);
+       System.out.format("Student %d borrowed book %s\n" , borrowsFile[0].getStudentNumber(), borrowsFile[0].getBookName());
+        System.out.format("Student %d borrowed book %s\n" , borrowsFile[1].getStudentNumber(), borrowsFile[1].getBookName());
 
-        System.out.format("Student %d borrowed book %s" , borrowsFile[0].getStudentNumber(), borrowsFile[0].getBookName());
     }
     static void writeBorrowed(EX3_LM_BORROW[]borrow) {
         try {
@@ -69,4 +83,14 @@ public class Main_EX3_LM_2_1 {
         }
     }
 
+    static boolean search(int studentNumber, EX3_LM_STUDENT [] students) {
+        for(EX3_LM_STUDENT s : students){
+            if(s.getStdNumber() == studentNumber){
+                System.out.println("Student found");
+                return true;
+            }
+        }
+        System.out.println("Student not found");
+        return false;
+    }
 }
