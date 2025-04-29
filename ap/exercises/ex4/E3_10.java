@@ -33,7 +33,7 @@ public class E3_10 {
         return receipt.concat("-----------"+"\nTotal Price: " + totalPrice + "\n"); //String.valueOf(totalPrice)
     }
 
-    public static void main(String[] args) {
+    public static void main() {
         E3_10 cashRegister = new E3_10();
         cashRegister.addProduct(new Product("milk",20));
         cashRegister.addProduct(new Product("coffee",15.59));
