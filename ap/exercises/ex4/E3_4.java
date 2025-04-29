@@ -14,34 +14,41 @@ public class E3_4 {
     public int getFirstSwitchState() {// 0 for down, 1 for up
         return firstSwitch;
     }
-    public int getSecondSwitchState(){
+
+    public int getSecondSwitchState() {
         return secondSwitch;
     }
-    public int getLampState(){ // 0 for off, 1 for on
 
-        if(firstSwitch == secondSwitch){
+    public int getLampState() { // 0 for off, 1 for on
+
+        if (firstSwitch == secondSwitch) {
             hallwayLight = 0;
-        }else hallwayLight = 1;
+        } else hallwayLight = 1;
 
         return hallwayLight;
     }
-    public void toggleFirstSwitch(){
-        if(firstSwitch == 1) firstSwitch = 0;
+
+    public void toggleFirstSwitch() {
+        if (firstSwitch == 1) firstSwitch = 0;
         else firstSwitch = 1;
     }
-    public void toggleSecondSwitch(){
-        if(secondSwitch == 1) secondSwitch = 0;
+
+    public void toggleSecondSwitch() {
+        if (secondSwitch == 1) secondSwitch = 0;
         else secondSwitch = 1;
     }
-    public String getSwitchState(int state){
-        if(state == 1) return "Up";
+
+    public String getSwitchState(int state) {
+        if (state == 1) return "Up";
         return "Down";
     }
-    public String getLightState(int state){
-        if(state == 1) return "On";
+
+    public String getLightState(int state) {
+        if (state == 1) return "On";
         return "Off";
     }
-    public void printState(E3_4 hallwayLight){
+
+    public void printState(E3_4 hallwayLight) {
         System.out.println("Hallway Light : " + hallwayLight.getLightState((hallwayLight.getLampState())));
         System.out.println("First Switch : " + hallwayLight.getSwitchState(hallwayLight.getFirstSwitchState()));
         System.out.println("Second Switch : " + hallwayLight.getSwitchState(hallwayLight.getSecondSwitchState()));
