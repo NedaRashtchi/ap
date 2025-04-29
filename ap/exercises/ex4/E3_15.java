@@ -1,8 +1,8 @@
 package ap.exercises.ex4;
 
 public class E3_15 {
-    private String from;
-    private String to;
+    private final String from;
+    private final String to;
     private String body = "";
 
     public E3_15(String from, String to) {
@@ -13,7 +13,6 @@ public class E3_15 {
     public void addLine(String line) {
         body = body.concat(line + "\n");
     }
-
     public String getText() {
         return "Dear " + to + ":\n\n" + body + "\nSincerely,\n" + from;
     }

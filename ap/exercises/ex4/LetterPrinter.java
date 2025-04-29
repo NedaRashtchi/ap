@@ -5,7 +5,7 @@ public class LetterPrinter {
         System.out.println(letter.getText());
     }
 
-    public static void main(String[] args) {
+    public static void main() {
         E3_15 letter = new E3_15("Mary", "John");
         letter.addLine("I am sorry we must part.");
         letter.addLine("I wish you all the best.");
