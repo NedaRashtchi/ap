@@ -1,4 +1,4 @@
-package ap.quizzz;
+package ap.quiz;
 
 public class Pen extends Product {
     private String color;

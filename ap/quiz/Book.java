@@ -1,4 +1,4 @@
-package ap.quizzz;
+package ap.quiz;
 
 public class Book extends Product {
     private String name;

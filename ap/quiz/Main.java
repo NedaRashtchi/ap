@@ -1,4 +1,4 @@
-package ap.quizzz;
+package ap.quiz;
 
 import java.util.ArrayList;
 
