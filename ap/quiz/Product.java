@@ -3,9 +3,13 @@ package ap.quiz;
 public class Product {
     double price;
     double discount;
-    public Product(double price , int discount) {
+
+    public Product(double price, int discount) {
         this.price = price;
-        this.discount =(double) discount/100;
+        this.discount = (double) discount / 100;
     }
 
+    double getPrice() {
+        return (price - (price * discount));
+    }
 }

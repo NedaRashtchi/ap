@@ -9,6 +9,6 @@ public class Book extends Product {
     }
     @Override
     public String toString() {
-        return "{ 'name': " + name + ", 'price': " + (price - (price* discount)) + " }";
+        return "{ 'name': " + name + ", 'price': " + super.getPrice() + " }";
     }
 }

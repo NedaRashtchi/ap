@@ -8,8 +8,9 @@ public class Pen extends Product {
         this.color = color;
         this.brand = brand;
     }
+
     @Override
     public String toString() {
-        return "{ 'color': " + color + ", 'brand': " + brand + ", 'price': " + (price-(price* discount)) + " }";
+        return "{ 'color': " + color + ", 'brand': " + brand + ", 'price': " + super.getPrice() + " }";
     }
 }
