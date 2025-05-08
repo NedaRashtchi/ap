@@ -1,4 +1,4 @@
-package ap.Lib;
+package ap.Library;
 
 public class Librarian extends Person{
 

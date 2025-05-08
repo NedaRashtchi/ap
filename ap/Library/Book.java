@@ -1,4 +1,4 @@
-package ap.Lib;
+package ap.Library;
 
 public class Book {
     private String name;
