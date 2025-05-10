@@ -10,6 +10,7 @@ public class Library {
     private ArrayList<Librarian> librarians;
     private ArrayList<Book> borrowedBooks ; // make method
     private ArrayList<Request> borrowRequests ;
+    private ArrayList<Request> returnRequests ;
 
     public Library(String name) {
         this.name = name;
@@ -18,6 +19,7 @@ public class Library {
         librarians = new ArrayList<>();
         borrowedBooks = new ArrayList<>();
         borrowRequests = new ArrayList<>();
+        returnRequests = new ArrayList<>();
     }
 
     public String getName() {
@@ -36,9 +38,32 @@ public class Library {
             System.out.println(s.toString());
         }
     }
-    public void getRequests(){
+    public void getBorrowRequests(){
+        if (borrowRequests.isEmpty()){
+            System.out.println("No requests.");
+        }
+        int i = 0;
         for (Request r : borrowRequests) {
-            System.out.println(r.toString());
+            i++;
+            System.out.println( i +". " + r.toString());
+        }
+    }
+    public void getReturnRequests(){
+        if (returnRequests.isEmpty()){
+            System.out.println("No requests.");
+        }
+        int i = 0;
+        for (Request r : returnRequests) {
+            i++;
+            System.out.println( i +". " + r.toString());
+        }
+    }
+    public void getBorroewdBooks(){
+        if(borrowedBooks.isEmpty()){
+            System.out.println("No Books borrowed.");
+        }
+        for (Book b : borrowedBooks) {
+            System.out.println(b.toString());
         }
     }
     public ArrayList<Librarian> getLibrarians() {
@@ -63,14 +88,21 @@ public class Library {
     void addStudent(Student student) {
         students.add(student);
     }
+    void addLibrarian(String firstname, String lastname , int id) {
+        librarians.add(new Librarian(firstname, lastname, id));
+    }
     private void addLibrarian(Librarian librarian) {
         librarians.add(librarian);
     }
     public void addBook(Book book) {
         books.add(book);
     }
-    void addRequest(Request request) {
+    void addBorrowRequest(Request request) {
         borrowRequests.add(request);
+        System.out.println("Request added successfully.\n" + request.toString());
+    }
+    void addReturnRequest(Request request) {
+        returnRequests.add(request);
         System.out.println("Request added successfully.\n" + request.toString());
     }
 
@@ -93,6 +125,15 @@ public class Library {
             index++;
         }
         System.out.println("Student not found");
+        return -1;
+    }
+    int searchLibrarian(int number){
+        int index = 0;
+        for (Librarian l : librarians) {
+            if(number == l.getId()) return index;
+            index++;
+        }
+        System.out.println("Invalid id.");
         return -1;
     }
 }

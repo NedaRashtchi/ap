@@ -22,11 +22,12 @@ public class Menu {
                 }
                 break;
             case 2:
-                break;
+                System.out.println("Enter your id to login : ");
+                return 3;
             case 3:
                 break;
             case 4:
-                break;
+                return 4;
             default:
                 break;
         }
@@ -55,5 +56,32 @@ public class Menu {
 
         }
         return 0;
+    }
+    public static int librarianMenu() {
+        System.out.println("What do you want to do?");
+        System.out.println("1. Request List\n2. Borrowed Books list\n3. All Books\n4. Add Student\n5. List of students\n6. Exit");
+        Scanner in = new Scanner(System.in);
+        int choice = in.nextInt();
+        in.nextLine();
+        return choice;
+//        switch(choice) {
+//            case 1:
+//                return 1;
+//            case 2:
+//                return 2;
+//            case 3:
+//                return 3;
+//            case 4:
+//                return 4;
+//            case 5:
+//                return 5;
+//            case 6:
+//                System.out.println("Returning to main menu.");
+//                return 6;
+//            default:
+//                System.out.println("Invalid Selection");
+//                break;
+//        }
+//        return 0;
     }
 }
