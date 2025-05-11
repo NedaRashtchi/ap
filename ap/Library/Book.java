@@ -1,50 +1,50 @@
 package ap.Library;
 
 public class Book {
-    private String name;
+    private String title;
     private String author;
     private int publishYear;
     private int pages;
     private int bookCode;
 
-    public Book(String name, String author, int publishYear, int pages , int bookCode) {
-        this.name = name;
+    public Book(String title, String author, int publishYear, int pages , int bookCode) {
+        this.title = title;
         this.author = author;
         this.publishYear = publishYear;
         this.pages = pages;
         this.bookCode = bookCode;
     }
-    String getName() {
-        return name;
+    public String gettitle() {
+        return title;
     }
-    void setName(String name) {
-        this.name = name;
-    }
-    String getAuthor() {
+    public String getAuthor() {
         return author;
     }
-    void setAuthor(String author) {
-        this.author = author;
-    }
-    int getPublishYear() {
+    public int getPublishYear() {
         return publishYear;
     }
-    void setPublishYear(int publishYear) {
-        this.publishYear = publishYear;
+    public void settitle(String title) {
+        this.title = title;
     }
-     int getPages() {
+    public int getPages() {
         return pages;
     }
-    void setPages(int pages) {
-        this.pages = pages;
-    }
-    int getBookCode() {
+    public int getBookCode() {
         return bookCode;
+    }
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+    public void setPublishYear(int publishYear) {
+        this.publishYear = publishYear;
+    }
+    public void setPages(int pages) {
+        this.pages = pages;
     }
 
     @Override
     public String toString() {
-        return "[Name: " + name + ", Author: " + author +
+        return "[title: " + title + ", Author: " + author +
                 ", Publish Year: " + publishYear + ", Pages: "+pages+" Book Code: "+bookCode+"]";
     }
 }

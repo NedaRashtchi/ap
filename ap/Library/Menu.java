@@ -3,7 +3,7 @@ package ap.Library;
 import java.util.Scanner;
 
 public class Menu {
-    public static int firstMenu() {
+    public int firstMenu() {
         System.out.println("Welcome to the Library\nAre you a :");
         System.out.println("1. Student\n2. Librarian\n3. Manager\n4. Exit");
         Scanner in = new Scanner(System.in);
@@ -33,7 +33,7 @@ public class Menu {
         }
         return 0;
     }
-    public static int studentMenu() {
+    public int studentMenu() {
         System.out.println("What do you want to do ?");
         System.out.println("1. Borrow Book\n2. Return Book\n3. List of the books\n4. Books you have borrowed\n5. Exit");
         Scanner in = new Scanner(System.in);
@@ -57,7 +57,7 @@ public class Menu {
         }
         return 0;
     }
-    public static int librarianMenu() {
+    public int librarianMenu() {
         System.out.println("What do you want to do?");
         System.out.println("1. Request List\n2. Borrowed Books list\n3. All Books\n4. Add Student\n5. List of students\n6. Exit");
         Scanner in = new Scanner(System.in);

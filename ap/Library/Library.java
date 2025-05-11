@@ -1,16 +1,17 @@
 package ap.Library;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Library {
     private String name;
-    private ArrayList<Book> books;
-    private ArrayList<Student> students;
-    private ArrayList<Librarian> librarians;
-    private ArrayList<Book> borrowedBooks ; // make method
-    private ArrayList<Request> borrowRequests ;
-    private ArrayList<Request> returnRequests ;
+    private List<Book> books;
+    private List<Student> students;
+    private List<Librarian> librarians;
+    private List<Book> borrowedBooks ; // make method
+    private List<Request> borrowRequests ;
+    private List<Request> returnRequests ;
 
     public Library(String name) {
         this.name = name;
@@ -66,10 +67,10 @@ public class Library {
             System.out.println(b.toString());
         }
     }
-    public ArrayList<Librarian> getLibrarians() {
+    public List<Librarian> getLibrarians() {
         return librarians;
     }
-    public ArrayList<Book> getBorrowedBooks() {
+    public List<Book> getBorrowedBooks() {
         return borrowedBooks;
     }
 

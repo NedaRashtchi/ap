@@ -15,4 +15,8 @@ public class Librarian extends Person{
     public void setId(int id) {
         this.id = id;
     }
+    @Override
+    public String toString() {
+        return "[Name: " + super.toString() + "ID: " + id + "]";
+    }
 }

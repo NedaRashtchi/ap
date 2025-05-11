@@ -5,6 +5,7 @@ import java.util.Scanner;
 public class Main {
     public static void main() {
         Library lib = new Library("library1");
+        Menu menu = new Menu();
 
         lib.addBook(new Book("book1" , "author1",2020,120 , 1));
         lib.addBook(new Book("book2" , "author2",2021,121, 2));
@@ -17,7 +18,7 @@ public class Main {
         int choice = 0;
 
         do{
-            choice = Menu.firstMenu();
+            choice = menu.firstMenu();
 
                     if (choice == 1) {
                         Scanner in = new Scanner(System.in);
@@ -25,7 +26,7 @@ public class Main {
                         if(index != -1){
                             loop:
                             do{
-                                int ch = Menu.studentMenu();
+                                int ch = menu.studentMenu();
                                 switch (ch){
                                     case 1:
                                         int bookCode = in.nextInt();
@@ -64,7 +65,7 @@ public class Main {
                         if(index != -1){
                             loop:
                             do{
-                                switch (Menu.librarianMenu()){
+                                switch (menu.librarianMenu()){
                                     case 1:
                                         lib.getBorrowRequests();
                                         lib.getReturnRequests();
