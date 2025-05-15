@@ -1,32 +1,32 @@
 package ap.Project;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
 public class Library {
     private String name;
-    private List<Book> books;
-    private List<Student> students;
-    private List<Librarian> librarians;
+    private HashMap<Integer , Book> books;
+    private HashMap<Integer,Student> students;
+    private HashMap<Integer,Librarian> librarians;
     private Manager manager;
 
     public Library(String name, Manager manager) {
         this.name = name;
-        this.books = new ArrayList<>();
-        this.students = new ArrayList<>();
-        this.librarians = new ArrayList<>();
+        this.books = new HashMap<>();
+        this.students = new HashMap<>();
+        this.librarians = new HashMap<>();
         this.manager = manager;
     }
 
-    public List<Book> getBooks() {
+    public HashMap<Integer, Book> getBooks() {
         return books;
     }
 
-    public List<Student> getStudents() {
+    public HashMap<Integer, Student> getStudents() {
         return students;
     }
 
-    public List<Librarian> getLibrarians() {
+    public HashMap<Integer, Librarian> getLibrarians() {
         return librarians;
     }
 
@@ -39,29 +39,23 @@ public class Library {
     }
 
     public void addBook(Book book) {
-        books.add(book);
+        books.put(book.getBookCode(), book);
     }
 
     public void addStudent(Student student) {
-        students.add(student);
+        students.put(student.getStdNumber(), student);
     }
 
     public void addLibrarian(Librarian librarian) {
-        librarians.add(librarian);
+        librarians.put(librarian.getId(), librarian);
     }
 
     public Book searchBook(int code) {
-        for (Book b : books) {
-            if (b.getBookCode() == code) {
-                return b;
-            }
-        }
-        return null;
+        return books.get(code);
     }
-
-    public List<Book> searchBooksByTitle(String title) {
-        List<Book> result = new ArrayList<>();
-        for (Book b : books) {
+    public ArrayList<Book> searchBooksByTitle(String title) { // ???
+        ArrayList<Book> result = new ArrayList<>();
+        for (Book b : books.values()) {
             if (b.getTitle().toLowerCase().contains(title.toLowerCase())) {
                 result.add(b);
             }
@@ -69,29 +63,29 @@ public class Library {
         return result;
     }
 
-    public int searchStudent(int number) {
-        for (int i = 0; i < students.size(); i++) {
-            if (students.get(i).getStdNumber() == number) {
-                return i;
-            }
-        }
-        return -1;
+//    public List<Book> searchBooksByTitle(String title) {
+//        List<Book> result = new ArrayList<>();
+//        for (Book b : books) {
+//            if (b.getTitle().toLowerCase().contains(title.toLowerCase())) {
+//                result.add(b);
+//            }
+//        }
+//        return result;
+//    }
+
+    public Student searchStudent(int stdNumber) {
+        return students.get(stdNumber);
     }
 
-    public int searchLibrarian(int number) {
-        for (int i = 0; i < librarians.size(); i++) {
-            if (librarians.get(i).getId() == number) {
-                return i;
-            }
-        }
-        return -1;
+    public Librarian searchLibrarian(int id) {
+        return librarians.get(id);
     }
 
     public void printBookList() {
         if (books.isEmpty()) {
             System.out.println("No books available.");
         } else {
-            for (Book book : books) {
+            for (Book book : books.values()) {
                 System.out.println(book);
             }
         }

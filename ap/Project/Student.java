@@ -1,17 +1,20 @@
 package ap.Project;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class Student extends Person {
     private int stdNumber;
     private String major;
     private ArrayList<Book> borrowedBooks;
+    private LocalDate registerDate;
 
     public Student(String firstName, String lastName, int stdNumber, String major) {
         super(firstName, lastName);
         this.stdNumber = stdNumber;
         this.major = major;
         this.borrowedBooks = new ArrayList<>();
+        this.registerDate = LocalDate.now();
     }
 
     public int getStdNumber() {
@@ -22,6 +25,13 @@ public class Student extends Person {
         return major;
     }
 
+    public LocalDate getRegisterDate() {
+        return registerDate;
+    }
+
+    public void setRegisterDate(LocalDate date) {
+        this.registerDate = date;
+    }
     public void addBorrowedBook(Book book) {
         borrowedBooks.add(book);
     }
@@ -44,4 +54,5 @@ public class Student extends Person {
     public String toString() {
         return "[Name: " + getName() + ", Student Number: " + stdNumber + ", Major: " + major + "]";
     }
+
 }

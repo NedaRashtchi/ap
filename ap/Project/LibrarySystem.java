@@ -1,6 +1,7 @@
 package ap.Project;
 
 import java.io.*;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Scanner;
 
@@ -51,9 +52,9 @@ public class LibrarySystem {
 
     private void handleStudentLogin() {
         int stdNumber = inputHandler.getInt("Enter student number: ", scanner);
-        int index = library.searchStudent(stdNumber);
-        if (index != -1) {
-            currentStudent = library.getStudents().get(index);
+        Student student = library.searchStudent(stdNumber);
+        if (student != null) {
+            currentStudent = student;
             System.out.println("Welcome, " + currentStudent.getName());
 
             while (true) {
@@ -91,9 +92,9 @@ public class LibrarySystem {
 
     private void handleLibrarianLogin() {
         int id = inputHandler.getInt("Enter librarian ID: ", scanner);
-        int index = library.searchLibrarian(id);
-        if (index != -1) {
-            currentLibrarian = library.getLibrarians().get(index);
+        Librarian librarian = library.searchLibrarian(id);
+        if ( librarian != null) {
+            currentLibrarian = librarian;
             System.out.println("Welcome, " + currentLibrarian.getName());
 
             while (true) {
@@ -200,7 +201,7 @@ public class LibrarySystem {
         try (PrintWriter writer = new PrintWriter(new FileWriter("library_data.txt"))) {
 
             writer.println("Books:");
-            for (Book book : library.getBooks()) {
+            for (Book book : library.getBooks().values()) {
                 writer.println(book.getTitle() + "," +
                         book.getAuthor() + "," +
                         book.getPublicationYear() + "," +
@@ -209,16 +210,18 @@ public class LibrarySystem {
             }
 
             writer.println("Students:");
-            for (Student student : library.getStudents()) {
+            for (Student student : library.getStudents().values()) {
                 writer.println(student.getStdNumber() + "," +
                         student.getName() + "," +
-                        student.getMajor());
+                        student.getMajor() + "," +
+                        student.getRegisterDate());
             }
 
             writer.println("Librarians:");
-            for (Librarian librarian : library.getLibrarians()) {
+            for (Librarian librarian : library.getLibrarians().values()) {
                 writer.println(librarian.getId() + "," +
-                        librarian.getName());
+                        librarian.getName() + "," +
+                        librarian.getRegisterDate());
             }
 
             writer.println("Manager:");
@@ -276,6 +279,7 @@ public class LibrarySystem {
                                 Integer.parseInt(stdData[0]),
                                 stdData[2]
                         );
+                        student.setRegisterDate(LocalDate.parse(stdData[3]));
                         library.addStudent(student);
                         break;
 
@@ -286,6 +290,7 @@ public class LibrarySystem {
                                 libData[1].split(" ")[1],
                                 Integer.parseInt(libData[0])
                         );
+                        librarian.setRegisterDate(LocalDate.parse(libData[2]));
                         library.addLibrarian(librarian);
                         break;
 
