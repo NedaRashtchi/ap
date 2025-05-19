@@ -12,6 +12,7 @@ public class Library {
     private Manager manager;
     private List<Request> requests;
     private List<Borrow> borrows;
+    private List<Borrow> delayedReturns;
 
     public Library(String name, Manager manager) {
         this.name = name;
@@ -21,6 +22,7 @@ public class Library {
         this.manager = manager;
         this.requests = new ArrayList<>();
         this.borrows = new ArrayList<>();
+        this.delayedReturns = new ArrayList<>();
     }
 
     public HashMap<Integer, Book> getBooks() {
@@ -83,6 +85,14 @@ public class Library {
 
     public void addBorrow(Borrow borrow) {
         borrows.add(borrow);
+    }
+
+    public void addDelayedReturn(Borrow delayedReturn) {
+        delayedReturns.add(delayedReturn);
+    }
+
+    public List<Borrow> getDelayedReturns() {
+        return delayedReturns;
     }
 
     public Book searchBook(int code) {

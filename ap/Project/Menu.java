@@ -1,5 +1,7 @@
 package ap.Project;
 
+import org.w3c.dom.ls.LSOutput;
+
 import java.util.Scanner;
 
 public class Menu {
@@ -42,7 +44,8 @@ public class Menu {
         System.out.println("what would you like to do?");
         System.out.println("1. Add Librarian");
         System.out.println("2. View All Books");
-        System.out.println("3. Back to Main Menu");
+        System.out.println("3. View Delayed Returns");
+        System.out.println("4. Back to Main Menu");
         int choice = input.nextInt();
         input.nextLine();
         return choice;

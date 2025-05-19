@@ -7,7 +7,7 @@ import java.util.List;
 public class Student extends Person {
     private int stdNumber;
     private String major;
-    private ArrayList<Book> borrowedBooks;
+    private List<Book> borrowedBooks;
     private LocalDate registerDate;
     private List<Request> studentRequests;
 
@@ -39,6 +39,9 @@ public class Student extends Person {
 
     public void removeBorrowedBook(Book book) {
         borrowedBooks.remove(book);
+    }
+    public List<Book> getBorrowedBooks() {
+        return borrowedBooks;
     }
 
     public void listBorrowedBooks() {
