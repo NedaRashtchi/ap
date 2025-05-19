@@ -2,12 +2,14 @@ package ap.Project;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Student extends Person {
     private int stdNumber;
     private String major;
     private ArrayList<Book> borrowedBooks;
     private LocalDate registerDate;
+    private List<Request> studentRequests;
 
     public Student(String firstName, String lastName, int stdNumber, String major) {
         super(firstName, lastName);
@@ -15,23 +17,22 @@ public class Student extends Person {
         this.major = major;
         this.borrowedBooks = new ArrayList<>();
         this.registerDate = LocalDate.now();
+        this.studentRequests = new ArrayList<>();
     }
 
     public int getStdNumber() {
         return stdNumber;
     }
-
     public String getMajor() {
         return major;
     }
-
     public LocalDate getRegisterDate() {
         return registerDate;
     }
-
     public void setRegisterDate(LocalDate date) {
         this.registerDate = date;
     }
+
     public void addBorrowedBook(Book book) {
         borrowedBooks.add(book);
     }
@@ -48,6 +49,14 @@ public class Student extends Person {
                 System.out.println(b);
             }
         }
+    }
+
+    public void addRequest(Request request) {
+        studentRequests.add(request);
+    }
+
+    public List<Request> getPendingRequests() {
+        return studentRequests;
     }
 
     @Override

@@ -19,7 +19,9 @@ public class Menu {
         System.out.println("\nWhat would you like to do?");
         System.out.println("1. View All Books");
         System.out.println("2. Search Book");
-        System.out.println("3. Back to Main Menu");
+        System.out.println("3. Borrow or Return Book");
+        System.out.println("4. Unreturned Books");
+        System.out.println("5. Back to Main Menu");
         int choice = input.nextInt();
         input.nextLine();
         return choice;
@@ -29,7 +31,8 @@ public class Menu {
         System.out.println("\nwhat would you like to do?");
         System.out.println("1. Add Book");
         System.out.println("2. Edit Personal Info");
-        System.out.println("3. Back to Main Menu");
+        System.out.println("3. View and Approve Requests");
+        System.out.println("4. Back to Main Menu");
         int choice = input.nextInt();
         input.nextLine();
         return choice;

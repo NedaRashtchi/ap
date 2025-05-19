@@ -3,6 +3,7 @@ package ap.Project;
 import java.io.*;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Random;
 import java.util.Scanner;
 
 public class LibrarySystem {
@@ -67,6 +68,14 @@ public class LibrarySystem {
                         searchBook();
                         break;
                     case 3:
+                        int input = inputHandler.getInt("1. Borrow\n2. Return\n", scanner);
+                        if(input == 1) {
+                            bookRequest(RequestType.BORROW);
+                        }else if(input == 2) {
+                            bookRequest(RequestType.RETURN);
+                        }
+                        break;
+                    case 5:
                         currentStudent = null;
                         return;
                     default:
@@ -92,9 +101,9 @@ public class LibrarySystem {
 
     private void handleLibrarianLogin() {
         int id = inputHandler.getInt("Enter librarian ID: ", scanner);
-        Librarian librarian = library.searchLibrarian(id);
-        if ( librarian != null) {
-            currentLibrarian = librarian;
+        int index = library.searchLibrarian(id);
+        if ( index != -1) {
+            currentLibrarian = library.getLibrarians().get(index);
             System.out.println("Welcome, " + currentLibrarian.getName());
 
             while (true) {
@@ -107,6 +116,9 @@ public class LibrarySystem {
                         editLibrarianInfo(currentLibrarian);
                         break;
                     case 3:
+                        handleLibrarianRequests(currentLibrarian);
+                        break;
+                    case 4:
                         currentLibrarian = null;
                         return;
                     default:
@@ -197,6 +209,69 @@ public class LibrarySystem {
         }
     }
 
+    private void bookRequest(RequestType type) {
+        int code = inputHandler.getInt("Enter book code: ", scanner);
+        Book b = library.searchBook(code);
+        Random random = new Random();
+
+        library.addRequest(new Request(b , this.currentStudent ,
+                        library.getLibrarians().get(random.nextInt(2)) //library.getLibrarians().size()+1
+                        ,type));
+        System.out.println("Request added successfully.");
+    }
+
+    private void handleLibrarianRequests(Librarian librarian) {
+        List<Request> requests = library.getRequestsByLibrarian(librarian.getId());
+
+        if (requests.isEmpty()) {
+            System.out.println("There is no request.");
+            return;
+        }
+
+        System.out.println("\nYour requests:");
+        for (int i = 0; i < requests.size(); i++) {
+            System.out.println((i + 1) + ". " + requests.get(i));
+        }
+
+        int choice = inputHandler.getInt("Enter request number to approve: ", scanner);
+        if (choice < 1 || choice > requests.size()) {
+            System.out.println("Invalid selection.");
+            return;
+        }
+
+        Request selectedRequest = requests.get(choice - 1);
+
+        if (selectedRequest.getType() == RequestType.BORROW) {
+
+            Borrow borrow = new Borrow(
+                    selectedRequest.getBook(),
+                    selectedRequest.getStudent(),
+                    LocalDate.now(),
+                    selectedRequest.getLibrarian()
+            );
+
+            library.addBorrow(borrow);
+            selectedRequest.getStudent().addBorrowedBook(selectedRequest.getBook());
+            System.out.println("Borrow request approved successfully.");
+
+        } else if (selectedRequest.getType() == RequestType.RETURN) {
+
+            selectedRequest.getStudent().removeBorrowedBook(selectedRequest.getBook());
+
+            for (Borrow b : library.getBorrows()) {
+                if (b.getBook().equals(selectedRequest.getBook()) &&
+                        b.getStudent().equals(selectedRequest.getStudent())) {
+                    b.setReturner(selectedRequest.getLibrarian());
+                    break;
+                }
+            }
+
+            System.out.println("Return request approved successfully.");
+        }
+
+        library.getRequests().remove(selectedRequest);
+    }
+
     private void saveLibraryData() {
         try (PrintWriter writer = new PrintWriter(new FileWriter("library_data.txt"))) {
 
@@ -218,7 +293,7 @@ public class LibrarySystem {
             }
 
             writer.println("Librarians:");
-            for (Librarian librarian : library.getLibrarians().values()) {
+            for (Librarian librarian : library.getLibrarians()) {
                 writer.println(librarian.getId() + "," +
                         librarian.getName() + "," +
                         librarian.getRegisterDate());
@@ -230,6 +305,24 @@ public class LibrarySystem {
                     manager.getName() + "," +
                     manager.getEducation());
 
+            writer.println("Requests:");
+            for (Request request : library.getRequests()) {
+                int stdNumber = request.getStudent() != null ? request.getStudent().getStdNumber() : -1;
+                int libId = request.getLibrarian() != null ? request.getLibrarian().getId() : -1;
+                int bookCode = request.getBook() != null ? request.getBook().getBookCode() : -1;
+
+                writer.println(stdNumber + "," + libId + "," + bookCode + "," + request.getType());
+            }
+
+            writer.println("Borrows:");
+            for (Borrow borrow : library.getBorrows()) {
+                writer.println(borrow.getStudent().getStdNumber() + "," +
+                        borrow.getBook().getBookCode() + "," +
+                        borrow.getBorrowDate() + "," +
+                        (borrow.getReturnDate() != null ? borrow.getReturnDate() : "") + "," +
+                        borrow.getBorrower().getId() + "," +
+                        (borrow.getReturner() != null ? borrow.getReturner().getId() : ""));
+            }
         } catch (IOException e) {
             System.out.println("Error saving data: " + e.getMessage());
         }
@@ -253,6 +346,12 @@ public class LibrarySystem {
                     continue;
                 } else if (line.equals("Manager:")) {
                     section = "Manager";
+                    continue;
+                } else if (line.equals("Requests:")) {
+                    section = "Requests";
+                    continue;
+                }else if (line.equals("Borrows:")) {
+                    section = "Borrows";
                     continue;
                 }
 
@@ -303,6 +402,51 @@ public class LibrarySystem {
                                 Integer.parseInt(mgrData[0])
                         );
                         library.setManager(manager);
+                        break;
+                    case "Requests":
+                        String[] reqData = line.split(",");
+                        int stdNumber = Integer.parseInt(reqData[0]);
+                        int libId = Integer.parseInt(reqData[1]);
+                        int bookCode = Integer.parseInt(reqData[2]);
+                        RequestType type = RequestType.valueOf(reqData[3]);
+
+                        Book b = library.searchBook(bookCode);
+                        Student s = library.getStudents().get(stdNumber);
+                        Librarian l = null;
+                        for (Librarian lib : library.getLibrarians()) {
+                            if (lib.getId() == libId) {
+                                l = lib;
+                                break;
+                            }
+                        }
+                        if (b != null && s != null && l != null) {
+                            Request request = new Request(b, s, l, type);
+                            library.addRequest(request);
+                        }
+                        break;
+                    case "Borrows":
+                        String[] borrowData = line.split(",");
+                        Student std = library.getStudents().get(Integer.parseInt(borrowData[0]));
+                        Book bk = library.getBooks().get(Integer.parseInt(borrowData[1]));
+
+                        Librarian borrower = null;
+                        Librarian returner = null;
+
+                        for (Librarian lib : library.getLibrarians()) {
+                            if (lib.getId() == Integer.parseInt(borrowData[4])) borrower = lib;
+                            if (borrowData.length > 5 && !borrowData[5].isEmpty() &&
+                                    lib.getId() == Integer.parseInt(borrowData[5])) returner = lib;
+                        }
+                        if (std != null && bk != null && borrower != null) {
+                            Borrow borrow = new Borrow(bk, std, LocalDate.parse(borrowData[2]), borrower);
+                            if (!borrowData[3].isEmpty()) {
+                                borrow.setReturnDate(LocalDate.parse(borrowData[3]));
+                            }
+                            if (returner != null) {
+                                borrow.setReturner(returner);
+                            }
+                            library.addBorrow(borrow);
+                        }
                         break;
                 }
             }

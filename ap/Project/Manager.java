@@ -13,7 +13,6 @@ public class Manager extends Person {
     public Education getEducation() {
         return education;
     }
-
     public int getId() {
         return id;
     }

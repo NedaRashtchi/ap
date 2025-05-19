@@ -18,7 +18,6 @@ public class Book {
     public String getTitle() {
         return title;
     }
-
     public int getBookCode() {
         return bookCode;
     }
