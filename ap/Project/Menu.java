@@ -45,7 +45,9 @@ public class Menu {
         System.out.println("1. Add Librarian");
         System.out.println("2. View All Books");
         System.out.println("3. View Delayed Returns");
-        System.out.println("4. Back to Main Menu");
+        System.out.println("4. View Librarian Activity Report");
+        System.out.println("5. View Popular Books");
+        System.out.println("6. Back to Main Menu");
         int choice = input.nextInt();
         input.nextLine();
         return choice;

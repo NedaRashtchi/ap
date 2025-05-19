@@ -6,6 +6,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
+import java.util.ArrayList;
 
 public class LibrarySystem {
     private Library library;
@@ -152,6 +153,12 @@ public class LibrarySystem {
                         viewDelayedReturns(library);
                         break;
                     case 4:
+                        viewLibrarianReport(library);
+                        break;
+                    case 5:
+                        viewPopularBooks(library);
+                        break;
+                    case 6:
                         return;
                     default:
                         System.out.println("Invalid choice.");
@@ -186,7 +193,7 @@ public class LibrarySystem {
         String lastName = inputHandler.getLine("Last name: ", scanner);
         int id = inputHandler.getInt("ID: ", scanner);
 
-        library.addLibrarian(new Librarian(firstName, lastName, id));
+        library.addLibrarian(new Librarian(firstName, lastName, id , 0 ,0));
         System.out.println("Librarian added successfully.");
     }
 
@@ -201,6 +208,58 @@ public class LibrarySystem {
         for (Borrow borrow : delayedList) {
             System.out.println(borrow.toString());
             System.out.println("Days Delayed: " + ChronoUnit.DAYS.between(borrow.getReturnDate(), LocalDate.now()));
+        }
+    }
+
+    private void viewLibrarianReport(Library library) {
+        System.out.println("\nLibrarian Activity  Report:");
+        for (Librarian librarian : library.getLibrarians()) {
+            System.out.println(librarian.toString());
+        }
+    }
+
+    private void viewPopularBooks(Library library) {
+        ArrayList<int[]> popularBooks = new ArrayList<>();
+        int borrowCount;
+
+        for (Book book : library.getBooks().values()) {
+            borrowCount = 0;
+
+            for (Borrow borrow : library.getBorrowRecords()) {
+                if (borrow.getBook().equals(book) && borrow.getBorrowDate().isAfter(LocalDate.now().minusYears(1))) {
+                    borrowCount++;
+                }
+            }
+
+            if (borrowCount > 0) {
+                int[] b = {book.getBookCode(), borrowCount};
+                popularBooks.add(b);
+            }
+        }
+        if (popularBooks.isEmpty()) {
+            System.out.println("No popular books this year.");
+            return;
+        }
+        for (int i = 0; i < popularBooks.size() - 1; i++) {
+            for (int j = 0; j < popularBooks.size() - i - 1; j++) {
+                if (popularBooks.get(j)[1] < popularBooks.get(j + 1)[1]) {
+
+                    int[] temp = popularBooks.get(j);
+                    popularBooks.set(j, popularBooks.get(j + 1));
+                    popularBooks.set(j + 1, temp);
+                }
+            }
+        }
+
+        System.out.println("\nPopular Books in the Last Year:");
+        for (int i = 0; i < Math.min(10, popularBooks.size()); i++) {
+            int bookCode = popularBooks.get(i)[0];
+            int count = popularBooks.get(i)[1];
+            Book book = library.getBooks().get(bookCode);
+
+            if (book != null) {
+                System.out.printf("%d. %s borrowed: %d time\n", i + 1, book.getTitle(), count);
+            }
         }
     }
 
@@ -266,6 +325,15 @@ public class LibrarySystem {
                     LocalDate.now(),
                     selectedRequest.getLibrarian()));
             selectedRequest.getStudent().addBorrowedBook(selectedRequest.getBook());
+            currentLibrarian.addBorrowCount();
+
+            library.addBorrowRecord(new Borrow(
+                    selectedRequest.getBook(),
+                    selectedRequest.getStudent(),
+                    LocalDate.now(),
+                    selectedRequest.getLibrarian()));
+            selectedRequest.getStudent().addBorrowedBook(selectedRequest.getBook());
+
             System.out.println("Borrow request approved successfully.");
 
         } else if (selectedRequest.getType() == RequestType.RETURN) {
@@ -291,6 +359,7 @@ public class LibrarySystem {
                 library.getBorrows().remove(foundBorrow);
             }
 
+            currentLibrarian.addReturnCount();
             System.out.println("Return request approved successfully.");
         }
 
@@ -334,7 +403,9 @@ public class LibrarySystem {
             for (Librarian librarian : library.getLibrarians()) {
                 writer.println(librarian.getId() + "," +
                         librarian.getName() + "," +
-                        librarian.getRegisterDate());
+                        librarian.getRegisterDate() + "," +
+                        librarian.getBorrowCount() + "," +
+                        librarian.getReturnCount());
             }
 
             writer.println("Manager:");
@@ -354,6 +425,16 @@ public class LibrarySystem {
 
             writer.println("Borrows:");
             for (Borrow borrow : library.getBorrows()) {
+                writer.println(borrow.getStudent().getStdNumber() + "," +
+                        borrow.getBook().getBookCode() + "," +
+                        borrow.getBorrowDate() + "," +
+                        (borrow.getReturnDate() != null ? borrow.getReturnDate() : "") + "," +
+                        borrow.getBorrower().getId() + "," +
+                        (borrow.getReturner() != null ? borrow.getReturner().getId() : ""));
+            }
+
+            writer.println("BorrowRecords:");
+            for (Borrow borrow : library.getBorrowedRecords()) {
                 writer.println(borrow.getStudent().getStdNumber() + "," +
                         borrow.getBook().getBookCode() + "," +
                         borrow.getBorrowDate() + "," +
@@ -400,6 +481,9 @@ public class LibrarySystem {
                     continue;
                 }else if (line.equals("Borrows:")) {
                     section = "Borrows";
+                    continue;
+                }else if (line.equals("BorrowRecords:")) {
+                    section = "BorrowRecords";
                     continue;
                 }else if (line.equals("DelayedReturns:")) {
                     section = "DelayedReturns";
@@ -450,8 +534,8 @@ public class LibrarySystem {
                         Librarian librarian = new Librarian(
                                 libData[1].split(" ")[0],
                                 libData[1].split(" ")[1],
-                                Integer.parseInt(libData[0])
-                        );
+                                Integer.parseInt(libData[0]),
+                                Integer.parseInt(libData[3]),Integer.parseInt(libData[4]));
                         librarian.setRegisterDate(LocalDate.parse(libData[2]));
                         library.addLibrarian(librarian);
                         break;
@@ -511,6 +595,31 @@ public class LibrarySystem {
                             library.addBorrow(borrow);
                         }
                         break;
+                    case "BorrowRecords":
+                        String[] borrowRecData = line.split(",");
+                        Student std2 = library.getStudents().get(Integer.parseInt(borrowRecData[0]));
+                        Book bk2 = library.getBooks().get(Integer.parseInt(borrowRecData[1]));
+                        Librarian brw2 = null;
+                        Librarian rtn2 = null;
+
+                        for (Librarian lib : library.getLibrarians()) {
+                            if (lib.getId() == Integer.parseInt(borrowRecData[4])) brw2 = lib;
+                            if (borrowRecData.length > 5 && !borrowRecData[5].isEmpty() &&
+                                    lib.getId() == Integer.parseInt(borrowRecData[5])) rtn2 = lib;
+                        }
+
+                        if (std2 != null && bk2 != null && brw2 != null) {
+                            Borrow borrow = new Borrow(bk2, std2, LocalDate.parse(borrowRecData[2]), brw2);
+                            if (!borrowRecData[3].isEmpty()) {
+                                borrow.setReturnDate(LocalDate.parse(borrowRecData[3]));
+                            }
+                            if (rtn2 != null) {
+                                borrow.setReturner(rtn2);
+                            }
+                            library.addBorrowRecord(borrow);
+                        }
+                        break;
+
                     case "DelayedReturns":
                         String[] delayData = line.split(",");
                         Student stdd = library.getStudents().get(Integer.parseInt(delayData[0]));

@@ -6,12 +6,13 @@ import java.util.List;
 
 public class Library {
     private String name;
-    private HashMap<Integer , Book> books;
-    private HashMap<Integer,Student> students;
+    private HashMap<Integer, Book> books;
+    private HashMap<Integer, Student> students;
     private List<Librarian> librarians;
     private Manager manager;
     private List<Request> requests;
     private List<Borrow> borrows;
+    private List<Borrow> borrowedRecords;
     private List<Borrow> delayedReturns;
 
     public Library(String name, Manager manager) {
@@ -23,26 +24,37 @@ public class Library {
         this.requests = new ArrayList<>();
         this.borrows = new ArrayList<>();
         this.delayedReturns = new ArrayList<>();
+        this.borrowedRecords = new ArrayList<>();
     }
 
     public HashMap<Integer, Book> getBooks() {
         return books;
     }
+
     public HashMap<Integer, Student> getStudents() {
         return students;
     }
+
     public List<Librarian> getLibrarians() {
         return librarians;
     }
+
     public Manager getManager() {
         return manager;
     }
+
     public List<Request> getRequests() {
         return requests;
     }
+
     public List<Borrow> getBorrows() {
         return borrows;
     }
+
+    public List<Borrow> getBorrowedRecords() {
+        return borrowedRecords;
+    }
+
     public List<Request> getRequestsByLibrarian(int librarianId) {
         List<Request> result = new ArrayList<>();
         for (Request request : requests) {
@@ -79,12 +91,16 @@ public class Library {
         librarians.add(librarian);
     }
 
-    public void addRequest(Request request){
+    public void addRequest(Request request) {
         requests.add(request);
     }
 
     public void addBorrow(Borrow borrow) {
         borrows.add(borrow);
+    }
+
+    public void addBorrowRecord(Borrow borrow) {
+        borrowedRecords.add(borrow);
     }
 
     public void addDelayedReturn(Borrow delayedReturn) {
@@ -95,9 +111,14 @@ public class Library {
         return delayedReturns;
     }
 
+    public List<Borrow> getBorrowRecords() {
+        return borrowedRecords;
+    }
+
     public Book searchBook(int code) {
         return books.get(code);
     }
+
     public ArrayList<Book> searchBooksByTitle(String title) { // ???
         ArrayList<Book> result = new ArrayList<>();
         for (Book b : books.values()) {
