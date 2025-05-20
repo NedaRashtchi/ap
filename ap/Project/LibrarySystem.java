@@ -1,34 +1,32 @@
 package ap.Project;
 
-import java.io.*;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Random;
-import java.util.Scanner;
 import java.util.ArrayList;
 
 public class LibrarySystem {
     private Library library;
-    private Scanner scanner;
+    private FileHandler fileHandler;
     private Menu menu;
     private InputHandler inputHandler;
     private Student currentStudent;
     private Librarian currentLibrarian;
-    private Manager currentManager;
+//    private Manager currentManager;
 
     public LibrarySystem(Library library) {
         this.library = library;
-        this.scanner = new Scanner(System.in);
         this.menu = new Menu();
         this.inputHandler = new InputHandler();
+        this.fileHandler = new FileHandler();
     }
 
     public void run() {
-        loadLibraryData();
+        fileHandler.loadLibraryData(library);
 
         while (true) {
-            int choice = menu.mainMenu(scanner);
+            int choice = menu.mainMenu(inputHandler);
 
             switch (choice) {
                 case 1:
@@ -44,7 +42,7 @@ public class LibrarySystem {
                     handleManagerLogin();
                     break;
                 case 5:
-                    saveLibraryData();
+                    fileHandler.saveLibraryData(library);
                     System.out.println("Exiting...");
                     return;
                 default:
@@ -54,14 +52,14 @@ public class LibrarySystem {
     }
 
     private void handleStudentLogin() {
-        int stdNumber = inputHandler.getInt("Enter student number: ", scanner);
+        int stdNumber = inputHandler.getInt("Enter student number: ");
         Student student = library.searchStudent(stdNumber);
         if (student != null) {
             currentStudent = student;
             System.out.println("Welcome, " + currentStudent.getName());
 
             while (true) {
-                int choice = menu.studentMenu(scanner);
+                int choice = menu.studentMenu(inputHandler);
                 switch (choice) {
                     case 1:
                         library.printBookList();
@@ -70,10 +68,10 @@ public class LibrarySystem {
                         searchBook();
                         break;
                     case 3:
-                        int input = inputHandler.getInt("1. Borrow\n2. Return\n", scanner);
-                        if(input == 1) {
+                        int input = inputHandler.getInt("1. Borrow\n2. Return\n");
+                        if (input == 1) {
                             bookRequest(RequestType.BORROW);
-                        }else if(input == 2) {
+                        } else if (input == 2) {
                             bookRequest(RequestType.RETURN);
                         }
                         break;
@@ -94,9 +92,9 @@ public class LibrarySystem {
 
     private void handleStudentRegistration() {
         System.out.println("Please enter your information:");
-        String firstName = inputHandler.getLine("First Name: ", scanner);
-        String lastName = inputHandler.getLine("Last Name: ", scanner);
-        String major = inputHandler.getLine("Major: ", scanner);
+        String firstName = inputHandler.getLine("First Name: ");
+        String lastName = inputHandler.getLine("Last Name: ");
+        String major = inputHandler.getLine("Major: ");
         int stdNumber = 140301 + library.getStudents().size();
 
         Student newStudent = new Student(firstName, lastName, stdNumber, major);
@@ -105,14 +103,14 @@ public class LibrarySystem {
     }
 
     private void handleLibrarianLogin() {
-        int id = inputHandler.getInt("Enter librarian ID: ", scanner);
+        int id = inputHandler.getInt("Enter librarian ID: ");
         int index = library.searchLibrarian(id);
-        if ( index != -1) {
+        if (index != -1) {
             currentLibrarian = library.getLibrarians().get(index);
             System.out.println("Welcome, " + currentLibrarian.getName());
 
             while (true) {
-                int choice = menu.librarianMenu(scanner);
+                int choice = menu.librarianMenu(inputHandler);
                 switch (choice) {
                     case 1:
                         addNewBook();
@@ -136,12 +134,12 @@ public class LibrarySystem {
     }
 
     private void handleManagerLogin() {
-        int id = inputHandler.getInt("Enter manager ID: ", scanner);
+        int id = inputHandler.getInt("Enter manager ID: ");
         if (id == library.getManager().getId()) {
             System.out.println("Welcome, Manager!");
 
             while (true) {
-                int choice = menu.managerMenu(scanner);
+                int choice = menu.managerMenu(inputHandler);
                 switch (choice) {
                     case 1:
                         addNewLibrarian();
@@ -170,11 +168,11 @@ public class LibrarySystem {
     }
 
     private void addNewBook() {
-        String title = inputHandler.getLine("Book title: ", scanner);
-        String author = inputHandler.getLine("Author name: ", scanner);
-        int year = inputHandler.getInt("Publish year: ", scanner);
-        int pages = inputHandler.getInt("Page count: ", scanner);
-        int code = inputHandler.getInt("Book code: ", scanner);
+        String title = inputHandler.getLine("Book title: ");
+        String author = inputHandler.getLine("Author name: ");
+        int year = inputHandler.getInt("Publish year: ");
+        int pages = inputHandler.getInt("Page count: ");
+        int code = inputHandler.getInt("Book code: ");
 
         Book book = new Book(title, author, year, pages, code);
         library.addBook(book);
@@ -182,18 +180,18 @@ public class LibrarySystem {
     }
 
     private void editLibrarianInfo(Librarian librarian) {
-        String firstName = inputHandler.getLine("Enter new first name: ", scanner);
-        String lastName = inputHandler.getLine("Enter new last name: ", scanner);
+        String firstName = inputHandler.getLine("Enter new first name: ");
+        String lastName = inputHandler.getLine("Enter new last name: ");
         librarian.setName(firstName, lastName);
         System.out.println("Information updated.");
     }
 
     private void addNewLibrarian() {
-        String firstName = inputHandler.getLine("First name: ", scanner);
-        String lastName = inputHandler.getLine("Last name: ", scanner);
-        int id = inputHandler.getInt("ID: ", scanner);
+        String firstName = inputHandler.getLine("First name: ");
+        String lastName = inputHandler.getLine("Last name: ");
+        int id = inputHandler.getInt("ID: ");
 
-        library.addLibrarian(new Librarian(firstName, lastName, id , 0 ,0));
+        library.addLibrarian(new Librarian(firstName, lastName, id, 0, 0));
         System.out.println("Librarian added successfully.");
     }
 
@@ -265,11 +263,10 @@ public class LibrarySystem {
 
     private void searchBook() {
         System.out.println("Search by:\n 1. Code \n 2. Title");
-        int choice = inputHandler.getInt("", scanner);
-        scanner.nextLine();
+        int choice = inputHandler.getInt("");
 
         if (choice == 1) {
-            int code = inputHandler.getInt("Enter book code: ", scanner);
+            int code = inputHandler.getInt("Enter book code: ");
             Book book = library.searchBook(code);
             if (book != null) {
                 System.out.println(book);
@@ -277,7 +274,7 @@ public class LibrarySystem {
                 System.out.println("Book not found.");
             }
         } else if (choice == 2) {
-            String title = inputHandler.getLine("Enter book title: ", scanner);
+            String title = inputHandler.getLine("Enter book title: ");
             List<Book> results = library.searchBooksByTitle(title);
             if (results.isEmpty()) {
                 System.out.println("No books found.");
@@ -290,13 +287,28 @@ public class LibrarySystem {
     }
 
     private void bookRequest(RequestType type) {
-        int code = inputHandler.getInt("Enter book code: ", scanner);
+        int code = inputHandler.getInt("Enter book code: ");
+        boolean found = false;
+
+        for (Book borrowedBook : currentStudent.getBorrowedBooks()) {
+            if (type == RequestType.BORROW && borrowedBook.getBookCode() == code) {
+                System.out.println("You already borrowed this book.");
+                return;
+            } else if (type == RequestType.RETURN && borrowedBook.getBookCode() == code) {
+                found = true;
+            }
+        }
+        if (!found && type == RequestType.RETURN) {
+            System.out.println("You never borrowed this book.");
+            return;
+        }
+
         Book b = library.searchBook(code);
         Random random = new Random();
 
-        library.addRequest(new Request(b , this.currentStudent ,
-                        library.getLibrarians().get(random.nextInt(2)) //library.getLibrarians().size()+1
-                        ,type));
+        library.addRequest(new Request(b, this.currentStudent,
+                library.getLibrarians().get(random.nextInt(library.getLibrarians().size()))
+                , type));
         System.out.println("Request added successfully.");
     }
 
@@ -310,7 +322,7 @@ public class LibrarySystem {
         for (int i = 0; i < requests.size(); i++) {
             System.out.println((i + 1) + ". " + requests.get(i));
         }
-        int choice = inputHandler.getInt("Enter request number to approve: ", scanner);
+        int choice = inputHandler.getInt("Enter request number to approve: ");
         if (choice < 1 || choice > requests.size()) {
             System.out.println("Invalid selection.");
             return;
@@ -320,18 +332,14 @@ public class LibrarySystem {
         if (selectedRequest.getType() == RequestType.BORROW) {
 
             library.addBorrow(new Borrow(
-                    selectedRequest.getBook(),
-                    selectedRequest.getStudent(),
-                    LocalDate.now(),
-                    selectedRequest.getLibrarian()));
+                    selectedRequest.getBook(), selectedRequest.getStudent(),
+                    LocalDate.now(), selectedRequest.getLibrarian()));
             selectedRequest.getStudent().addBorrowedBook(selectedRequest.getBook());
             currentLibrarian.addBorrowCount();
 
             library.addBorrowRecord(new Borrow(
-                    selectedRequest.getBook(),
-                    selectedRequest.getStudent(),
-                    LocalDate.now(),
-                    selectedRequest.getLibrarian()));
+                    selectedRequest.getBook(), selectedRequest.getStudent(),
+                    LocalDate.now(), selectedRequest.getLibrarian()));
             selectedRequest.getStudent().addBorrowedBook(selectedRequest.getBook());
 
             System.out.println("Borrow request approved successfully.");
@@ -364,285 +372,5 @@ public class LibrarySystem {
         }
 
         library.getRequests().remove(selectedRequest);
-    }
-
-    private void saveLibraryData() {
-        try (PrintWriter writer = new PrintWriter(new FileWriter("library_data.txt"))) {
-
-            writer.println("Books:");
-            for (Book book : library.getBooks().values()) {
-                writer.println(book.getTitle() + "," +
-                        book.getAuthor() + "," +
-                        book.getPublicationYear() + "," +
-                        book.getPageCount() + "," +
-                        book.getBookCode());
-            }
-
-            writer.println("Students:");
-            for (Student student : library.getStudents().values()) {
-                StringBuilder borrowedCodes = new StringBuilder();
-
-                for (int i = 0; i < student.getBorrowedBooks().size(); i++) {
-                    Book book = student.getBorrowedBooks().get(i);
-                    borrowedCodes.append(book.getBookCode());
-
-                    if (i < student.getBorrowedBooks().size() - 1) {
-                        borrowedCodes.append(":");
-                    }
-                }
-
-                writer.println(student.getStdNumber() + "," +
-                        student.getName() + "," +
-                        student.getMajor() + "," +
-                        student.getRegisterDate() + "," +
-                        borrowedCodes);
-            }
-
-
-            writer.println("Librarians:");
-            for (Librarian librarian : library.getLibrarians()) {
-                writer.println(librarian.getId() + "," +
-                        librarian.getName() + "," +
-                        librarian.getRegisterDate() + "," +
-                        librarian.getBorrowCount() + "," +
-                        librarian.getReturnCount());
-            }
-
-            writer.println("Manager:");
-            Manager manager = library.getManager();
-            writer.println(manager.getId() + "," +
-                    manager.getName() + "," +
-                    manager.getEducation());
-
-            writer.println("Requests:");
-            for (Request request : library.getRequests()) {
-                int stdNumber = request.getStudent() != null ? request.getStudent().getStdNumber() : -1;
-                int libId = request.getLibrarian() != null ? request.getLibrarian().getId() : -1;
-                int bookCode = request.getBook() != null ? request.getBook().getBookCode() : -1;
-
-                writer.println(stdNumber + "," + libId + "," + bookCode + "," + request.getType());
-            }
-
-            writer.println("Borrows:");
-            for (Borrow borrow : library.getBorrows()) {
-                writer.println(borrow.getStudent().getStdNumber() + "," +
-                        borrow.getBook().getBookCode() + "," +
-                        borrow.getBorrowDate() + "," +
-                        (borrow.getReturnDate() != null ? borrow.getReturnDate() : "") + "," +
-                        borrow.getBorrower().getId() + "," +
-                        (borrow.getReturner() != null ? borrow.getReturner().getId() : ""));
-            }
-
-            writer.println("BorrowRecords:");
-            for (Borrow borrow : library.getBorrowedRecords()) {
-                writer.println(borrow.getStudent().getStdNumber() + "," +
-                        borrow.getBook().getBookCode() + "," +
-                        borrow.getBorrowDate() + "," +
-                        (borrow.getReturnDate() != null ? borrow.getReturnDate() : "") + "," +
-                        borrow.getBorrower().getId() + "," +
-                        (borrow.getReturner() != null ? borrow.getReturner().getId() : ""));
-            }
-
-            writer.println("DelayedReturns:");
-            for (Borrow borrow : library.getDelayedReturns()) {
-                writer.println(borrow.getStudent().getStdNumber() + "," +
-                        borrow.getBook().getBookCode() + "," +
-                        borrow.getBorrowDate() + "," +
-                        borrow.getReturnDate() + "," +
-                        borrow.getBorrower().getId() + "," +
-                        borrow.getReturner().getId());
-            }
-        } catch (IOException e) {
-            System.out.println("Error saving data: " + e.getMessage());
-        }
-    }
-
-    private void loadLibraryData() {
-        try (Scanner fileScanner = new Scanner(new File("library_data.txt"))) {
-            String section = "";
-
-            while (fileScanner.hasNextLine()) {
-                String line = fileScanner.nextLine();
-
-                if (line.equals("Books:")) {
-                    section = "Books";
-                    continue;
-                } else if (line.equals("Students:")) {
-                    section = "Students";
-                    continue;
-                } else if (line.equals("Librarians:")) {
-                    section = "Librarians";
-                    continue;
-                } else if (line.equals("Manager:")) {
-                    section = "Manager";
-                    continue;
-                } else if (line.equals("Requests:")) {
-                    section = "Requests";
-                    continue;
-                }else if (line.equals("Borrows:")) {
-                    section = "Borrows";
-                    continue;
-                }else if (line.equals("BorrowRecords:")) {
-                    section = "BorrowRecords";
-                    continue;
-                }else if (line.equals("DelayedReturns:")) {
-                    section = "DelayedReturns";
-                    continue;
-                }
-
-                if (line.trim().isEmpty()) continue;
-
-                switch (section) {
-                    case "Books":
-                        String[] bookData = line.split(",");
-                        Book book = new Book(
-                                bookData[0],
-                                bookData[1],
-                                Integer.parseInt(bookData[2]),
-                                Integer.parseInt(bookData[3]),
-                                Integer.parseInt(bookData[4])
-                        );
-                        library.addBook(book);
-                        break;
-
-                    case "Students":
-                        String[] stdData = line.split(",");
-                        Student student = new Student(
-                                stdData[1].split(" ")[0],
-                                stdData[1].split(" ")[1],
-                                Integer.parseInt(stdData[0]),
-                                stdData[2]
-                        );
-                        student.setRegisterDate(LocalDate.parse(stdData[3]));
-
-                        if (stdData.length > 4 && !stdData[4].isEmpty()) {
-                            String[] codeStrings = stdData[4].split(":");
-                            for (String codeStr : codeStrings) {
-                                int bookCode = Integer.parseInt(codeStr);
-                                Book b = library.searchBook(bookCode);
-                                if (b != null) {
-                                    student.addBorrowedBook(b);
-                                }
-                            }
-                        }
-
-                        library.addStudent(student);
-                        break;
-
-                    case "Librarians":
-                        String[] libData = line.split(",");
-                        Librarian librarian = new Librarian(
-                                libData[1].split(" ")[0],
-                                libData[1].split(" ")[1],
-                                Integer.parseInt(libData[0]),
-                                Integer.parseInt(libData[3]),Integer.parseInt(libData[4]));
-                        librarian.setRegisterDate(LocalDate.parse(libData[2]));
-                        library.addLibrarian(librarian);
-                        break;
-
-                    case "Manager":
-                        String[] mgrData = line.split(",");
-                        Manager manager = new Manager(
-                                mgrData[1].split(" ")[0],
-                                mgrData[1].split(" ")[1],
-                                Education.valueOf(mgrData[2]),
-                                Integer.parseInt(mgrData[0])
-                        );
-                        library.setManager(manager);
-                        break;
-                    case "Requests":
-                        String[] reqData = line.split(",");
-                        int stdNumber = Integer.parseInt(reqData[0]);
-                        int libId = Integer.parseInt(reqData[1]);
-                        int bookCode = Integer.parseInt(reqData[2]);
-                        RequestType type = RequestType.valueOf(reqData[3]);
-
-                        Book b = library.searchBook(bookCode);
-                        Student s = library.getStudents().get(stdNumber);
-                        Librarian l = null;
-                        for (Librarian lib : library.getLibrarians()) {
-                            if (lib.getId() == libId) {
-                                l = lib;
-                                break;
-                            }
-                        }
-                        if (b != null && s != null && l != null) {
-                            Request request = new Request(b, s, l, type);
-                            library.addRequest(request);
-                        }
-                        break;
-                    case "Borrows":
-                        String[] borrowData = line.split(",");
-                        Student std = library.getStudents().get(Integer.parseInt(borrowData[0]));
-                        Book bk = library.getBooks().get(Integer.parseInt(borrowData[1]));
-
-                        Librarian borrower = null;
-                        Librarian returner = null;
-
-                        for (Librarian lib : library.getLibrarians()) {
-                            if (lib.getId() == Integer.parseInt(borrowData[4])) borrower = lib;
-                            if (borrowData.length > 5 && !borrowData[5].isEmpty() &&
-                                    lib.getId() == Integer.parseInt(borrowData[5])) returner = lib;
-                        }
-                        if (std != null && bk != null && borrower != null) {
-                            Borrow borrow = new Borrow(bk, std, LocalDate.parse(borrowData[2]), borrower);
-                            if (!borrowData[3].isEmpty()) {
-                                borrow.setReturnDate(LocalDate.parse(borrowData[3]));
-                            }
-                            if (returner != null) {
-                                borrow.setReturner(returner);
-                            }
-                            library.addBorrow(borrow);
-                        }
-                        break;
-                    case "BorrowRecords":
-                        String[] borrowRecData = line.split(",");
-                        Student std2 = library.getStudents().get(Integer.parseInt(borrowRecData[0]));
-                        Book bk2 = library.getBooks().get(Integer.parseInt(borrowRecData[1]));
-                        Librarian brw2 = null;
-                        Librarian rtn2 = null;
-
-                        for (Librarian lib : library.getLibrarians()) {
-                            if (lib.getId() == Integer.parseInt(borrowRecData[4])) brw2 = lib;
-                            if (borrowRecData.length > 5 && !borrowRecData[5].isEmpty() &&
-                                    lib.getId() == Integer.parseInt(borrowRecData[5])) rtn2 = lib;
-                        }
-
-                        if (std2 != null && bk2 != null && brw2 != null) {
-                            Borrow borrow = new Borrow(bk2, std2, LocalDate.parse(borrowRecData[2]), brw2);
-                            if (!borrowRecData[3].isEmpty()) {
-                                borrow.setReturnDate(LocalDate.parse(borrowRecData[3]));
-                            }
-                            if (rtn2 != null) {
-                                borrow.setReturner(rtn2);
-                            }
-                            library.addBorrowRecord(borrow);
-                        }
-                        break;
-
-                    case "DelayedReturns":
-                        String[] delayData = line.split(",");
-                        Student stdd = library.getStudents().get(Integer.parseInt(delayData[0]));
-                        Book bkk = library.getBooks().get(Integer.parseInt(delayData[1]));
-                        Librarian borrowerr = null;
-                        Librarian returnerr = null;
-
-                        for (Librarian lib : library.getLibrarians()) {
-                            if (lib.getId() == Integer.parseInt(delayData[4])) borrowerr = lib;
-                            if (lib.getId() == Integer.parseInt(delayData[5])) returnerr = lib;
-                        }
-
-                        if (stdd != null && bkk != null && borrowerr != null && returnerr != null) {
-                            Borrow borrow = new Borrow(bkk, stdd, LocalDate.parse(delayData[2]), borrowerr);
-                            borrow.setReturnDate(LocalDate.parse(delayData[3]));
-                            borrow.setReturner(returnerr);
-                            library.addDelayedReturn(borrow);
-                        }
-                        break;
-                }
-            }
-        } catch (FileNotFoundException e) {
-            System.out.println("No saved data found.");
-        }
     }
 }
