@@ -4,9 +4,10 @@ public class Request {
     private Book book;
     private Student student;
     private Librarian librarian;
+//    private Librarian librarian2;
     private RequestType type;
 
-    public Request(Book book, Student student ,Librarian librarian , RequestType type){
+    public Request(Book book, Student student , Librarian librarian, RequestType type){
         this.book = book;
         this.student = student;
         this.librarian = librarian;

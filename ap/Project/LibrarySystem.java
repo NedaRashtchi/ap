@@ -79,6 +79,9 @@ public class LibrarySystem {
                         currentStudent.listBorrowedBooks();
                         break;
                     case 5:
+                        listBorrowRecord();
+                        break;
+                    case 6:
                         currentStudent = null;
                         return;
                     default:
@@ -121,7 +124,10 @@ public class LibrarySystem {
                     case 3:
                         handleLibrarianRequests(currentLibrarian);
                         break;
-                    case 4:
+//                    case 4:
+//                        listLibrarianActivity();
+//                        break;
+                    case 5:
                         currentLibrarian = null;
                         return;
                     default:
@@ -215,6 +221,23 @@ public class LibrarySystem {
             System.out.println(librarian.toString());
         }
     }
+//    private void listLibrarianActivity() {
+//        boolean found = false;
+//        System.out.println("\nLibrarian Activity Report:");
+//        for (Borrow borrowRecord : this.library.getBorrowRecords()) {
+//            if(borrowRecord.getBorrower().equals(this.currentLibrarian)) {
+//                System.out.println(borrowRecord);
+//                found = true;
+//            }
+//        } if(!found) System.out.println("No borrows found.");
+//        found = false;
+//        for (Borrow borrowRecord : this.library.getBorrowRecords()) {
+//            if(borrowRecord.getReturner().equals(this.currentLibrarian)) {
+//                System.out.println(borrowRecord);
+//                found = true;
+//            }
+//        } if(!found) System.out.println("No returns found.");
+//    }
 
     private void viewPopularBooks(Library library) {
         ArrayList<int[]> popularBooks = new ArrayList<>();
@@ -262,8 +285,7 @@ public class LibrarySystem {
     }
 
     private void searchBook() {
-        System.out.println("Search by:\n 1. Code \n 2. Title");
-        int choice = inputHandler.getInt("");
+        int choice = inputHandler.getInt("Search by:\n 1. Code \n 2. Title");
 
         if (choice == 1) {
             int code = inputHandler.getInt("Enter book code: ");
@@ -307,11 +329,20 @@ public class LibrarySystem {
         Random random = new Random();
 
         library.addRequest(new Request(b, this.currentStudent,
-                library.getLibrarians().get(random.nextInt(library.getLibrarians().size()))
-                , type));
+                library.getLibrarians().get(random.nextInt(library.getLibrarians().size())), type));
         System.out.println("Request added successfully.");
     }
-
+    private void listBorrowRecord() {
+        boolean found = false;
+        System.out.println("Borrowed Books History:");
+        for (Borrow borrowedRecord : this.library.getBorrowedRecords()) {
+            if (borrowedRecord.getStudent().equals(this.currentStudent)) {
+                System.out.println(borrowedRecord.getBook());
+                System.out.println("[ Date: " + borrowedRecord.getBorrowDate() + "]");
+                found = true;
+            }
+        } if (!found) System.out.println("No borrow record found.");
+    }
     private void handleLibrarianRequests(Librarian librarian) {
         List<Request> requests = library.getRequestsByLibrarian(librarian.getId());
         if (requests.isEmpty()) {
@@ -333,13 +364,13 @@ public class LibrarySystem {
 
             library.addBorrow(new Borrow(
                     selectedRequest.getBook(), selectedRequest.getStudent(),
-                    LocalDate.now(), selectedRequest.getLibrarian()));
+                    LocalDate.now(), selectedRequest.getLibrarian() /*,currentLibrarian*/));
             selectedRequest.getStudent().addBorrowedBook(selectedRequest.getBook());
             currentLibrarian.addBorrowCount();
 
             library.addBorrowRecord(new Borrow(
                     selectedRequest.getBook(), selectedRequest.getStudent(),
-                    LocalDate.now(), selectedRequest.getLibrarian()));
+                    LocalDate.now(), selectedRequest.getLibrarian() /*,currentLibrarian*/));
             selectedRequest.getStudent().addBorrowedBook(selectedRequest.getBook());
 
             System.out.println("Borrow request approved successfully.");

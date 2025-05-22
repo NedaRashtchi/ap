@@ -18,7 +18,8 @@ public class Menu {
         System.out.println("2. Search Book");
         System.out.println("3. Borrow or Return Book");
         System.out.println("4. Unreturned Books");
-        System.out.println("5. Back to Main Menu");
+        System.out.println("5. View Borrowed Books");
+        System.out.println("6. Back to Main Menu");
 
         return inputHandler.getInt("");
     }
@@ -28,7 +29,8 @@ public class Menu {
         System.out.println("1. Add Book");
         System.out.println("2. Edit Personal Info");
         System.out.println("3. View and Approve Requests");
-        System.out.println("4. Back to Main Menu");
+//        System.out.println("4. View Activity Report");
+        System.out.println("5. Back to Main Menu");
 
         return inputHandler.getInt("");
     }

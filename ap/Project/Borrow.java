@@ -16,9 +16,12 @@ public class Borrow {
         this.borrowDate = borrowDate;
         this.returnDate = borrowDate.plusDays(10);
         this.borrower = borrower;
-//        this.returner = borrower;   how?
         this.returner = null;
     }
+//    public Borrow(Book book, Student student, LocalDate borrowDate ,Librarian borrower , Librarian returner) {
+//        this(book,student,borrowDate,borrower);
+//        this.returner = borrower;
+//    }
 
     public void setReturner(Librarian returner){
         this.returner = returner;
