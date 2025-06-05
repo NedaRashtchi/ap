@@ -71,4 +71,26 @@ public class HtmlParser {
         }
         return imageUrls;
     }
+
+    public static boolean isUrlInDomain(String url, String domain) {
+        if (url == null || domain == null) return false;
+        String lowerUrl = url.toLowerCase();
+        String lowerDomain = domain.toLowerCase();
+
+        if (lowerUrl.startsWith(lowerDomain)) {
+            return true;
+        }
+        if (url.startsWith("/") || url.startsWith("#") || url.startsWith("?")) {
+            return true;
+        }
+        try {
+            URL parsedUrl = new URL(url);
+            String host = parsedUrl.getHost().toLowerCase();
+            String targetHost = new URL(domain).getHost().toLowerCase();
+
+            return host.endsWith(targetHost);
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }

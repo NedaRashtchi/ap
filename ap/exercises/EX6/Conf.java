@@ -8,4 +8,6 @@ public class Conf {
 
     public static final String SAVE_IMAGES_DIRECTORY = "fetched_images";
 
+    public static final boolean FILTER_DOMAIN_ONLY = true;
+
 }
