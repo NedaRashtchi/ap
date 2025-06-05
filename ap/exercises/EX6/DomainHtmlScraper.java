@@ -1,6 +1,5 @@
 package ap.exercises.EX6;
 
-
 import ap.scraper.Conf;
 import ap.scraper.fetcher.HtmlFetcher;
 import ap.scraper.fetcher.ImageDownloader;
@@ -33,7 +32,7 @@ public class DomainHtmlScraper {
             return;
         }
 
-        this.htmlFileManager.save(htmlLines);
+        this.htmlFileManager.save(htmlLines, domainAddress);
         downloadAndSaveImages(htmlLines, domainAddress);
 
         List<String> urls = HtmlParser.getAllUrlsFromList(htmlLines);
@@ -60,7 +59,7 @@ public class DomainHtmlScraper {
                     continue;
                 }
 
-                this.htmlFileManager.save(htmlLines);
+                this.htmlFileManager.save(htmlLines,url);
                 visitedUrls.add(url);
                 counter++;
 
