@@ -7,8 +7,16 @@ import ap.scraper.parser.HtmlParser;
 import ap.scraper.store.HtmlFileManager;
 
 import java.io.IOException;
-import java.util.*;
 import java.util.stream.Collectors;
+
+import ap.scraper.utils.DirectoryTools;
+import ap.scraper.fetcher.MP3Downloader;
+
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+import java.util.Set;
 
 public class DomainHtmlScraper {
 
@@ -25,6 +33,9 @@ public class DomainHtmlScraper {
     }
 
     public void start() throws IOException {
+        DirectoryTools.createDirectory(Conf.SAVE_IMAGES_DIRECTORY);
+        DirectoryTools.createDirectory(Conf.SAVE_AUDIO_DIRECTORY);
+
         List<String> htmlLines = HtmlFetcher.fetchHtml(domainAddress);
 
         if (htmlLines == null || htmlLines.isEmpty()) {
@@ -34,9 +45,10 @@ public class DomainHtmlScraper {
 
         this.htmlFileManager.save(htmlLines, domainAddress);
         downloadAndSaveImages(htmlLines, domainAddress);
+        downloadAndSaveAudioFiles(htmlLines, domainAddress);
 
         List<String> urls = HtmlParser.getAllUrlsFromList(htmlLines);
-        if (ap.scraper.Conf.FILTER_DOMAIN_ONLY) {
+        if (Conf.FILTER_DOMAIN_ONLY) {
             urls = urls.stream()
                     .filter(url -> HtmlParser.isUrlInDomain(url, domainAddress))
                     .collect(Collectors.toList());
@@ -59,14 +71,15 @@ public class DomainHtmlScraper {
                     continue;
                 }
 
-                this.htmlFileManager.save(htmlLines,url);
+                this.htmlFileManager.save(htmlLines, url);
                 visitedUrls.add(url);
                 counter++;
 
                 downloadAndSaveImages(htmlLines, url);
+                downloadAndSaveAudioFiles(htmlLines, url);
 
                 urls = HtmlParser.getAllUrlsFromList(htmlLines);
-                if (ap.scraper.Conf.FILTER_DOMAIN_ONLY) {
+                if (Conf.FILTER_DOMAIN_ONLY) {
                     urls = urls.stream()
                             .filter(u -> HtmlParser.isUrlInDomain(u, domainAddress))
                             .collect(Collectors.toList());
@@ -98,6 +111,25 @@ public class DomainHtmlScraper {
                 ImageDownloader.downloadImage(imageUrl, savePath);
             } catch (IOException e) {
                 System.out.println("Failed to download image: " + imageUrl + " - " + e.getMessage());
+            }
+        }
+    }
+
+    private void downloadAndSaveAudioFiles(List<String> htmlLines, String baseUrl) {
+        List<String> audioUrls = HtmlParser.getAllAudioUrls(htmlLines, baseUrl);
+        if (audioUrls.isEmpty()) return;
+
+        System.out.println("Found " + audioUrls.size() + " audio files on page: " + baseUrl);
+
+        for (String audioUrl : audioUrls) {
+            String[] parts = audioUrl.split("/");
+            String filename = parts[parts.length - 1];
+            String savePath = Conf.SAVE_AUDIO_DIRECTORY + "/" + filename;
+
+            try {
+                MP3Downloader.downloadMP3(audioUrl, savePath);
+            } catch (IOException e) {
+                System.out.println("Failed to download audio: " + audioUrl + " - " + e.getMessage());
             }
         }
     }
