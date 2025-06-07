@@ -1,15 +1,14 @@
 package ap.exercises.EX6;
 
-import ap.scraper.Conf;
 import ap.scraper.fetcher.HtmlFetcher;
 import ap.scraper.fetcher.ImageDownloader;
 import ap.scraper.parser.HtmlParser;
 import ap.scraper.store.HtmlFileManager;
+import ap.scraper.utils.DirectoryTools;
 
 import java.io.IOException;
 import java.util.stream.Collectors;
 
-import ap.scraper.utils.DirectoryTools;
 import ap.scraper.fetcher.MP3Downloader;
 
 import java.util.HashSet;
@@ -91,6 +90,15 @@ public class DomainHtmlScraper {
             }
 
             System.out.println("[" + counter + "] " + url + " fetch and saved (queue size:" + queue.size() + ").");
+            
+            if (Conf.DOWNLOAD_DELAY_SECONDS > 0) {
+                try {
+                    System.out.println("Waiting " + Conf.DOWNLOAD_DELAY_SECONDS + " seconds before next download...");
+                    Thread.sleep(Conf.DOWNLOAD_DELAY_SECONDS * 1000);
+                } catch (InterruptedException e) {
+                    System.out.println("Download delay was interrupted");
+                }
+            }
         }
 
         System.out.println("Operation complete");

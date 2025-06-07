@@ -10,5 +10,6 @@ public class Conf {
     public static final String SAVE_AUDIO_DIRECTORY = "fetched_songs";
 
     public static final boolean FILTER_DOMAIN_ONLY = true;
+    public static final int DOWNLOAD_DELAY_SECONDS = 2;
 
 }
