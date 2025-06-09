@@ -1,5 +1,6 @@
 package ap.Project;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -15,7 +16,7 @@ public class LibrarySystem {
     private Librarian currentLibrarian;
 //    private Manager currentManager;
 
-    public LibrarySystem(Library library) {
+    public LibrarySystem(Library library) throws IOException {
         this.library = library;
         this.menu = new Menu();
         this.inputHandler = new InputHandler();
@@ -122,7 +123,7 @@ public class LibrarySystem {
                         editLibrarianInfo(currentLibrarian);
                         break;
                     case 3:
-                        handleLibrarianRequests(currentLibrarian);
+                        handleLibrarianRequests();
                         break;
 //                    case 4:
 //                        listLibrarianActivity();
@@ -343,8 +344,8 @@ public class LibrarySystem {
             }
         } if (!found) System.out.println("No borrow record found.");
     }
-    private void handleLibrarianRequests(Librarian librarian) {
-        List<Request> requests = library.getRequestsByLibrarian(librarian.getId());
+    private void handleLibrarianRequests() {
+        List<Request> requests = library.getRequestsByLibrarian(currentLibrarian.getId());
         if (requests.isEmpty()) {
             System.out.println("There is no request.");
             return;
@@ -393,7 +394,7 @@ public class LibrarySystem {
                     library.addDelayedReturn(foundBorrow);
                     System.out.println("Delayed Return");
                 }
-                foundBorrow.setReturner(librarian);
+                foundBorrow.setReturner(currentLibrarian);
 
                 library.getBorrows().remove(foundBorrow);
             }

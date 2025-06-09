@@ -9,7 +9,7 @@ public class Student extends Person {
     private String major;
     private List<Book> borrowedBooks;
     private LocalDate registerDate;
-    private List<Request> studentRequests;
+//    private List<Request> studentRequests;
 
     public Student(String firstName, String lastName, int stdNumber, String major) {
         super(firstName, lastName);
@@ -17,7 +17,7 @@ public class Student extends Person {
         this.major = major;
         this.borrowedBooks = new ArrayList<>();
         this.registerDate = LocalDate.now();
-        this.studentRequests = new ArrayList<>();
+//        this.studentRequests = new ArrayList<>();
     }
 
     public int getStdNumber() {
@@ -54,17 +54,17 @@ public class Student extends Person {
         }
     }
 
-    public void addRequest(Request request) {
-        studentRequests.add(request);
-    }
-
-    public List<Request> getPendingRequests() {
-        return studentRequests;
-    }
+//    public void addRequest(Request request) {
+//        studentRequests.add(request);
+//    }
+//
+//    public List<Request> getPendingRequests() {
+//        return studentRequests;
+//    }
 
     @Override
     public String toString() {
-        return "[Name: " + getName() + ", Student Number: " + stdNumber + ", Major: " + major + "]";
+        return "[Name: " + super.toString() + ", Student Number: " + stdNumber + ", Major: " + major + "]";
     }
 
 }
