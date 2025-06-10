@@ -5,7 +5,6 @@ import ap.Project.Library;
 
 import java.sql.*;
 import java.time.LocalDate;
-import java.util.*;
 
 public class SQLiteStorage implements DataStorageStrategy {
 
@@ -133,11 +132,11 @@ public class SQLiteStorage implements DataStorageStrategy {
         String sql = "INSERT INTO books(title, author, publicationYear, pageCount,bookCode) VALUES(?,?,?,?,?)";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             for (Book book : library.getBooks().values()) {
-                pstmt.setInt(1, book.getBookCode());
-                pstmt.setString(2, book.getTitle());
-                pstmt.setString(3, book.getAuthor());
-                pstmt.setInt(4, book.getPublicationYear());
-                pstmt.setInt(5, book.getPageCount());
+                pstmt.setString(1, book.getTitle());
+                pstmt.setString(2, book.getAuthor());
+                pstmt.setInt(3, book.getPublicationYear());
+                pstmt.setInt(4, book.getPageCount());
+                pstmt.setInt(5, book.getBookCode());
                 pstmt.executeUpdate();
             }
         }

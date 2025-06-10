@@ -225,23 +225,6 @@ public class LibrarySystem {
             System.out.println(librarian.toString());
         }
     }
-//    private void listLibrarianActivity() {
-//        boolean found = false;
-//        System.out.println("\nLibrarian Activity Report:");
-//        for (Borrow borrowRecord : this.library.getBorrowRecords()) {
-//            if(borrowRecord.getBorrower().equals(this.currentLibrarian)) {
-//                System.out.println(borrowRecord);
-//                found = true;
-//            }
-//        } if(!found) System.out.println("No borrows found.");
-//        found = false;
-//        for (Borrow borrowRecord : this.library.getBorrowRecords()) {
-//            if(borrowRecord.getReturner().equals(this.currentLibrarian)) {
-//                System.out.println(borrowRecord);
-//                found = true;
-//            }
-//        } if(!found) System.out.println("No returns found.");
-//    }
 
     private void viewPopularBooks(Library library) {
         ArrayList<int[]> popularBooks = new ArrayList<>();
@@ -314,22 +297,32 @@ public class LibrarySystem {
 
     private void bookRequest(RequestType type) {
         int code = inputHandler.getInt("Enter book code: ");
-        boolean found = false;
+        Book b = library.searchBook(code);
 
-        for (Book borrowedBook : currentStudent.getBorrowedBooks()) {
-            if (type == RequestType.BORROW && borrowedBook.getBookCode() == code) {
-                System.out.println("You already borrowed this book.");
-                return;
-            } else if (type == RequestType.RETURN && borrowedBook.getBookCode() == code) {
-                found = true;
-            }
-        }
-        if (!found && type == RequestType.RETURN) {
-            System.out.println("You never borrowed this book.");
+        if (b == null) {
+            System.out.println("Book not found!");
             return;
         }
-
-        Book b = library.searchBook(code);
+        if (type == RequestType.BORROW) {
+            for (Book borrowedBook : currentStudent.getBorrowedBooks()) {
+                if (borrowedBook.getBookCode() == code) {
+                    System.out.println("You already borrowed this book.");
+                    return;
+                }
+            }
+        } else if(type == RequestType.RETURN) {
+            boolean found = false;
+            for (Book borrowedBook : currentStudent.getBorrowedBooks()) {
+                if (borrowedBook.getBookCode() == code) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                System.out.println("You never borrowed this book.");
+                return;
+            }
+        }
         Random random = new Random();
 
         library.addRequest(new Request(b, this.currentStudent,
