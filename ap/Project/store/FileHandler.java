@@ -5,12 +5,13 @@ import ap.Project.Library;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.sql.SQLException;
 import java.util.List;
 
 public class FileHandler {
     private DataStorageStrategy storageStrategy;
 
-    public FileHandler() throws IOException {
+    public FileHandler() throws IOException, SQLException {
         String storageType = readConfig();
         switch (storageType) {
             case "tabsplit":
@@ -18,6 +19,9 @@ public class FileHandler {
                 break;
             case "json":
                 storageStrategy = new JsonStorage();
+                break;
+            case "sqlite":
+                storageStrategy = new SQLiteStorage();
                 break;
             default:
                 throw new IllegalArgumentException("Unsupported storage type: " + storageType);

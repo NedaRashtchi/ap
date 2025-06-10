@@ -3,6 +3,7 @@ package ap.Project;
 import ap.Project.store.FileHandler;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -18,7 +19,7 @@ public class LibrarySystem {
     private Librarian currentLibrarian;
 //    private Manager currentManager;
 
-    public LibrarySystem(Library library) throws IOException {
+    public LibrarySystem(Library library) throws IOException, SQLException {
         this.library = library;
         this.menu = new Menu();
         this.inputHandler = new InputHandler();
