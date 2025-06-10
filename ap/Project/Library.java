@@ -7,7 +7,7 @@ import java.util.List;
 public class Library {
     private String name;
     private HashMap<Integer, Book> books;
-    private HashMap<Integer, Student> students;
+    private HashMap<Integer, Student> students = new HashMap<>();
     private List<Librarian> librarians;
     private Manager manager;
     private List<Request> requests;
@@ -18,7 +18,7 @@ public class Library {
     public Library(String name, Manager manager) {
         this.name = name;
         this.books = new HashMap<>();
-        this.students = new HashMap<>();
+//        this.students = new HashMap<>();
         this.librarians = new ArrayList<>();
         this.manager = manager;
         this.requests = new ArrayList<>();

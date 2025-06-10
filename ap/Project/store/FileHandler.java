@@ -1,4 +1,6 @@
-package ap.Project;
+package ap.Project.store;
+
+import ap.Project.Library;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -14,10 +16,9 @@ public class FileHandler {
             case "tabsplit":
                 storageStrategy = new TabSplitStorage();
                 break;
-//            case "json":
-//                storageStrategy = new JsonStorage();
-//            case "sqlite":
-//                storageStrategy = new SQLiteStorage();
+            case "json":
+                storageStrategy = new JsonStorage();
+                break;
             default:
                 throw new IllegalArgumentException("Unsupported storage type: " + storageType);
         }
