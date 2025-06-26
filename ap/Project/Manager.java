@@ -1,6 +1,6 @@
 package ap.Project;
 
-public class Manager extends Person {
+public class Manager extends Person implements Loginable {
     private Education education;
     private int id;
 
@@ -20,5 +20,9 @@ public class Manager extends Person {
     @Override
     public String toString() {
         return "[Name: " + getName() + ", ID: " + id + ", Education: " + education + "]";
+    }
+    @Override
+    public boolean login(int id) {
+        return this.id == id;
     }
 }

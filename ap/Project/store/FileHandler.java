@@ -1,6 +1,8 @@
 package ap.Project.store;
 
+import ap.Project.Borrow;
 import ap.Project.Library;
+import ap.Project.Student;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -47,5 +49,28 @@ public class FileHandler {
 
     public void loadLibraryData(Library library) {
         storageStrategy.load(library);
+        repairRelationships(library);
+    }
+
+    private void repairRelationships(Library library) {
+
+        for (Borrow borrow : library.getBorrows()) {
+            Student student = library.searchStudent(borrow.getStudent().getStdNumber());
+            if (student != null) {
+                student.addBorrowedBook(borrow.getBook());
+            }
+        }
+        for (Borrow record : library.getBorrowedRecords()) {
+            Student student = library.searchStudent(record.getStudent().getStdNumber());
+            if (student != null) {
+                student.addBorrowedBook(record.getBook());
+            }
+        }
+        for (Borrow delayed : library.getDelayedReturns()) {
+            Student student = library.searchStudent(delayed.getStudent().getStdNumber());
+            if (student != null) {
+                student.addBorrowedBook(delayed.getBook());
+            }
+        }
     }
 }

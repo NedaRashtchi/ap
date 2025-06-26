@@ -2,10 +2,9 @@ package ap.Project;
 
 import java.time.LocalDate;
 
-public class Librarian extends Person {
+public class Librarian extends Person implements Loginable {
     private int id;
     private LocalDate registerDate;
-//    private List<Request> requests;
     private int borrowCount;
     private int returnCount;
 
@@ -13,7 +12,6 @@ public class Librarian extends Person {
         super(firstName, lastName);
         this.id = id;
         this.registerDate = LocalDate.now();
-//        requests = new ArrayList<>();
         this.borrowCount = borrowCount;
         this.returnCount = returnCount;
     }
@@ -27,18 +25,11 @@ public class Librarian extends Person {
     public void setRegisterDate(LocalDate date) {
         this.registerDate = date;
     }
-//    public void setId(int id) {
-//        this.id = id;
-//    }
+
     public void setName(String firstName, String lastName) {
         super.setName(firstName, lastName);
     }
-//    public List<Request> getRequests() {
-//        return requests;
-//    }
-//    public void addRequest(Request request) {
-//        requests.add(request);
-//    }
+
     public void addBorrowCount() {
         borrowCount++;
     }
@@ -56,5 +47,9 @@ public class Librarian extends Person {
     public String toString() {
         return "[Name: " + super.toString() + ", ID: " + id +
                 ", Borrow Count: " + borrowCount + ", Return Count: " + returnCount + "]";
+    }
+    @Override
+    public boolean login(int id) {
+        return this.id == id;
     }
 }

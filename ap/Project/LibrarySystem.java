@@ -17,7 +17,6 @@ public class LibrarySystem {
     private InputHandler inputHandler;
     private Student currentStudent;
     private Librarian currentLibrarian;
-//    private Manager currentManager;
 
     public LibrarySystem(Library library) throws IOException, SQLException {
         this.library = library;
@@ -58,7 +57,7 @@ public class LibrarySystem {
     private void handleStudentLogin() {
         int stdNumber = inputHandler.getInt("Enter student number: ");
         Student student = library.searchStudent(stdNumber);
-        if (student != null) {
+        if (student != null && student.login(stdNumber)) {
             currentStudent = student;
             System.out.println("Welcome, " + currentStudent.getName());
 
@@ -113,29 +112,32 @@ public class LibrarySystem {
         int id = inputHandler.getInt("Enter librarian ID: ");
         int index = library.searchLibrarian(id);
         if (index != -1) {
-            currentLibrarian = library.getLibrarians().get(index);
-            System.out.println("Welcome, " + currentLibrarian.getName());
+            Librarian librarian = library.getLibrarians().get(index);
+            if (librarian.login(id)) {
+                currentLibrarian = librarian;
+                System.out.println("Welcome, " + currentLibrarian.getName());
 
-            while (true) {
-                int choice = menu.librarianMenu(inputHandler);
-                switch (choice) {
-                    case 1:
-                        addNewBook();
-                        break;
-                    case 2:
-                        editLibrarianInfo(currentLibrarian);
-                        break;
-                    case 3:
-                        handleLibrarianRequests();
-                        break;
+                while (true) {
+                    int choice = menu.librarianMenu(inputHandler);
+                    switch (choice) {
+                        case 1:
+                            addNewBook();
+                            break;
+                        case 2:
+                            editLibrarianInfo(currentLibrarian);
+                            break;
+                        case 3:
+                            handleLibrarianRequests();
+                            break;
 //                    case 4:
 //                        listLibrarianActivity();
 //                        break;
-                    case 5:
-                        currentLibrarian = null;
-                        return;
-                    default:
-                        System.out.println("Invalid choice.");
+                        case 5:
+                            currentLibrarian = null;
+                            return;
+                        default:
+                            System.out.println("Invalid choice.");
+                    }
                 }
             }
         } else {
@@ -145,7 +147,8 @@ public class LibrarySystem {
 
     private void handleManagerLogin() {
         int id = inputHandler.getInt("Enter manager ID: ");
-        if (id == library.getManager().getId()) {
+        Manager manager = library.getManager();
+        if (manager != null && manager.login(id)) {
             System.out.println("Welcome, Manager!");
 
             while (true) {
@@ -220,7 +223,7 @@ public class LibrarySystem {
     }
 
     private void viewLibrarianReport(Library library) {
-        System.out.println("\nLibrarian Activity  Report:");
+        System.out.println("\nLibrarian Activity Report:");
         for (Librarian librarian : library.getLibrarians()) {
             System.out.println(librarian.toString());
         }
@@ -233,7 +236,7 @@ public class LibrarySystem {
         for (Book book : library.getBooks().values()) {
             borrowCount = 0;
 
-            for (Borrow borrow : library.getBorrowRecords()) {
+            for (Borrow borrow : library.getBorrowedRecords()) {
                 if (borrow.getBook().equals(book) && borrow.getBorrowDate().isAfter(LocalDate.now().minusYears(1))) {
                     borrowCount++;
                 }
@@ -251,7 +254,6 @@ public class LibrarySystem {
         for (int i = 0; i < popularBooks.size() - 1; i++) {
             for (int j = 0; j < popularBooks.size() - i - 1; j++) {
                 if (popularBooks.get(j)[1] < popularBooks.get(j + 1)[1]) {
-
                     int[] temp = popularBooks.get(j);
                     popularBooks.set(j, popularBooks.get(j + 1));
                     popularBooks.set(j + 1, temp);
@@ -266,7 +268,7 @@ public class LibrarySystem {
             Book book = library.getBooks().get(bookCode);
 
             if (book != null) {
-                System.out.printf("%d. %s borrowed: %d time\n", i + 1, book.getTitle(), count);
+                System.out.printf("%d. %s \n   borrowed: %d time\n", i + 1, book.getTitle(), count);
             }
         }
     }
@@ -358,18 +360,15 @@ public class LibrarySystem {
         Request selectedRequest = requests.get(choice - 1);
 
         if (selectedRequest.getType() == RequestType.BORROW) {
-
-            library.addBorrow(new Borrow(
-                    selectedRequest.getBook(), selectedRequest.getStudent(),
-                    LocalDate.now(), selectedRequest.getLibrarian() /*,currentLibrarian*/));
+            Borrow borrow = new Borrow(
+                    selectedRequest.getBook(),
+                    selectedRequest.getStudent(),
+                    LocalDate.now(),
+                    currentLibrarian
+            );
+            library.addBorrow(borrow);
             selectedRequest.getStudent().addBorrowedBook(selectedRequest.getBook());
             currentLibrarian.addBorrowCount();
-
-            library.addBorrowRecord(new Borrow(
-                    selectedRequest.getBook(), selectedRequest.getStudent(),
-                    LocalDate.now(), selectedRequest.getLibrarian() /*,currentLibrarian*/));
-            selectedRequest.getStudent().addBorrowedBook(selectedRequest.getBook());
-
             System.out.println("Borrow request approved successfully.");
 
         } else if (selectedRequest.getType() == RequestType.RETURN) {
@@ -385,20 +384,18 @@ public class LibrarySystem {
                 }
             }
             if (foundBorrow != null) {
-
                 if (LocalDate.now().isAfter(foundBorrow.getReturnDate())) {
                     library.addDelayedReturn(foundBorrow);
                     System.out.println("Delayed Return");
                 }
                 foundBorrow.setReturner(currentLibrarian);
-
+                foundBorrow.setReturnDate(LocalDate.now());
                 library.getBorrows().remove(foundBorrow);
+                library.addBorrowRecord(foundBorrow);
             }
-
             currentLibrarian.addReturnCount();
             System.out.println("Return request approved successfully.");
         }
-
         library.getRequests().remove(selectedRequest);
     }
 }

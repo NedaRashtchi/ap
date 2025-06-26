@@ -1,7 +1,6 @@
 package ap.Project.store;
 
 import ap.Project.*;
-
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -98,7 +97,9 @@ public class TabSplitStorage implements DataStorageStrategy {
             String[] parts = line.split("\t");
             String[] nameParts = parts[1].split(" ");
             Librarian librarian = new Librarian(nameParts[0], nameParts[1],
-                    Integer.parseInt(parts[0]), Integer.parseInt(parts[3]), Integer.parseInt(parts[4]));
+                    Integer.parseInt(parts[0]),
+                    Integer.parseInt(parts[3]),
+                    Integer.parseInt(parts[4]));
             librarian.setRegisterDate(LocalDate.parse(parts[2]));
             library.addLibrarian(librarian);
         }
@@ -114,6 +115,7 @@ public class TabSplitStorage implements DataStorageStrategy {
     private void loadManager(Library library) throws IOException {
         if (!Files.exists(Paths.get("manager.tsv"))) return;
         List<String> lines = Files.readAllLines(Paths.get("manager.tsv"));
+        if (lines.isEmpty()) return;
         String[] parts = lines.get(0).split("\t");
         String[] nameParts = parts[1].split(" ");
         Manager manager = new Manager(nameParts[0], nameParts[1],
@@ -141,7 +143,7 @@ public class TabSplitStorage implements DataStorageStrategy {
             RequestType type = RequestType.valueOf(parts[3]);
 
             Book book = library.searchBook(bookCode);
-            Student student = library.getStudents().get(stdNumber);
+            Student student = library.searchStudent(stdNumber);
             Librarian librarian = null;
             for (Librarian l : library.getLibrarians()) {
                 if (l.getId() == libId) {
@@ -159,9 +161,12 @@ public class TabSplitStorage implements DataStorageStrategy {
         try (PrintWriter writer = new PrintWriter(new FileWriter("borrows.tsv"))) {
             for (Borrow borrow : library.getBorrows()) {
                 writer.println(borrow.getStudent().getStdNumber() + "\t" +
-                        borrow.getBook().getBookCode() + "\t" +
-                        borrow.getBorrowDate() + "\t" +
-                        borrow.getReturnDate());
+                                borrow.getBook().getBookCode() + "\t" +
+                                borrow.getBorrowDate() + "\t" +
+                                (borrow.getReturnDate() != null ? borrow.getReturnDate() : "") + "\t" +
+                                borrow.getBorrower().getId() + "\t" +
+                                (borrow.getReturner() != null ? borrow.getReturner().getId() : "null")
+                );
             }
         }
     }
@@ -170,18 +175,43 @@ public class TabSplitStorage implements DataStorageStrategy {
         List<String> lines = Files.readAllLines(Paths.get("borrows.tsv"));
         for (String line : lines) {
             String[] parts = line.split("\t");
-            Student student = library.getStudents().get(Integer.parseInt(parts[0]));
-            Book book = library.getBooks().get(Integer.parseInt(parts[1]));
-            LocalDate borrowDate = LocalDate.parse(parts[2]);
-            LocalDate returnDate = parts.length > 3 ? LocalDate.parse(parts[3]) : null;
+            if (parts.length < 6) continue;
 
-            if (student != null && book != null) {
-                Borrow borrow = new Borrow(book, student, borrowDate, null); // librarian is temporary null
+            int stdNumber = Integer.parseInt(parts[0]);
+            int bookCode = Integer.parseInt(parts[1]);
+            LocalDate borrowDate = LocalDate.parse(parts[2]);
+            LocalDate returnDate = !parts[3].isEmpty() ? LocalDate.parse(parts[3]) : null;
+            int borrowerId = Integer.parseInt(parts[4]);
+            int returnerId = parts[5].equals("null") ? -1 : Integer.parseInt(parts[5]);
+
+            Student student = library.searchStudent(stdNumber);
+            Book book = library.searchBook(bookCode);
+            Librarian borrower = findLibrarianById(library, borrowerId);
+            Librarian returner = returnerId != -1 ? findLibrarianById(library, returnerId) : null;
+
+            if (student != null && book != null && borrower != null) {
+                Borrow borrow = new Borrow(book, student, borrowDate, borrower);
                 if (returnDate != null) {
                     borrow.setReturnDate(returnDate);
                 }
+                if (returner != null) {
+                    borrow.setReturner(returner);
+                }
                 library.addBorrow(borrow);
+
+                if (returnDate == null) {
+                    student.addBorrowedBook(book);
+                }
             }
         }
+    }
+
+    private Librarian findLibrarianById(Library library, int id) {
+        for (Librarian l : library.getLibrarians()) {
+            if (l.getId() == id) {
+                return l;
+            }
+        }
+        return null;
     }
 }

@@ -3,11 +3,12 @@ package ap.Project;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Library {
     private String name;
-    private HashMap<Integer, Book> books;
-    private HashMap<Integer, Student> students = new HashMap<>();
+    private Map<Integer, Book> books;
+    private Map<Integer, Student> students = new HashMap<>();
     private List<Librarian> librarians;
     private Manager manager;
     private List<Request> requests;
@@ -18,20 +19,19 @@ public class Library {
     public Library(String name, Manager manager) {
         this.name = name;
         this.books = new HashMap<>();
-//        this.students = new HashMap<>();
         this.librarians = new ArrayList<>();
         this.manager = manager;
         this.requests = new ArrayList<>();
         this.borrows = new ArrayList<>();
-        this.delayedReturns = new ArrayList<>();
         this.borrowedRecords = new ArrayList<>();
+        this.delayedReturns = new ArrayList<>();
     }
 
-    public HashMap<Integer, Book> getBooks() {
+    public Map<Integer, Book> getBooks() {
         return books;
     }
 
-    public HashMap<Integer, Student> getStudents() {
+    public Map<Integer, Student> getStudents() {
         return students;
     }
 
@@ -53,6 +53,10 @@ public class Library {
 
     public List<Borrow> getBorrowedRecords() {
         return borrowedRecords;
+    }
+
+    public List<Borrow> getDelayedReturns() {
+        return delayedReturns;
     }
 
     public List<Request> getRequestsByLibrarian(int librarianId) {
@@ -87,6 +91,10 @@ public class Library {
         students.put(student.getStdNumber(), student);
     }
 
+    public Student searchStudent(int stdNumber) {
+        return students.get(stdNumber);
+    }
+
     public void addLibrarian(Librarian librarian) {
         librarians.add(librarian);
     }
@@ -107,32 +115,6 @@ public class Library {
         delayedReturns.add(delayedReturn);
     }
 
-    public List<Borrow> getDelayedReturns() {
-        return delayedReturns;
-    }
-
-    public List<Borrow> getBorrowRecords() {
-        return borrowedRecords;
-    }
-
-    public Book searchBook(int code) {
-        return books.get(code);
-    }
-
-    public ArrayList<Book> searchBooksByTitle(String title) { // ???
-        ArrayList<Book> result = new ArrayList<>();
-        for (Book b : books.values()) {
-            if (b.getTitle().toLowerCase().contains(title.toLowerCase())) {
-                result.add(b);
-            }
-        }
-        return result;
-    }
-
-    public Student searchStudent(int stdNumber) {
-        return students.get(stdNumber);
-    }
-
     public int searchLibrarian(int number) {
         for (int i = 0; i < librarians.size(); i++) {
             if (librarians.get(i).getId() == number) {
@@ -140,6 +122,20 @@ public class Library {
             }
         }
         return -1;
+    }
+
+    public Book searchBook(int code) {
+        return books.get(code);
+    }
+
+    public List<Book> searchBooksByTitle(String title) {
+        List<Book> result = new ArrayList<>();
+        for (Book b : books.values()) {
+            if (b.getTitle().toLowerCase().contains(title.toLowerCase())) {
+                result.add(b);
+            }
+        }
+        return result;
     }
 
     public void printBookList() {

@@ -1,13 +1,12 @@
 package ap.Project.store;
 
 import ap.Project.*;
-import ap.Project.Library;
-
 import java.sql.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SQLiteStorage implements DataStorageStrategy {
-
     private Connection connection;
 
     public SQLiteStorage() throws SQLException {
@@ -23,12 +22,15 @@ public class SQLiteStorage implements DataStorageStrategy {
     @Override
     public void save(Library library) {
         try {
+            clearTables();
             saveBooks(library);
             saveStudents(library);
             saveLibrarians(library);
             saveManager(library);
             saveRequests(library);
-            saveBorrows(library);
+            saveBorrows(library, "borrows");
+            saveBorrows(library, "borrowed_records");
+            saveBorrows(library, "delayed_returns");
         } catch (SQLException e) {
             System.err.println("Error saving data to SQLite: " + e.getMessage());
         }
@@ -42,101 +44,123 @@ public class SQLiteStorage implements DataStorageStrategy {
             loadLibrarians(library);
             loadManager(library);
             loadRequests(library);
-            loadBorrows(library);
+            loadBorrows(library, "borrows");
+            loadBorrows(library, "borrowed_records");
+            loadBorrows(library, "delayed_returns");
         } catch (SQLException e) {
             System.err.println("Error loading data from SQLite: " + e.getMessage());
         }
     }
 
     private void createTables() throws SQLException {
-        String createBooksTable = """
-            CREATE TABLE IF NOT EXISTS books (
-                bookCode INTEGER PRIMARY KEY,
-                title TEXT,
-                author TEXT,
-                publicationYear INTEGER,
-                pageCount INTEGER
-            )
-        """;
+        String[] createStatements = {
+                "CREATE TABLE IF NOT EXISTS books (" +
+                        "bookCode INTEGER PRIMARY KEY, " +
+                        "title TEXT, " +
+                        "author TEXT, " +
+                        "publicationYear INTEGER, " +
+                        "pageCount INTEGER)",
 
-        String createStudentsTable = """
-            CREATE TABLE IF NOT EXISTS students (
-                stdNumber INTEGER PRIMARY KEY,
-                firstName TEXT,
-                lastName TEXT,
-                major TEXT,
-                registerDate TEXT
-            )
-        """;
+                "CREATE TABLE IF NOT EXISTS students (" +
+                        "stdNumber INTEGER PRIMARY KEY, " +
+                        "firstName TEXT, " +
+                        "lastName TEXT, " +
+                        "major TEXT, " +
+                        "registerDate TEXT)",
 
-        String createLibrariansTable = """
-            CREATE TABLE IF NOT EXISTS librarians (
-                id INTEGER PRIMARY KEY,
-                firstName TEXT,
-                lastName TEXT,
-                registerDate TEXT,
-                borrowCount INTEGER,
-                returnCount INTEGER
-            )
-        """;
+                "CREATE TABLE IF NOT EXISTS librarians (" +
+                        "id INTEGER PRIMARY KEY, " +
+                        "firstName TEXT, " +
+                        "lastName TEXT, " +
+                        "registerDate TEXT, " +
+                        "borrowCount INTEGER, " +
+                        "returnCount INTEGER)",
 
-        String createManagerTable = """
-            CREATE TABLE IF NOT EXISTS manager (
-                id INTEGER PRIMARY KEY,
-                firstName TEXT,
-                lastName TEXT,
-                education TEXT
-            )
-        """;
+                "CREATE TABLE IF NOT EXISTS manager (" +
+                        "id INTEGER PRIMARY KEY, " +
+                        "firstName TEXT, " +
+                        "lastName TEXT, " +
+                        "education TEXT)",
 
-        String createRequestsTable = """
-            CREATE TABLE IF NOT EXISTS requests (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                studentStdNumber INTEGER,
-                librarianId INTEGER,
-                bookCode INTEGER,
-                requestType TEXT,
-                FOREIGN KEY(studentStdNumber) REFERENCES students(stdNumber),
-                FOREIGN KEY(librarianId) REFERENCES librarians(id),
-                FOREIGN KEY(bookCode) REFERENCES books(bookCode)
-            )
-        """;
+                "CREATE TABLE IF NOT EXISTS requests (" +
+                        "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                        "studentStdNumber INTEGER, " +
+                        "librarianId INTEGER, " +
+                        "bookCode INTEGER, " +
+                        "requestType TEXT, " +
+                        "FOREIGN KEY(studentStdNumber) REFERENCES students(stdNumber), " +
+                        "FOREIGN KEY(librarianId) REFERENCES librarians(id), " +
+                        "FOREIGN KEY(bookCode) REFERENCES books(bookCode))",
 
-        String createBorrowsTable = """
-            CREATE TABLE IF NOT EXISTS borrows (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                studentStdNumber INTEGER,
-                bookCode INTEGER,
-                borrowDate TEXT,
-                returnDate TEXT,
-                borrowerId INTEGER,
-                returnerId INTEGER,
-                FOREIGN KEY(studentStdNumber) REFERENCES students(stdNumber),
-                FOREIGN KEY(bookCode) REFERENCES books(bookCode),
-                FOREIGN KEY(borrowerId) REFERENCES librarians(id),
-                FOREIGN KEY(returnerId) REFERENCES librarians(id)
-            )
-        """;
+                "CREATE TABLE IF NOT EXISTS borrows (" +
+                        "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                        "studentStdNumber INTEGER, " +
+                        "bookCode INTEGER, " +
+                        "borrowDate TEXT, " +
+                        "returnDate TEXT, " +
+                        "borrowerId INTEGER, " +
+                        "returnerId INTEGER, " +
+                        "FOREIGN KEY(studentStdNumber) REFERENCES students(stdNumber), " +
+                        "FOREIGN KEY(bookCode) REFERENCES books(bookCode), " +
+                        "FOREIGN KEY(borrowerId) REFERENCES librarians(id), " +
+                        "FOREIGN KEY(returnerId) REFERENCES librarians(id))",
+
+                "CREATE TABLE IF NOT EXISTS borrowed_records (" +
+                        "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                        "studentStdNumber INTEGER, " +
+                        "bookCode INTEGER, " +
+                        "borrowDate TEXT, " +
+                        "returnDate TEXT, " +
+                        "borrowerId INTEGER, " +
+                        "returnerId INTEGER, " +
+                        "FOREIGN KEY(studentStdNumber) REFERENCES students(stdNumber), " +
+                        "FOREIGN KEY(bookCode) REFERENCES books(bookCode), " +
+                        "FOREIGN KEY(borrowerId) REFERENCES librarians(id), " +
+                        "FOREIGN KEY(returnerId) REFERENCES librarians(id))",
+
+                "CREATE TABLE IF NOT EXISTS delayed_returns (" +
+                        "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                        "studentStdNumber INTEGER, " +
+                        "bookCode INTEGER, " +
+                        "borrowDate TEXT, " +
+                        "returnDate TEXT, " +
+                        "borrowerId INTEGER, " +
+                        "returnerId INTEGER, " +
+                        "FOREIGN KEY(studentStdNumber) REFERENCES students(stdNumber), " +
+                        "FOREIGN KEY(bookCode) REFERENCES books(bookCode), " +
+                        "FOREIGN KEY(borrowerId) REFERENCES librarians(id), " +
+                        "FOREIGN KEY(returnerId) REFERENCES librarians(id))"
+        };
 
         try (Statement stmt = connection.createStatement()) {
-            stmt.execute(createBooksTable);
-            stmt.execute(createStudentsTable);
-            stmt.execute(createLibrariansTable);
-            stmt.execute(createManagerTable);
-            stmt.execute(createRequestsTable);
-            stmt.execute(createBorrowsTable);
+            for (String sql : createStatements) {
+                stmt.execute(sql);
+            }
+        }
+    }
+
+    private void clearTables() throws SQLException {
+        String[] tables = {
+                "books", "students", "librarians", "manager",
+                "requests", "borrows", "borrowed_records", "delayed_returns"
+        };
+
+        try (Statement stmt = connection.createStatement()) {
+            for (String table : tables) {
+                stmt.execute("DELETE FROM " + table);
+            }
         }
     }
 
     private void saveBooks(Library library) throws SQLException {
-        String sql = "INSERT INTO books(title, author, publicationYear, pageCount,bookCode) VALUES(?,?,?,?,?)";
+        String sql = "INSERT INTO books(bookCode, title, author, publicationYear, pageCount) VALUES(?,?,?,?,?)";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             for (Book book : library.getBooks().values()) {
-                pstmt.setString(1, book.getTitle());
-                pstmt.setString(2, book.getAuthor());
-                pstmt.setInt(3, book.getPublicationYear());
-                pstmt.setInt(4, book.getPageCount());
-                pstmt.setInt(5, book.getBookCode());
+                pstmt.setInt(1, book.getBookCode());
+                pstmt.setString(2, book.getTitle());
+                pstmt.setString(3, book.getAuthor());
+                pstmt.setInt(4, book.getPublicationYear());
+                pstmt.setInt(5, book.getPageCount());
                 pstmt.executeUpdate();
             }
         }
@@ -196,10 +220,21 @@ public class SQLiteStorage implements DataStorageStrategy {
         }
     }
 
-    private void saveBorrows(Library library) throws SQLException {
-        String sql = "INSERT INTO borrows(studentStdNumber, bookCode, borrowDate, returnDate, borrowerId, returnerId) VALUES(?,?,?,?,?,?)";
+    private void saveBorrows(Library library, String tableName) throws SQLException {
+        List<Borrow> borrows = new ArrayList<>();
+        if (tableName.equals("borrows")) {
+            borrows = library.getBorrows();
+        } else if (tableName.equals("borrowed_records")) {
+            borrows = library.getBorrowedRecords();
+        } else if (tableName.equals("delayed_returns")) {
+            borrows = library.getDelayedReturns();
+        }
+
+        if (borrows.isEmpty()) return;
+
+        String sql = "INSERT INTO " + tableName + "(studentStdNumber, bookCode, borrowDate, returnDate, borrowerId, returnerId) VALUES(?,?,?,?,?,?)";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            for (Borrow borrow : library.getBorrows()) {
+            for (Borrow borrow : borrows) {
                 pstmt.setInt(1, borrow.getStudent().getStdNumber());
                 pstmt.setInt(2, borrow.getBook().getBookCode());
                 pstmt.setString(3, borrow.getBorrowDate().toString());
@@ -290,14 +325,8 @@ public class SQLiteStorage implements DataStorageStrategy {
                 RequestType type = RequestType.valueOf(rs.getString("requestType"));
 
                 Book book = library.searchBook(bookCode);
-                Student student = library.getStudents().get(stdNumber);
-                Librarian librarian = null;
-                for (Librarian l : library.getLibrarians()) {
-                    if (l.getId() == libId) {
-                        librarian = l;
-                        break;
-                    }
-                }
+                Student student = library.searchStudent(stdNumber);
+                Librarian librarian = findLibrarianById(library, libId);
 
                 if (book != null && student != null && librarian != null) {
                     library.addRequest(new Request(book, student, librarian, type));
@@ -306,36 +335,54 @@ public class SQLiteStorage implements DataStorageStrategy {
         }
     }
 
-    private void loadBorrows(Library library) throws SQLException {
-        String sql = "SELECT * FROM borrows";
+    private void loadBorrows(Library library, String tableName) throws SQLException {
+        String sql = "SELECT * FROM " + tableName;
         try (Statement stmt = connection.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
-                Student student = library.getStudents().get(rs.getInt("studentStdNumber"));
-                Book book = library.getBooks().get(rs.getInt("bookCode"));
+                Student student = library.searchStudent(rs.getInt("studentStdNumber"));
+                Book book = library.searchBook(rs.getInt("bookCode"));
                 LocalDate borrowDate = LocalDate.parse(rs.getString("borrowDate"));
-                LocalDate returnDate = rs.getString("returnDate") == null ? null : LocalDate.parse(rs.getString("returnDate"));
-                Librarian borrower = null;
-                Librarian returner = null;
+                LocalDate returnDate = rs.getString("returnDate") == null ?
+                        null : LocalDate.parse(rs.getString("returnDate"));
 
-                for (Librarian l : library.getLibrarians()) {
-                    if (l.getId() == rs.getObject("borrowerId", Integer.class)) {
-                        borrower = l;
-                    }
-                    if (rs.getObject("returnerId", Integer.class) != null && l.getId() == rs.getObject("returnerId", Integer.class)) {
-                        returner = l;
-                    }
-                }
+                int borrowerId = rs.getInt("borrowerId");
+                int returnerId = rs.getObject("returnerId") != null ?
+                        rs.getInt("returnerId") : -1;
+
+                Librarian borrower = findLibrarianById(library, borrowerId);
+                Librarian returner = returnerId != -1 ?
+                        findLibrarianById(library, returnerId) : null;
 
                 if (student != null && book != null && borrower != null) {
                     Borrow borrow = new Borrow(book, student, borrowDate, borrower);
-                    if (returner != null && returnDate != null) {
-                        borrow.setReturner(returner);
+                    if (returnDate != null) {
                         borrow.setReturnDate(returnDate);
                     }
-                    library.addBorrow(borrow);
+                    if (returner != null) {
+                        borrow.setReturner(returner);
+                    }
+
+                    if (tableName.equals("borrows")) {
+                        library.addBorrow(borrow);
+                        if (returnDate == null) {
+                            student.addBorrowedBook(book);
+                        }
+                    } else if (tableName.equals("borrowed_records")) {
+                        library.addBorrowRecord(borrow);
+                    } else if (tableName.equals("delayed_returns")) {
+                        library.addDelayedReturn(borrow);
+                    }
                 }
             }
         }
+    }
+    private Librarian findLibrarianById(Library library, int id) {
+        for (Librarian l : library.getLibrarians()) {
+            if (l.getId() == id) {
+                return l;
+            }
+        }
+        return null;
     }
 }

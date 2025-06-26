@@ -1,15 +1,13 @@
 package ap.Project;
 
-public class Request {
-    private Book book;
-    private Student student;
+import java.time.LocalDate;
+
+public class Request extends Action {
     private Librarian librarian;
-//    private Librarian librarian2;
     private RequestType type;
 
     public Request(Book book, Student student , Librarian librarian, RequestType type){
-        this.book = book;
-        this.student = student;
+        super(book, student, LocalDate.now());
         this.librarian = librarian;
         this.type = type;
     }
@@ -18,10 +16,10 @@ public class Request {
         return librarian;
     }
     public Student getStudent(){
-        return student;
+        return super.getStudent();
     }
     public Book getBook(){
-        return book;
+        return super.getBook();
     }
     public RequestType getType(){
         return type;
@@ -29,6 +27,9 @@ public class Request {
 
     @Override
     public String toString(){
-        return "Book: " + book + "\nStudent: " + student + "\nLibrarian: " + librarian + "\nRequest Type: " + type;
+        return "Book: " + super.getBook() +
+                "\nStudent: " + super.getStudent() +
+                "\nLibrarian: " + librarian +
+                "\nRequest Type: " + type;
     }
 }
