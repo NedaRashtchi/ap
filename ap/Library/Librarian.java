@@ -1,22 +1,28 @@
 package ap.Library;
 
-public class Librarian extends Person{
+import java.time.LocalDate;
 
-    private int id;
+public class Librarian extends User implements Loginable {
+
+    private LocalDate registerDate;
+    private int borrowCount;
+    private int returnCount;
 
     public Librarian(String firstName, String lastName, int id) {
-        super(firstName,lastName);
-        this.id = id;
+        super(firstName, lastName,id);
+        this.registerDate = LocalDate.now();
+        this.borrowCount = 0;
+        this.returnCount = 0;
     }
 
-    public int getId() {
-        return id;
+    public void setName(String firstName, String lastName) {
+        super.setName(firstName, lastName);
     }
-    public void setId(int id) {
-        this.id = id;
-    }
+
     @Override
     public String toString() {
-        return "[Name: " + super.toString() + "ID: " + id + "]";
+        return "[Name: " + this.getName() + ", ID: " + super.getIdNumber() +
+                ", Borrow Count: " + borrowCount + ", Return Count: " + returnCount + "]";
     }
 }
+

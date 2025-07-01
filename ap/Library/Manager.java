@@ -1,19 +1,16 @@
 package ap.Library;
 
-public class Manager extends Person{
 
-    private String education; // make enum
+public class Manager extends User implements Loginable {
+    private Education education;
 
-    public Manager(String firstName, String lastName, String education) {
-        super(firstName, lastName);
+    public Manager(String firstName, String lastName, Education education, int id) {
+        super(firstName, lastName, id);
         this.education = education;
     }
 
-    public String getEducation() {
-        return education;
-    }
-
-    public void setEducation(String education) {
-        this.education = education;
+    @Override
+    public String toString() {
+        return "[Name: " + super.getName() + ", ID: " + super.getIdNumber() + ", Education: " + education + "]";
     }
 }

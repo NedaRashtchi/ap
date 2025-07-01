@@ -1,54 +1,25 @@
 package ap.Library;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 
-public class Student extends Person {
 
-    private int stdNumber;
+public class Student extends User implements Loginable {
     private String major;
-    private ArrayList<Book> borowedbooks;
+    private List<Loan> loanedBooks;
+    private LocalDate registerDate;
 
-    public Student (String firstName, String lastName, int stdNumber, String major) {
-        super(firstName,lastName);
-        this.stdNumber = stdNumber;
+    public Student(String firstName, String lastName, int stdNumber, String major) {
+        super(firstName, lastName , stdNumber);
         this.major = major;
-        this.borowedbooks = new ArrayList<>();
-    }
-
-    public int getStdNumber() {
-        return stdNumber;
-    }
-
-    public void setStdNumber(int stdNumber) {
-        this.stdNumber = stdNumber;
-    }
-    public String getMajor() {
-        return major;
-    }
-    public void setMajor(String major) {
-        this.major = major;
-    }
-    public void getBorrowedbooks() {
-        if(borowedbooks.isEmpty()){
-            System.out.println("No books found.");
-        }else{
-            for (Book b : borowedbooks) {
-                System.out.println(b);
-            }
-        }
-
-    }
-    void addBorrowedbook(Book b) {
-        borowedbooks.add(b);
-    }
-    void removeBorrowedbook(Book b) {
-        borowedbooks.remove(b);
+        this.loanedBooks = new ArrayList<>();
+        this.registerDate = LocalDate.now();
     }
 
     @Override
     public String toString() {
-        return "[ Name: " + super.toString() +
-                ", Student Number:" + stdNumber + ", Major: " + major + "]";
+        return "[Name: " + this.getName() + ", Student Number: " + super.getIdNumber() + ", Major: " + major + "]";
     }
 
 }
