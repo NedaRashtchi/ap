@@ -15,6 +15,9 @@ public class Book {
         this.bookCode = bookCode;
     }
 
+    public int getBookCode() {
+        return bookCode;
+    }
     @Override
     public String toString() {
         return "[ Title: " + title + ", Author: " + author + ", Year: " + publicationYear +

@@ -1,6 +1,6 @@
 package ap.Library;
 
-import ap.Library.Handler.InputHandler;
+import ap.Library.SystemHandleAndStorage.InputHandler;
 
 public class Menu {
     public int mainMenu(InputHandler inputHandler) {

@@ -18,7 +18,18 @@ public class Librarian extends User implements Loginable {
     public void setName(String firstName, String lastName) {
         super.setName(firstName, lastName);
     }
-
+    public LocalDate getRegisterDate() {
+        return registerDate;
+    }
+    public void setRegisterDate(LocalDate registerDate) {
+        this.registerDate = registerDate;
+    }
+    public int getBorrowCount() {
+        return borrowCount;
+    }
+    public int getReturnCount() {
+        return returnCount;
+    }
     @Override
     public String toString() {
         return "[Name: " + this.getName() + ", ID: " + super.getIdNumber() +

@@ -1,6 +1,5 @@
 package ap.Library;
 
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,10 +26,28 @@ public class Library {
     public Student searchStudent(int stdNumber) {
         return students.get(stdNumber);
     }
+    public Librarian searchLibrarian(int libNumber) {
+        return librarians.get(libNumber);
+    }
     public void addStudent(Student student) {
         students.put(student.getIdNumber(), student);
     }
+    public void addLibrarian(Librarian librarian) {
+        librarians.put(librarian.getIdNumber(), librarian);
+    }
+    public void addBook(Book book) {
+        books.put(book.getBookCode(), book);
+    }
     public Map<Integer, Student> getStudents() {
         return students;
+    }
+    public Map<Integer, Librarian> getLibrarians() {
+        return librarians;
+    }
+    public Manager getManager() {
+        return manager;
+    }
+    public void printBookList() {
+        books.values().forEach(System.out::println);
     }
 }
