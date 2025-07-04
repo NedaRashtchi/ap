@@ -17,6 +17,16 @@ public class Student extends User implements Loginable {
         this.registerDate = LocalDate.now();
     }
 
+    public String getMajor() {
+        return major;
+    }
+    public LocalDate getRegisterDate() {
+        return registerDate;
+    }
+    public void setRegisterDate(LocalDate registerDate) {
+        this.registerDate = registerDate;
+    }
+
     @Override
     public String toString() {
         return "[Name: " + this.getName() + ", Student Number: " + super.getIdNumber() + ", Major: " + major + "]";
