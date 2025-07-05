@@ -7,24 +7,26 @@ import ap.Library.Student;
 import ap.Library.Manager;
 import ap.Library.Book;
 
+import java.io.IOException;
+import java.sql.SQLException;
 
 public class LibrarySystem {
     private Library library;
-    //    private FileHandler fileHandler;
+    private FileHandler fileHandler;
     private Menu menu;
     private InputHandler inputHandler;
     private Student currentStudent;
     private Librarian currentLibrarian;
 
-    public LibrarySystem(Library library){
+    public LibrarySystem(Library library) throws SQLException, IOException {
         this.library = library;
         this.menu = new Menu();
         this.inputHandler = new InputHandler();
-//        this.fileHandler = new FileHandler();
+        this.fileHandler = new FileHandler();
     }
 
     public void run() {
-//        fileHandler.loadLibraryData(library);
+        fileHandler.loadLibraryData(library);
 
         while (true) {
             int choice = menu.mainMenu(inputHandler);
@@ -43,7 +45,7 @@ public class LibrarySystem {
                     handleManagerLogin();
                     break;
                 case 5:
-//                    fileHandler.saveLibraryData(library);
+                    fileHandler.saveLibraryData(library);
                     System.out.println("Exiting...");
                     return;
                 default:

@@ -22,7 +22,6 @@ public class Library {
         this.loans = new ArrayList<>();
     }
 
-    //add , search , print methods ...
     public Student searchStudent(int stdNumber) {
         return students.get(stdNumber);
     }
@@ -44,8 +43,35 @@ public class Library {
     public Map<Integer, Librarian> getLibrarians() {
         return librarians;
     }
+    public String getName() {
+        return name;
+    }
     public Manager getManager() {
         return manager;
+    }
+    public List<Loan> getLoans() {
+        return loans;
+    }
+    public Map<Integer, Book> getBooks() {
+        return books;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+    public void setManager(Manager manager) {
+        this.manager = manager;
+    }
+    public void setBooks(Map<Integer, Book> books) {
+        this.books = books;
+    }
+    public void setStudents(Map<Integer, Student> students) {
+        this.students = students;
+    }
+    public void setLibrarians(Map<Integer, Librarian> librarians) {
+        this.librarians = librarians;
+    }
+    public void setLoans(List<Loan> loans) {
+        this.loans = loans;
     }
     public void printBookList() {
         books.values().forEach(System.out::println);
