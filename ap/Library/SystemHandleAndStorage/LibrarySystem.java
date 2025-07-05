@@ -9,6 +9,7 @@ import ap.Library.Book;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 
 public class LibrarySystem {
     private Library library;
@@ -67,7 +68,7 @@ public class LibrarySystem {
                         library.printBookList();
                         break;
                     case 2:
-//                        searchBook();
+                        searchBook();
                         break;
                     case 3:
 //                        int input = inputHandler.getInt("1. Borrow\n2. Return\n");
@@ -198,5 +199,28 @@ public class LibrarySystem {
         String lastName = inputHandler.getLine("Enter new last name: ");
         librarian.setName(firstName, lastName);
         System.out.println("Information updated.");
+    }
+    private void searchBook() {
+        int choice = inputHandler.getInt("Search by:\n 1. Code \n 2. Title");
+
+        if (choice == 1) {
+            int code = inputHandler.getInt("Enter book code: ");
+            Book book = library.searchBook(code);
+            if (book != null) {
+                System.out.println(book);
+            } else {
+                System.out.println("Book not found.");
+            }
+        } else if (choice == 2) {
+            String title = inputHandler.getLine("Enter book title: ");
+            List<Book> results = library.searchBooksByTitle(title);
+            if (results.isEmpty()) {
+                System.out.println("No books found.");
+            } else {
+                for (Book b : results) {
+                    System.out.println(b);
+                }
+            }
+        }
     }
 }

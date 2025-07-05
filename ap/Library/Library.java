@@ -28,6 +28,18 @@ public class Library {
     public Librarian searchLibrarian(int libNumber) {
         return librarians.get(libNumber);
     }
+    public Book searchBook(int bookCode) {
+        return books.get(bookCode);
+    }
+    public List<Book> searchBooksByTitle(String title) {
+        List<Book> result = new ArrayList<>();
+        for (Book b : books.values()) {
+            if (b.getTitle().toLowerCase().contains(title.toLowerCase())) {
+                result.add(b);
+            }
+        }
+        return result;
+    }
     public void addStudent(Student student) {
         students.put(student.getIdNumber(), student);
     }

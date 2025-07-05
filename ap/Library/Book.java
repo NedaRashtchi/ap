@@ -18,6 +18,9 @@ public class Book {
     public int getBookCode() {
         return bookCode;
     }
+    public String getTitle() {
+        return title;
+    }
     @Override
     public String toString() {
         return "[ Title: " + title + ", Author: " + author + ", Year: " + publicationYear +

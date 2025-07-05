@@ -19,7 +19,7 @@ public class JsonStorage implements DataStorageStrategy {
        Gson gson = new GsonBuilder().registerTypeAdapter(LocalDate.class, new LocalDateTypeAdapter())
                    .setPrettyPrinting().create();
 
-       try (FileWriter writer = new FileWriter("librarytest.json")) {
+       try (FileWriter writer = new FileWriter("libraryjson.json")) {
            gson.toJson(library, writer);
        }catch (IOException e){
            System.out.println("Error writing library test.json");
@@ -29,7 +29,7 @@ public class JsonStorage implements DataStorageStrategy {
 
     @Override
     public void load(Library library) {
-        try (FileReader reader = new FileReader("librarytest.json")) {
+        try (FileReader reader = new FileReader("libraryjson.json")) {
             Gson gson = new GsonBuilder()
                     .registerTypeAdapter(LocalDate.class, new LocalDateTypeAdapter())
                     .create();
@@ -45,7 +45,7 @@ public class JsonStorage implements DataStorageStrategy {
                 library.setLoans(temp.getLoans());
             }
         } catch (IOException e) {
-            System.out.println("Error reading library test.json: " + e.getMessage());
+            System.out.println("Error reading libraryjson.json: " + e.getMessage());
 
             library.setBooks(new HashMap<>());
             library.setStudents(new HashMap<>());
