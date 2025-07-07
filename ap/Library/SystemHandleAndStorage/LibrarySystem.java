@@ -1,15 +1,11 @@
 package ap.Library.SystemHandleAndStorage;
 
-import ap.Library.Librarian;
-import ap.Library.Library;
-import ap.Library.Menu;
-import ap.Library.Student;
-import ap.Library.Manager;
-import ap.Library.Book;
+import ap.Library.*;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Random;
 
 public class LibrarySystem {
     private Library library;
@@ -71,12 +67,12 @@ public class LibrarySystem {
                         searchBook();
                         break;
                     case 3:
-//                        int input = inputHandler.getInt("1. Borrow\n2. Return\n");
-//                        if (input == 1) {
-//                            bookRequest(RequestType.BORROW);
-//                        } else if (input == 2) {
-//                            bookRequest(RequestType.RETURN);
-//                        }
+                        int input = inputHandler.getInt("1. Borrow\n2. Return\n");
+                        if (input == 1) {
+                            loanRequest(LoanType.LOAN_REQUEST);
+                        } else if (input == 2) {
+                            loanRequest(LoanType.RETURN_REQUEST);
+                        }
                         break;
                     case 4:
 //                        currentStudent.listBorrowedBooks();
@@ -222,5 +218,45 @@ public class LibrarySystem {
                 }
             }
         }
+    }
+    private void loanRequest(LoanType type) {
+        int code = inputHandler.getInt("Enter book code: ");
+        Book requestedBook = library.searchBook(code);
+
+        if (requestedBook == null) {
+            System.out.println("Book not found!");
+            return;
+        }
+
+        boolean duplicateExists = library.getLoans().stream()
+                                 .anyMatch(loan -> loan.getType().equals(type) &&
+                                  loan.getStudent().equals(currentStudent) && loan.getBook().equals(requestedBook));
+        if (duplicateExists) {
+            System.out.println("You have submitted this request before.");
+            return;
+        }
+        if (type == LoanType.LOAN_REQUEST) {
+            boolean alreadyBorrowed = currentStudent.getLoanedBooks().stream()
+                    .anyMatch(loan -> loan.getBook().equals(requestedBook));
+
+            if (alreadyBorrowed) {
+                System.out.println("You already borrowed this book.");
+                return;
+            }
+        }
+        else if (type == LoanType.RETURN_REQUEST) {
+            boolean neverBorrowed = currentStudent.getLoanedBooks().stream()
+                    .noneMatch(loan -> loan.getBook().equals(requestedBook));
+
+            if (neverBorrowed) {
+                System.out.println("You never borrowed this book.");
+                return;
+            }
+        }
+        Random random = new Random();
+
+        library.addLoan(new Loan(requestedBook, this.currentStudent,
+                library.getLibrarians().get(random.nextInt(library.getLibrarians().size())), type));
+        System.out.println("Request added successfully.");
     }
 }

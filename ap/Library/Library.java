@@ -49,6 +49,9 @@ public class Library {
     public void addBook(Book book) {
         books.put(book.getBookCode(), book);
     }
+    public void addLoan(Loan loan) {
+        loans.add(loan);
+    }
     public Map<Integer, Student> getStudents() {
         return students;
     }

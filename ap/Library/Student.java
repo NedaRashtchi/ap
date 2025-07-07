@@ -17,6 +17,15 @@ public class Student extends User implements Loginable {
         this.registerDate = LocalDate.now();
     }
 
+    public void addLoan(Loan loan) {
+        loanedBooks.add(loan);
+    }
+    public void removeLoan(Loan loan) {
+        loanedBooks.remove(loan);
+    }
+    public List<Loan> getLoanedBooks() {
+        return loanedBooks;
+    }
     public String getMajor() {
         return major;
     }

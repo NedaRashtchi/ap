@@ -16,15 +16,15 @@ import java.util.HashMap;
 public class JsonStorage implements DataStorageStrategy {
     @Override
     public void save(Library library) {
-       Gson gson = new GsonBuilder().registerTypeAdapter(LocalDate.class, new LocalDateTypeAdapter())
-                   .setPrettyPrinting().create();
+        Gson gson = new GsonBuilder().registerTypeAdapter(LocalDate.class, new LocalDateTypeAdapter())
+                .setPrettyPrinting().create();
 
-       try (FileWriter writer = new FileWriter("libraryjson.json")) {
-           gson.toJson(library, writer);
-       }catch (IOException e){
-           System.out.println("Error writing library test.json");
-           e.printStackTrace();
-       }
+        try (FileWriter writer = new FileWriter("libraryjson.json")) {
+            gson.toJson(library, writer);
+        }catch (IOException e){
+            System.out.println("Error writing library test.json");
+            e.printStackTrace();
+        }
     }
 
     @Override
