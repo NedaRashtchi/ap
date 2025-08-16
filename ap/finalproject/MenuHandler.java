@@ -34,6 +34,7 @@ public class MenuHandler {
                     handleStudentLogin();
                     break;
                 case 3:
+                    handleManagerLogin();
                     break;
                 case 4:
                     displayStudentCount();
@@ -130,6 +131,53 @@ public class MenuHandler {
         }
     }
 
+    private void handleManagerLogin() {
+        System.out.println("\n--- Manager Login ---");
+
+        System.out.print("Username: ");
+        String username = scanner.nextLine();
+
+        System.out.print("Password: ");
+        String password = scanner.nextLine();
+
+        if (librarySystem.authenticateManager(username, password)) {
+            System.out.println("Login successful! Welcome, " + username);
+            displayManagerMenu();
+        }
+
+    }
+    private void displayManagerMenu() {
+        System.out.println("\n=== Manager Dashboard ===");
+        System.out.println("1. Add New Librarian.");
+        System.out.println("2. Edit Exit.");
+
+        int choice = getIntInput(1, 2);
+        switch (choice) {
+            case 1:
+                System.out.println("\n--- Add New Librarian ---");
+                handleLibrarianRegistration();
+                break;
+            case 2:
+                currentUser = null;
+                System.out.println("Logged out successfully.");
+                return;
+            default:
+                System.out.println("Invalid option! Please try again.");
+        }
+    }
+    private void handleLibrarianRegistration() {
+
+        System.out.print("\nName: ");
+        String name = scanner.nextLine();
+
+        System.out.print("Username: ");
+        String username = scanner.nextLine();
+
+        System.out.print("Password: ");
+        String password = scanner.nextLine();
+
+        librarySystem.registerLibrarian(name, username, password);
+    }
     private int getIntInput(int min, int max) {
         while (true) {
             try {

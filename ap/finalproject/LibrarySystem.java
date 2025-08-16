@@ -3,10 +3,14 @@ package ap.finalproject;
 // LibrarySystem.java
 public class LibrarySystem {
     private StudentManager studentManager;
+    private LibrarianManager librarianManager;
     private MenuHandler menuHandler;
+    private Manager manager;
 
-    public LibrarySystem() {
+    public LibrarySystem(Manager manager) {
+        this.manager = manager;
         this.studentManager = new StudentManager();
+        this.librarianManager = new LibrarianManager();
         this.menuHandler = new MenuHandler(this);
     }
 
@@ -17,9 +21,21 @@ public class LibrarySystem {
     public void registerStudent(String name, String studentId, String username, String password) {
         studentManager.registerStudent(name, studentId, username, password);
     }
+    public void registerLibrarian(String name, String username, String password) {
+        librarianManager.registerLibrarian(name, username, password);
+    }
 
     public Student authenticateStudent(String username, String password) {
         return studentManager.authenticateStudent(username, password);
+    }
+
+    public Boolean authenticateManager(String username, String password) {
+        if (username.equals(manager.getIdNumber()) && password.equals(manager.getPassword())) {
+            return true;
+        } else {
+            System.out.println("Invalid username or password");
+            return false;
+        }
     }
 
     public void editStudentInformation(Student student) {
@@ -43,7 +59,7 @@ public class LibrarySystem {
     }
 
     public static void main(String[] args) {
-        LibrarySystem system = new LibrarySystem();
+        LibrarySystem system = new LibrarySystem(new Manager("Manager","Manager","1234"));
         system.start();
     }
 }
