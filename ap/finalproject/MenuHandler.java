@@ -44,7 +44,7 @@ public class MenuHandler {
                     displayStudentCount();
                     break;
                 case 6:
-                    System.out.println("Exiting system. Goodbye!");
+                    librarySystem.exit();
                     return;
                 default:
                     System.out.println("Invalid option! Please try again.");
@@ -158,10 +158,11 @@ public class MenuHandler {
         while (currentUser != null) {
             System.out.println("\n=== Librarian Dashboard ===");
             System.out.println("1. View My Information");
-            System.out.println("2. Logout");
+            System.out.println("2. Change Password");
+            System.out.println("3. Logout");
             System.out.print("Please enter your choice: ");
 
-            int choice = getIntInput(1, 2);
+            int choice = getIntInput(1, 3);
 
             switch (choice) {
                 case 1:
@@ -169,6 +170,9 @@ public class MenuHandler {
                     System.out.println(currentUser);
                     break;
                 case 2:
+                    handleChangeLibrarianPassword();
+                    break;
+                case 3:
                     currentUser = null;
                     System.out.println("Logged out successfully.");
                     return;
@@ -197,6 +201,29 @@ public class MenuHandler {
                 default:
                     System.out.println("Invalid option! Please try again.");
             }
+        }
+    }
+
+    private void handleChangeLibrarianPassword() {
+        System.out.println("\n--- Change Password ---");
+        System.out.print("Current Password: ");
+        String currentPassword = scanner.nextLine();
+
+        System.out.print("New Password: ");
+        String newPassword = scanner.nextLine();
+
+        System.out.print("Confirm New Password: ");
+        String confirmPassword = scanner.nextLine();
+
+        if (!newPassword.equals(confirmPassword)) {
+            System.out.println("New passwords do not match!");
+            return;
+        }
+
+        if (librarySystem.changeLibrarianPassword(currentUser.getUsername(), currentPassword, newPassword)) {
+            System.out.println("Password changed successfully!");
+        } else {
+            System.out.println("Failed to change password.");
         }
     }
 

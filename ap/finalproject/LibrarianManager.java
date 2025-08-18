@@ -28,7 +28,28 @@ public class LibrarianManager {
                 .orElse(null);
     }
 
+    public boolean changePassword(String username, String oldPassword, String newPassword) {
+        Librarian librarian = librarians.stream()
+                .filter(l -> l.getUsername().equals(username) && l.getPassword().equals(oldPassword))
+                .findFirst()
+                .orElse(null);
+
+        if (librarian != null) {
+            librarian.setPassword(newPassword);
+            return true;
+        }
+        return false;
+    }
+
     private boolean isUsernameTaken(String username) {
         return librarians.stream().anyMatch(l -> l.getUsername().equals(username));
+    }
+
+    public List<Librarian> getLibrarians() {
+        return librarians;
+    }
+
+    public void setLibrarians(List<Librarian> librarians) {
+        this.librarians = librarians;
     }
 }

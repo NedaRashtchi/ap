@@ -12,6 +12,23 @@ public class LibrarySystem {
         this.studentManager = new StudentManager();
         this.librarianManager = new LibrarianManager();
         this.menuHandler = new MenuHandler(this);
+        FileHandler.loadData(this);
+    }
+
+    public StudentManager getStudentManager() {
+        return studentManager;
+    }
+
+    public LibrarianManager getLibrarianManager() {
+        return librarianManager;
+    }
+
+    public Manager getManager() {
+        return manager;
+    }
+
+    public void setManager(Manager manager) {
+        this.manager = manager;
     }
 
     public int getStudentCount() {
@@ -20,10 +37,12 @@ public class LibrarySystem {
 
     public void registerStudent(String name, String studentId, String username, String password) {
         studentManager.registerStudent(name, studentId, username, password);
+        saveData();
     }
 
     public void registerLibrarian(String name, String username, String password) {
         librarianManager.registerLibrarian(name, username, password);
+        saveData();
     }
 
     public Student authenticateStudent(String username, String password) {
@@ -43,6 +62,14 @@ public class LibrarySystem {
         }
     }
 
+    public boolean changeLibrarianPassword(String username, String oldPassword, String newPassword) {
+        boolean result = librarianManager.changePassword(username, oldPassword, newPassword);
+        if (result) {
+            saveData();
+        }
+        return result;
+    }
+
     public void editStudentInformation(Student student) {
         System.out.println("Not implemented.");
     }
@@ -57,6 +84,16 @@ public class LibrarySystem {
 
     public void displayAvailableBooks() {
         System.out.println("Not implemented.");
+    }
+
+    public void saveData() {
+        FileHandler.saveData(this);
+    }
+
+    public void exit() {
+        saveData();
+        System.out.println("Data saved. Exiting system. Goodbye!");
+        System.exit(0);
     }
 
     public void start() {
