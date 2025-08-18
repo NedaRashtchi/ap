@@ -21,6 +21,7 @@ public class LibrarySystem {
     public void registerStudent(String name, String studentId, String username, String password) {
         studentManager.registerStudent(name, studentId, username, password);
     }
+
     public void registerLibrarian(String name, String username, String password) {
         librarianManager.registerLibrarian(name, username, password);
     }
@@ -29,8 +30,12 @@ public class LibrarySystem {
         return studentManager.authenticateStudent(username, password);
     }
 
+    public Librarian authenticateLibrarian(String username, String password) {
+        return librarianManager.authenticateLibrarian(username, password);
+    }
+
     public Boolean authenticateManager(String username, String password) {
-        if (username.equals(manager.getIdNumber()) && password.equals(manager.getPassword())) {
+        if (username.equals(manager.getUsername()) && password.equals(manager.getPassword())) {
             return true;
         } else {
             System.out.println("Invalid username or password");
@@ -59,7 +64,7 @@ public class LibrarySystem {
     }
 
     public static void main(String[] args) {
-        LibrarySystem system = new LibrarySystem(new Manager("Manager","Manager","1234"));
+        LibrarySystem system = new LibrarySystem(new Manager("Manager", "manager", "1234"));
         system.start();
     }
 }

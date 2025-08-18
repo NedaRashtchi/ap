@@ -18,17 +18,17 @@ public class LibrarianManager {
 
         Librarian newLibrarian = new Librarian(name, username, password);
         librarians.add(newLibrarian);
-        System.out.println("Student registration completed successfully.");
+        System.out.println("Librarian registration completed successfully.");
     }
 
-    public Librarian authenticateStudent(String username, String password) {
+    public Librarian authenticateLibrarian(String username, String password) {
         return librarians.stream()
-                .filter(s -> s.getUsername().equals(username) && s.getPassword().equals(password))
+                .filter(l -> l.getUsername().equals(username) && l.getPassword().equals(password))
                 .findFirst()
                 .orElse(null);
     }
 
     private boolean isUsernameTaken(String username) {
-        return librarians.stream().anyMatch(s -> s.getUsername().equals(username));
+        return librarians.stream().anyMatch(l -> l.getUsername().equals(username));
     }
 }
