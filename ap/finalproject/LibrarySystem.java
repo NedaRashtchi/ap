@@ -4,6 +4,7 @@ package ap.finalproject;
 public class LibrarySystem {
     private StudentManager studentManager;
     private LibrarianManager librarianManager;
+    private BookManager bookManager;
     private MenuHandler menuHandler;
     private Manager manager;
 
@@ -11,6 +12,7 @@ public class LibrarySystem {
         this.manager = manager;
         this.studentManager = new StudentManager();
         this.librarianManager = new LibrarianManager();
+        this.bookManager = new BookManager();
         this.menuHandler = new MenuHandler(this);
         FileHandler.loadData(this);
     }
@@ -21,6 +23,10 @@ public class LibrarySystem {
 
     public LibrarianManager getLibrarianManager() {
         return librarianManager;
+    }
+
+    public BookManager getBookManager() {
+        return bookManager;
     }
 
     public Manager getManager() {
@@ -42,6 +48,11 @@ public class LibrarySystem {
 
     public void registerLibrarian(String name, String username, String password) {
         librarianManager.registerLibrarian(name, username, password);
+        saveData();
+    }
+
+    public void addBook(String title, String author, int publicationYear, int pageCount, int bookCode) {
+        bookManager.addBook(title, author, publicationYear, pageCount, bookCode);
         saveData();
     }
 
@@ -83,7 +94,7 @@ public class LibrarySystem {
     }
 
     public void displayAvailableBooks() {
-        System.out.println("Not implemented.");
+        bookManager.displayBooks();
     }
 
     public void saveData() {

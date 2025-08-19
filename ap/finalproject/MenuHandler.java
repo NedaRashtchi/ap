@@ -159,10 +159,12 @@ public class MenuHandler {
             System.out.println("\n=== Librarian Dashboard ===");
             System.out.println("1. View My Information");
             System.out.println("2. Change Password");
-            System.out.println("3. Logout");
+            System.out.println("3. Add New Book");
+            System.out.println("4. View All Books");
+            System.out.println("5. Logout");
             System.out.print("Please enter your choice: ");
 
-            int choice = getIntInput(1, 3);
+            int choice = getIntInput(1, 5);
 
             switch (choice) {
                 case 1:
@@ -173,6 +175,12 @@ public class MenuHandler {
                     handleChangeLibrarianPassword();
                     break;
                 case 3:
+                    handleAddBook();
+                    break;
+                case 4:
+                    librarySystem.displayAvailableBooks();
+                    break;
+                case 5:
                     currentUser = null;
                     System.out.println("Logged out successfully.");
                     return;
@@ -236,6 +244,25 @@ public class MenuHandler {
         System.out.print("Password: ");
         String password = scanner.nextLine();
         librarySystem.registerLibrarian(name, username, password);
+    }
+
+    private void handleAddBook() {
+        System.out.println("\n--- Add New Book ---");
+        System.out.print("Book Title: ");
+        String title = scanner.nextLine();
+        System.out.print("Author: ");
+        String author = scanner.nextLine();
+
+        System.out.print("Publication Year: ");
+        int year = getIntInput(1000, 2025);
+
+        System.out.print("Page Count: ");
+        int pages = getIntInput(1, 9999);
+
+        System.out.print("Book Code: ");
+        int code = getIntInput(1, 99999);
+
+        librarySystem.addBook(title, author, year, pages, code);
     }
 
     private int getIntInput(int min, int max) {

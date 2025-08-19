@@ -11,6 +11,7 @@ public class FileHandler {
     private static final String STUDENTS_FILE = "students.json";
     private static final String LIBRARIANS_FILE = "librarians.json";
     private static final String MANAGER_FILE = "manager.json";
+    private static final String BOOKS_FILE = "books.json";
 
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
@@ -25,6 +26,10 @@ public class FileHandler {
 
         try (FileWriter writer = new FileWriter(MANAGER_FILE)) {
             gson.toJson(system.getManager(), writer);
+        } catch (IOException e) {}
+
+        try (FileWriter writer = new FileWriter(BOOKS_FILE)) {
+            gson.toJson(system.getBookManager().getBooks(), writer);
         } catch (IOException e) {}
     }
 
@@ -49,6 +54,14 @@ public class FileHandler {
             Manager manager = gson.fromJson(reader, Manager.class);
             if (manager != null) {
                 system.setManager(manager);
+            }
+        } catch (IOException e) {}
+
+        try (FileReader reader = new FileReader(BOOKS_FILE)) {
+            Type bookListType = new TypeToken<List<Book>>(){}.getType();
+            List<Book> books = gson.fromJson(reader, bookListType);
+            if (books != null) {
+                system.getBookManager().setBooks(books);
             }
         } catch (IOException e) {}
     }
