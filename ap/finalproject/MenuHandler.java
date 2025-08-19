@@ -21,7 +21,7 @@ public class MenuHandler {
             System.out.println("2. Student Login");
             System.out.println("3. Librarian Login");
             System.out.println("4. Manager Login");
-            System.out.println("5. View Registered Student Count");
+            System.out.println("5. Enter as Guest");
             System.out.println("6. Exit");
             System.out.print("Please enter your choice: ");
 
@@ -41,7 +41,7 @@ public class MenuHandler {
                     handleManagerLogin();
                     break;
                 case 5:
-                    displayStudentCount();
+                    displayGuestMenu();
                     break;
                 case 6:
                     librarySystem.exit();
@@ -50,6 +50,31 @@ public class MenuHandler {
                     System.out.println("Invalid option! Please try again.");
             }
             System.out.println("___________________________");
+        }
+    }
+
+    private void displayGuestMenu() {
+        while (true) {
+            System.out.println("\n=== Guest Menu ===");
+            System.out.println("1. View Available Books");
+            System.out.println("2. View Registered Student Count");
+            System.out.println("3. Back to Main Menu");
+            System.out.print("Please enter your choice: ");
+
+            int choice = getIntInput(1, 3);
+
+            switch (choice) {
+                case 1:
+                    librarySystem.displayAvailableBooks();
+                    break;
+                case 2:
+                    displayStudentCount();
+                    break;
+                case 3:
+                    return;
+                default:
+                    System.out.println("Invalid option! Please try again.");
+            }
         }
     }
 
