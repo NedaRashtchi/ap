@@ -6,6 +6,7 @@ public class Book {
     private int publicationYear;
     private int pageCount;
     private int bookCode;
+    private String status;
 
     public Book(String title, String author, int publicationYear, int pageCount, int bookCode) {
         this.title = title;
@@ -13,6 +14,7 @@ public class Book {
         this.publicationYear = publicationYear;
         this.pageCount = pageCount;
         this.bookCode = bookCode;
+        this.status = "Available";
     }
 
     public String getTitle() {
@@ -55,12 +57,21 @@ public class Book {
         this.bookCode = bookCode;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     @Override
     public String toString() {
         return "Title: " + title +
                 " | Author: " + author +
                 " | Year: " + publicationYear +
                 " | Pages: " + pageCount +
-                " | Code: " + bookCode;
+                " | Code: " + bookCode +
+                " | Status: " + status;
     }
 }

@@ -110,6 +110,14 @@ public class LibrarySystem {
         return bookManager.searchBookByBookCode(bookCode);
     }
 
+    public List<Book> searchBooksByAuthor(String author) {
+        return bookManager.searchBooksByAuthor(author);
+    }
+
+    public List<Book> searchBooksByPublicationYear(int publicationYear) {
+        return bookManager.searchBooksByPublicationYear(publicationYear);
+    }
+
     public boolean isBookCodeTaken(int bookCode) {
         return bookManager.isBookCodeTaken(bookCode);
     }

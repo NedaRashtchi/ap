@@ -164,10 +164,11 @@ public class MenuHandler {
             System.out.println("3. Borrow a Book");
             System.out.println("4. Return a Book");
             System.out.println("5. View Available Books");
-            System.out.println("6. Logout");
+            System.out.println("6. Search for Books");
+            System.out.println("7. Logout");
             System.out.print("Please enter your choice: ");
 
-            int choice = getIntInput(1, 6);
+            int choice = getIntInput(1, 7);
             Student student = (Student) currentUser;
 
             switch (choice) {
@@ -188,12 +189,51 @@ public class MenuHandler {
                     librarySystem.displayAvailableBooks();
                     break;
                 case 6:
+                    handleBookSearchForStudent();
+                    break;
+                case 7:
                     currentUser = null;
                     System.out.println("Logged out successfully.");
                     return;
                 default:
                     System.out.println("Invalid option! Please try again.");
             }
+        }
+    }
+
+    private void handleBookSearchForStudent() {
+        System.out.println("\n--- Search for Books ---");
+        System.out.println("1. Search by Title");
+        System.out.println("2. Search by Author");
+        System.out.println("3. Search by Publication Year");
+        System.out.print("Please enter your choice: ");
+
+        int searchType = getIntInput(1, 3);
+        List<Book> foundBooks = null;
+
+        switch (searchType) {
+            case 1:
+                System.out.print("Enter book title: ");
+                String title = scanner.nextLine();
+                foundBooks = librarySystem.searchBooksByTitle(title);
+                break;
+            case 2:
+                System.out.print("Enter author name: ");
+                String author = scanner.nextLine();
+                foundBooks = librarySystem.searchBooksByAuthor(author);
+                break;
+            case 3:
+                System.out.print("Enter publication year: ");
+                int year = getIntInput(1000, 2025);
+                foundBooks = librarySystem.searchBooksByPublicationYear(year);
+                break;
+        }
+
+        if (foundBooks.isEmpty()) {
+            System.out.println("No books found.");
+        } else {
+            System.out.println("\n--- Search Results ---");
+            foundBooks.forEach(System.out::println);
         }
     }
 

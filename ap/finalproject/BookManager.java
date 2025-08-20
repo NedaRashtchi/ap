@@ -53,6 +53,17 @@ public class BookManager {
                 .findFirst()
                 .orElse(null);
     }
+    public List<Book> searchBooksByAuthor(String author) {
+        return books.stream()
+                .filter(book -> book.getAuthor().toLowerCase().contains(author.toLowerCase()))
+                .collect(Collectors.toList());
+    }
+
+    public List<Book> searchBooksByPublicationYear(int publicationYear) {
+        return books.stream()
+                .filter(book -> book.getPublicationYear() == publicationYear)
+                .collect(Collectors.toList());
+    }
 
     public boolean isBookCodeTaken(int bookCode, Book excludeBook) {
         if (excludeBook == null) {
