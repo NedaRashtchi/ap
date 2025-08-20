@@ -1,4 +1,4 @@
-package ap;
+package ap.exercises.ex1;
 
 public class E6_16 {
     public static void main(String[] args) {
