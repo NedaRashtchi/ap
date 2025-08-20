@@ -1,5 +1,7 @@
 package ap.finalproject;
 
+import java.util.List;
+
 // LibrarySystem.java
 public class LibrarySystem {
     private StudentManager studentManager;
@@ -95,6 +97,14 @@ public class LibrarySystem {
 
     public void displayAvailableBooks() {
         bookManager.displayBooks();
+    }
+
+    public List<Book> searchBooksByTitle(String title) {
+        return bookManager.searchBooksByTitle(title);
+    }
+
+    public Book searchBookByBookCode(int bookCode) {
+        return bookManager.searchBookByBookCode(bookCode);
     }
 
     public void saveData() {

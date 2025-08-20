@@ -2,6 +2,7 @@ package ap.finalproject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class BookManager {
     private List<Book> books;
@@ -32,6 +33,19 @@ public class BookManager {
         for (Book book : books) {
             System.out.println(book);
         }
+    }
+
+    public List<Book> searchBooksByTitle(String title) {
+        return books.stream()
+                .filter(book -> book.getTitle().toLowerCase().contains(title.toLowerCase()))
+                .collect(Collectors.toList());
+    }
+
+    public Book searchBookByBookCode(int bookCode) {
+        return books.stream()
+                .filter(book -> book.getBookCode() == bookCode)
+                .findFirst()
+                .orElse(null);
     }
 
     private boolean isBookCodeTaken(int bookCode) {

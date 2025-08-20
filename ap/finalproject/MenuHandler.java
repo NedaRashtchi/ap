@@ -1,6 +1,7 @@
 package ap.finalproject;
 
 // MenuHandler.java
+import java.util.List;
 import java.util.Scanner;
 
 public class MenuHandler {
@@ -57,24 +58,41 @@ public class MenuHandler {
         while (true) {
             System.out.println("\n=== Guest Menu ===");
             System.out.println("1. View Available Books");
-            System.out.println("2. View Registered Student Count");
-            System.out.println("3. Back to Main Menu");
+            System.out.println("2. Search Books by Title");
+            System.out.println("3. View Registered Student Count");
+            System.out.println("4. Back to Main Menu");
             System.out.print("Please enter your choice: ");
 
-            int choice = getIntInput(1, 3);
+            int choice = getIntInput(1, 4);
 
             switch (choice) {
                 case 1:
                     librarySystem.displayAvailableBooks();
                     break;
                 case 2:
-                    displayStudentCount();
+                    handleBookSearch();
                     break;
                 case 3:
+                    displayStudentCount();
+                    break;
+                case 4:
                     return;
                 default:
                     System.out.println("Invalid option! Please try again.");
             }
+        }
+    }
+
+    private void handleBookSearch() {
+        System.out.print("\nEnter book title to search: ");
+        String title = scanner.nextLine();
+        List<Book> foundBooks = librarySystem.searchBooksByTitle(title);
+
+        if (foundBooks.isEmpty()) {
+            System.out.println("No books found with that title.");
+        } else {
+            System.out.println("\n--- Search Results ---");
+            foundBooks.forEach(System.out::println);
         }
     }
 
