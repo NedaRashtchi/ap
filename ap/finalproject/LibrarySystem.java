@@ -53,9 +53,12 @@ public class LibrarySystem {
         saveData();
     }
 
-    public void addBook(String title, String author, int publicationYear, int pageCount, int bookCode) {
-        bookManager.addBook(title, author, publicationYear, pageCount, bookCode);
-        saveData();
+    public boolean addBook(String title, String author, int publicationYear, int pageCount, int bookCode) {
+        boolean success = bookManager.addBook(title, author, publicationYear, pageCount, bookCode);
+        if (success) {
+            saveData();
+        }
+        return success;
     }
 
     public Student authenticateStudent(String username, String password) {
@@ -105,6 +108,14 @@ public class LibrarySystem {
 
     public Book searchBookByBookCode(int bookCode) {
         return bookManager.searchBookByBookCode(bookCode);
+    }
+
+    public boolean isBookCodeTaken(int bookCode) {
+        return bookManager.isBookCodeTaken(bookCode);
+    }
+
+    public boolean isBookCodeTaken(int bookCode, Book excludeBook) {
+        return bookManager.isBookCodeTaken(bookCode, excludeBook);
     }
 
     public void saveData() {

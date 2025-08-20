@@ -11,15 +11,16 @@ public class BookManager {
         this.books = new ArrayList<>();
     }
 
-    public void addBook(String title, String author, int publicationYear, int pageCount, int bookCode) {
+    public boolean addBook(String title, String author, int publicationYear, int pageCount, int bookCode) {
         if (isBookCodeTaken(bookCode)) {
             System.out.println("This book code already exists. Choose a different code.");
-            return;
+            return false;
         }
 
         Book newBook = new Book(title, author, publicationYear, pageCount, bookCode);
         books.add(newBook);
         System.out.println("Book added successfully.");
+        return true;
     }
 
     public void displayBooks() {
@@ -35,6 +36,11 @@ public class BookManager {
         }
     }
 
+    boolean isBookCodeTaken(int bookCode) {
+        return books.stream().anyMatch(b -> b.getBookCode() == bookCode);
+    }
+
+
     public List<Book> searchBooksByTitle(String title) {
         return books.stream()
                 .filter(book -> book.getTitle().toLowerCase().contains(title.toLowerCase()))
@@ -48,8 +54,13 @@ public class BookManager {
                 .orElse(null);
     }
 
-    private boolean isBookCodeTaken(int bookCode) {
-        return books.stream().anyMatch(b -> b.getBookCode() == bookCode);
+    public boolean isBookCodeTaken(int bookCode, Book excludeBook) {
+        if (excludeBook == null) {
+            return isBookCodeTaken(bookCode);
+        }
+        return books.stream()
+                .filter(b -> b != excludeBook)
+                .anyMatch(b -> b.getBookCode() == bookCode);
     }
 
     public List<Book> getBooks() {

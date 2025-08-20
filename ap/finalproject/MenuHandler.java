@@ -204,10 +204,11 @@ public class MenuHandler {
             System.out.println("2. Change Password");
             System.out.println("3. Add New Book");
             System.out.println("4. View All Books");
-            System.out.println("5. Logout");
+            System.out.println("5. Edit Book Information");
+            System.out.println("6. Logout");
             System.out.print("Please enter your choice: ");
 
-            int choice = getIntInput(1, 5);
+            int choice = getIntInput(1, 6);
 
             switch (choice) {
                 case 1:
@@ -224,6 +225,9 @@ public class MenuHandler {
                     librarySystem.displayAvailableBooks();
                     break;
                 case 5:
+                    handleEditBook();
+                    break;
+                case 6:
                     currentUser = null;
                     System.out.println("Logged out successfully.");
                     return;
@@ -305,7 +309,114 @@ public class MenuHandler {
         System.out.print("Book Code: ");
         int code = getIntInput(1, 99999);
 
-        librarySystem.addBook(title, author, year, pages, code);
+        boolean success = librarySystem.addBook(title, author, year, pages, code);
+
+        while (!success) {
+            System.out.print("Please enter a different book code: ");
+            code = getIntInput(1, 99999);
+            success = librarySystem.addBook(title, author, year, pages, code);
+        }
+    }
+
+    private void handleEditBook() {
+        System.out.println("\n--- Edit Book Information ---");
+        System.out.println("How do you want to search for the book?");
+        System.out.println("1. By Title");
+        System.out.println("2. By Book Code");
+        System.out.print("Enter your choice: ");
+        int searchChoice = getIntInput(1, 2);
+
+        Book bookToEdit = null;
+        if (searchChoice == 1) {
+            System.out.print("Enter book title: ");
+            String title = scanner.nextLine();
+            List<Book> books = librarySystem.searchBooksByTitle(title);
+            if (books.isEmpty()) {
+                System.out.println("No books found with that title.");
+                return;
+            } else if (books.size() == 1) {
+                bookToEdit = books.get(0);
+            } else {
+                System.out.println("Multiple books found. Please select one by code:");
+                for (Book book : books) {
+                    System.out.println(book);
+                }
+                System.out.print("Enter the book code of the book you want to edit: ");
+                int code = getIntInput(1, 99999);
+                bookToEdit = librarySystem.searchBookByBookCode(code);
+                if (bookToEdit == null) {
+                    System.out.println("Invalid book code.");
+                    return;
+                }
+            }
+        } else {
+            System.out.print("Enter book code: ");
+            int code = getIntInput(1, 99999);
+            bookToEdit = librarySystem.searchBookByBookCode(code);
+            if (bookToEdit == null) {
+                System.out.println("No book found with that code.");
+                return;
+            }
+        }
+        editBookDetails(bookToEdit);
+    }
+
+    private void editBookDetails(Book book) {
+        while (true) {
+            System.out.println("\nCurrent book information:");
+            System.out.println(book);
+            System.out.println("\nChoose what you want to edit?");
+            System.out.println("1. Title");
+            System.out.println("2. Author");
+            System.out.println("3. Publication Year");
+            System.out.println("4. Page Count");
+            System.out.println("5. Book Code");
+            System.out.println("6. Finish Editing");
+            System.out.print("Enter your choice: ");
+
+            int choice = getIntInput(1, 6);
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter new title: ");
+                    String newTitle = scanner.nextLine();
+                    book.setTitle(newTitle);
+                    System.out.println("Title updated.");
+                    break;
+                case 2:
+                    System.out.print("Enter new author: ");
+                    String newAuthor = scanner.nextLine();
+                    book.setAuthor(newAuthor);
+                    System.out.println("Author updated.");
+                    break;
+                case 3:
+                    System.out.print("Enter new publication year: ");
+                    int newYear = getIntInput(1000, 2025);
+                    book.setPublicationYear(newYear);
+                    System.out.println("Publication year updated.");
+                    break;
+                case 4:
+                    System.out.print("Enter new page count: ");
+                    int newPages = getIntInput(1, 9999);
+                    book.setPageCount(newPages);
+                    System.out.println("Page count updated.");
+                    break;
+                case 5:
+                    System.out.print("Enter new book code: ");
+                    int newCode = getIntInput(1, 99999);
+                    if (librarySystem.isBookCodeTaken(newCode, book)) {
+                        System.out.println("This book code already taken by exist. Please choose a different code.");
+                    } else {
+                        book.setBookCode(newCode);
+                        System.out.println("Book code updated.");
+                    }
+                    break;
+                case 6:
+                    librarySystem.saveData();
+                    System.out.println("Changes saved.");
+                    return;
+            }
+        }
     }
 
     private int getIntInput(int min, int max) {
