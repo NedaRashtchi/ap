@@ -180,7 +180,7 @@ public class MenuHandler {
                     librarySystem.editStudentInformation(student);
                     break;
                 case 3:
-                    librarySystem.borrowBook(student);
+                    handleLoanRequest(student);
                     break;
                 case 4:
                     librarySystem.returnBook(student);
@@ -234,6 +234,30 @@ public class MenuHandler {
         } else {
             System.out.println("\n--- Search Results ---");
             foundBooks.forEach(System.out::println);
+        }
+    }
+
+    private void handleLoanRequest(Student student) {
+        System.out.println("\n--- Borrow a Book ---");
+        System.out.print("Enter the book code of the book you want to borrow: ");
+        int bookCode = getIntInput(1, 99999);
+
+        Book book = librarySystem.searchBookByBookCode(bookCode);
+        if (book == null) {
+            System.out.println("No book found with that code.");
+            return;
+        }
+
+        if (!book.getStatus().equals("Available")) {
+            System.out.println("This book is not available for borrowing.");
+            return;
+        }
+
+        boolean success = librarySystem.requestLoan(student, book);
+        if (success) {
+            System.out.println("Loan request submitted successfully.");
+        } else {
+            System.out.println("Failed to submit loan request.");
         }
     }
 

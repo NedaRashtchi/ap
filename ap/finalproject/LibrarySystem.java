@@ -7,6 +7,7 @@ public class LibrarySystem {
     private StudentManager studentManager;
     private LibrarianManager librarianManager;
     private BookManager bookManager;
+    private LoanManager loanManager;
     private MenuHandler menuHandler;
     private Manager manager;
 
@@ -15,6 +16,7 @@ public class LibrarySystem {
         this.studentManager = new StudentManager();
         this.librarianManager = new LibrarianManager();
         this.bookManager = new BookManager();
+        this.loanManager = new LoanManager();
         this.menuHandler = new MenuHandler(this);
         FileHandler.loadData(this);
     }
@@ -29,6 +31,13 @@ public class LibrarySystem {
 
     public BookManager getBookManager() {
         return bookManager;
+    }
+    public LoanManager getLoanManager() {
+        return loanManager;
+    }
+
+    public void setLoanManager(LoanManager loanManager) {
+        this.loanManager = loanManager;
     }
 
     public Manager getManager() {
@@ -90,8 +99,12 @@ public class LibrarySystem {
         System.out.println("Not implemented.");
     }
 
-    public void borrowBook(Student student) {
-        System.out.println("Not implemented.");
+    public boolean requestLoan(Student student, Book book) {
+        boolean success = loanManager.requestLoan(student, book);
+        if (success) {
+            saveData();
+        }
+        return success;
     }
 
     public void returnBook(Student student) {
