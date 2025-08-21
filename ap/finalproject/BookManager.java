@@ -81,4 +81,8 @@ public class BookManager {
     public void setBooks(List<Book> books) {
         this.books = books;
     }
+
+    public int getBookCount() {
+        return books.size();
+    }
 }

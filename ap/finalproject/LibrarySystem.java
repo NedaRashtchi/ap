@@ -51,6 +51,9 @@ public class LibrarySystem {
     public int getStudentCount() {
         return this.studentManager.getStudentCount();
     }
+    public int getBookCount() {
+        return this.bookManager.getBookCount();
+    }
 
     public void registerStudent(String name, String studentId, String username, String password) {
         studentManager.registerStudent(name, studentId, username, password);

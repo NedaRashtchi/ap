@@ -60,10 +60,11 @@ public class MenuHandler {
             System.out.println("1. View Available Books");
             System.out.println("2. Search Books by Title");
             System.out.println("3. View Registered Student Count");
-            System.out.println("4. Back to Main Menu");
+            System.out.println("4. View Book Count in Library");
+            System.out.println("5. Back to Main Menu");
             System.out.print("Please enter your choice: ");
 
-            int choice = getIntInput(1, 4);
+            int choice = getIntInput(1, 5);
 
             switch (choice) {
                 case 1:
@@ -76,6 +77,8 @@ public class MenuHandler {
                     displayStudentCount();
                     break;
                 case 4:
+                    displayBookCount();
+                case 5:
                     return;
                 default:
                     System.out.println("Invalid option! Please try again.");
@@ -99,6 +102,11 @@ public class MenuHandler {
     private void displayStudentCount() {
         int studentCount = librarySystem.getStudentCount();
         System.out.println("\nTotal registered students: " + studentCount);
+    }
+
+    private void displayBookCount() {
+        int bookCount = librarySystem.getBookCount();
+        System.out.println("\nTotal registered books: " + bookCount);
     }
 
     private void handleStudentRegistration() {
