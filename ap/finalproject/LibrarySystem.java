@@ -29,6 +29,13 @@ public class LibrarySystem {
         return librarianManager;
     }
 
+    public Librarian getLibrarianByUsername(String username) {
+        return librarianManager.getLibrarians().stream()
+                .filter(l -> l.getUsername().equals(username))
+                .findFirst()
+                .orElse(null);
+    }
+
     public BookManager getBookManager() {
         return bookManager;
     }

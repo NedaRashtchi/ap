@@ -313,21 +313,41 @@ public class MenuHandler {
         while (true) {
             System.out.println("\n=== Manager Dashboard ===");
             System.out.println("1. Add New Librarian");
-            System.out.println("2. Logout");
+            System.out.println("2. View Librarian Performance Report");
+            System.out.println("3. Logout");
             System.out.print("Please enter your choice: ");
 
-            int choice = getIntInput(1, 2);
+            int choice = getIntInput(1, 3);
 
             switch (choice) {
                 case 1:
                     handleLibrarianRegistration();
                     break;
                 case 2:
+                    handleLibrarianPerformanceReport();
+                    break;
+                case 3:
                     System.out.println("Logged out successfully.");
                     return;
                 default:
                     System.out.println("Invalid option! Please try again.");
             }
+        }
+    }
+
+    private void handleLibrarianPerformanceReport() {
+        System.out.println("\n--- Librarian Performance Report ---");
+        System.out.print("Enter librarian username: ");
+        String username = scanner.nextLine();
+
+        Librarian librarian = librarySystem.getLibrarianByUsername(username);
+        if (librarian != null) {
+            System.out.println("\n--- Performance Report for " + librarian.getName() + " ---");
+            System.out.println("Total Books Added: " + librarian.getBooksAdded());
+            System.out.println("Total Books Lent: " + librarian.getBooksLent());
+            System.out.println("Total Books Returned: " + librarian.getBooksReturned());
+        } else {
+            System.out.println("Librarian with username '" + username + "' not found.");
         }
     }
 
@@ -387,6 +407,10 @@ public class MenuHandler {
             System.out.print("Please enter a different book code: ");
             code = getIntInput(1, 99999);
             success = librarySystem.addBook(title, author, year, pages, code);
+        }
+        if (success && currentUser instanceof Librarian) {
+            ((Librarian) currentUser).addBooksAdded();
+            librarySystem.saveData();
         }
     }
 
