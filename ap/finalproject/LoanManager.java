@@ -23,6 +23,22 @@ public class LoanManager {
         return true;
     }
 
+    public boolean approveLoan(int loanIndex, Librarian librarian) {
+        if (loanIndex < 0 || loanIndex >= loans.size()) {
+            return false;
+        }
+        Loan loan = loans.get(loanIndex);
+        if (loan.getStatus() != LoanStatus.REQUESTED) {
+            return false;
+        }
+        loan.setStatus(LoanStatus.BORROWED);
+        loan.setBorrowDate(LocalDate.now());
+        loan.setReturnDate(LocalDate.now().plusDays(10));
+        loan.getBook().setStatus("Borrowed");
+        librarian.addBooksLent();
+        return true;
+    }
+
     public List<Loan> getLoansByStudent(Student student) {
         List<Loan> studentLoans = new ArrayList<>();
         for (Loan loan : loans) {

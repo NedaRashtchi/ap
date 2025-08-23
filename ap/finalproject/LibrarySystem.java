@@ -117,6 +117,14 @@ public class LibrarySystem {
         return success;
     }
 
+    public boolean approveLoan(int loanIndex, Librarian librarian) {
+        boolean success = loanManager.approveLoan(loanIndex, librarian);
+        if (success) {
+            saveData();
+        }
+        return success;
+    }
+
     public void returnBook(Student student) {
         System.out.println("Not implemented.");
     }

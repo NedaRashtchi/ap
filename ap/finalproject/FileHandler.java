@@ -51,7 +51,9 @@ public class FileHandler {
         }
 
         try (FileWriter writer = new FileWriter(LOANS_FILE)) {
-            gson.toJson(system.getLoanManager().getLoans(), writer);
+            Type loanListType = new TypeToken<List<SimplifiedLoan>>(){}.getType();
+            List<SimplifiedLoan> simplifiedLoans = SimplifiedLoan.fromLoans(system.getLoanManager().getLoans());
+            gson.toJson(simplifiedLoans, writer);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -90,12 +92,75 @@ public class FileHandler {
         } catch (IOException e) {}
 
         try (FileReader reader = new FileReader(LOANS_FILE)) {
-            Type loanListType = new TypeToken<List<Loan>>(){}.getType();
-            List<Loan> loans = gson.fromJson(reader, loanListType);
-            if (loans != null) {
-                system.getLoanManager().setLoans(loans);
+            Type simplifiedLoanListType = new TypeToken<List<SimplifiedLoan>>(){}.getType();
+            List<SimplifiedLoan> simplifiedLoans = gson.fromJson(reader, simplifiedLoanListType);
+
+            if (simplifiedLoans != null) {
+                for (SimplifiedLoan simplifiedLoan : simplifiedLoans) {
+                    Student student = system.getStudentManager().getStudents().stream()
+                            .filter(s -> s.getUsername().equals(simplifiedLoan.studentUsername))
+                            .findFirst()
+                            .orElse(null);
+
+                    Book book = system.getBookManager().getBooks().stream()
+                            .filter(b -> b.getBookCode() == simplifiedLoan.bookCode)
+                            .findFirst()
+                            .orElse(null);
+
+                    if (student != null && book != null) {
+                        Loan loan = new Loan(
+                                student,
+                                book,
+                                simplifiedLoan.requestDate,
+                                simplifiedLoan.borrowDate,
+                                simplifiedLoan.returnDate,
+                                simplifiedLoan.status
+                        );
+                        system.getLoanManager().getLoans().add(loan);
+
+                        if (simplifiedLoan.status == LoanStatus.REQUESTED) {
+                            book.setStatus("Requested");
+                        } else if (simplifiedLoan.status == LoanStatus.BORROWED) {
+                            book.setStatus("Borrowed");
+                        }
+                    }
+                }
             }
-        } catch (IOException e) {}
+        } catch (IOException e) {
+
+        }
+    }
+
+    private static class SimplifiedLoan {
+        String studentUsername;
+        int bookCode;
+        LocalDate requestDate;
+        LocalDate borrowDate;
+        LocalDate returnDate;
+        LoanStatus status;
+
+        public SimplifiedLoan(String studentUsername, int bookCode, LocalDate requestDate,
+                              LocalDate borrowDate, LocalDate returnDate, LoanStatus status) {
+            this.studentUsername = studentUsername;
+            this.bookCode = bookCode;
+            this.requestDate = requestDate;
+            this.borrowDate = borrowDate;
+            this.returnDate = returnDate;
+            this.status = status;
+        }
+
+        public static List<SimplifiedLoan> fromLoans(List<Loan> loans) {
+            return loans.stream()
+                    .map(loan -> new SimplifiedLoan(
+                            loan.getStudent().getUsername(),
+                            loan.getBook().getBookCode(),
+                            loan.getRequestDate(),
+                            loan.getBorrowDate(),
+                            loan.getReturnDate(),
+                            loan.getStatus()
+                    ))
+                    .collect(java.util.stream.Collectors.toList());
+        }
     }
 
     private static class LocalDateTypeAdapter extends TypeAdapter<LocalDate> {

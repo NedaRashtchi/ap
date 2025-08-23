@@ -78,6 +78,7 @@ public class MenuHandler {
                     break;
                 case 4:
                     displayBookCount();
+                    break;
                 case 5:
                     return;
                 default:
@@ -173,10 +174,11 @@ public class MenuHandler {
             System.out.println("4. Return a Book");
             System.out.println("5. View Available Books");
             System.out.println("6. Search for Books");
-            System.out.println("7. Logout");
+            System.out.println("7. View My Loans");
+            System.out.println("8. Logout");
             System.out.print("Please enter your choice: ");
 
-            int choice = getIntInput(1, 7);
+            int choice = getIntInput(1, 8);
             Student student = (Student) currentUser;
 
             switch (choice) {
@@ -200,6 +202,9 @@ public class MenuHandler {
                     handleBookSearchForStudent();
                     break;
                 case 7:
+                    handleViewStudentLoans();
+                    break;
+                case 8:
                     currentUser = null;
                     System.out.println("Logged out successfully.");
                     return;
@@ -277,10 +282,11 @@ public class MenuHandler {
             System.out.println("3. Add New Book");
             System.out.println("4. View All Books");
             System.out.println("5. Edit Book Information");
-            System.out.println("6. Logout");
+            System.out.println("6. Approve Loan Requests");
+            System.out.println("7. Logout");
             System.out.print("Please enter your choice: ");
 
-            int choice = getIntInput(1, 6);
+            int choice = getIntInput(1, 7);
 
             switch (choice) {
                 case 1:
@@ -300,6 +306,9 @@ public class MenuHandler {
                     handleEditBook();
                     break;
                 case 6:
+                    handleApproveLoanRequests();
+                    break;
+                case 7:
                     currentUser = null;
                     System.out.println("Logged out successfully.");
                     return;
@@ -512,6 +521,53 @@ public class MenuHandler {
                     System.out.println("Changes saved.");
                     return;
             }
+        }
+    }
+
+    private void handleApproveLoanRequests() {
+        List<Loan> requestedLoans = librarySystem.getLoanManager().getRequestedLoans();
+
+        if (requestedLoans.isEmpty()) {
+            System.out.println("There are no loan requests to approve.");
+            return;
+        }
+        System.out.println("\n--- Loan Requests ---");
+        for (int i = 0; i < requestedLoans.size(); i++) {
+            Loan loan = requestedLoans.get(i);
+            System.out.println((i+1) + ". " + loan.getStudent().getName() + " - " + loan.getBook().getTitle());
+        }
+        System.out.print("Enter the number of the loan to approve (0 to cancel): ");
+        int choice = getIntInput(0, requestedLoans.size());
+
+        if (choice == 0) {
+            return;
+        }
+        boolean success = librarySystem.approveLoan(choice-1, (Librarian) currentUser);
+        if (success) {
+            System.out.println("Loan approved successfully.");
+            librarySystem.saveData();
+        } else {
+            System.out.println("Failed to approve the loan.");
+        }
+    }
+
+    private void handleViewStudentLoans() {
+        Student student = (Student) currentUser;
+        List<Loan> studentLoans = librarySystem.getLoanManager().getLoansByStudent(student);
+
+        if (studentLoans.isEmpty()) {
+            System.out.println("You have no loans.");
+            return;
+        }
+        System.out.println("\n--- My Loans ---");
+        for (Loan loan : studentLoans) {
+            String loanInfo = loan.toString();
+            if (loan.getStatus() == LoanStatus.BORROWED &&
+                    loan.getReturnDate() != null &&
+                    java.time.LocalDate.now().isAfter(loan.getReturnDate())) {
+                loanInfo += " (delayed)";
+            }
+            System.out.println(loanInfo);
         }
     }
 
