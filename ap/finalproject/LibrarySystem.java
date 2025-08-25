@@ -125,8 +125,12 @@ public class LibrarySystem {
         return success;
     }
 
-    public void returnBook(Student student) {
-        System.out.println("Not implemented.");
+    public boolean returnBook(Loan loan, Librarian librarian) {
+        boolean success = loanManager.returnLoan(loan, librarian);
+        if (success) {
+            saveData();
+        }
+        return success;
     }
 
     public void displayAvailableBooks() {

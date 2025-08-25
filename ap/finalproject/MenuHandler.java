@@ -1,8 +1,10 @@
 package ap.finalproject;
 
 // MenuHandler.java
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class MenuHandler {
     private Scanner scanner;
@@ -171,14 +173,13 @@ public class MenuHandler {
             System.out.println("1. View My Information");
             System.out.println("2. Edit My Information");
             System.out.println("3. Borrow a Book");
-            System.out.println("4. Return a Book");
-            System.out.println("5. View Available Books");
-            System.out.println("6. Search for Books");
-            System.out.println("7. View My Loans");
-            System.out.println("8. Logout");
+            System.out.println("4. View Available Books");
+            System.out.println("5. Search for Books");
+            System.out.println("6. View My Loans");
+            System.out.println("7. Logout");
             System.out.print("Please enter your choice: ");
 
-            int choice = getIntInput(1, 8);
+            int choice = getIntInput(1, 7);
             Student student = (Student) currentUser;
 
             switch (choice) {
@@ -193,18 +194,15 @@ public class MenuHandler {
                     handleLoanRequest(student);
                     break;
                 case 4:
-                    librarySystem.returnBook(student);
-                    break;
-                case 5:
                     librarySystem.displayAvailableBooks();
                     break;
-                case 6:
+                case 5:
                     handleBookSearchForStudent();
                     break;
-                case 7:
+                case 6:
                     handleViewStudentLoans();
                     break;
-                case 8:
+                case 7:
                     currentUser = null;
                     System.out.println("Logged out successfully.");
                     return;
@@ -283,10 +281,11 @@ public class MenuHandler {
             System.out.println("4. View All Books");
             System.out.println("5. Edit Book Information");
             System.out.println("6. Approve Loan Requests");
-            System.out.println("7. Logout");
+            System.out.println("7. Return Book ");
+            System.out.println("8. Logout");
             System.out.print("Please enter your choice: ");
 
-            int choice = getIntInput(1, 7);
+            int choice = getIntInput(1, 8);
 
             switch (choice) {
                 case 1:
@@ -309,12 +308,82 @@ public class MenuHandler {
                     handleApproveLoanRequests();
                     break;
                 case 7:
+                    handleReturnBook();
+                    break;
+                case 8:
                     currentUser = null;
                     System.out.println("Logged out successfully.");
                     return;
                 default:
                     System.out.println("Invalid option! Please try again.");
             }
+        }
+    }
+
+    private void handleReturnBook() {
+        System.out.println("\n--- Return a Book ---");
+        System.out.println("1. Search by Student Name");
+        System.out.println("2. Search by Book Title");
+        System.out.println("3. Show All Borrowed Books");
+        System.out.print("Please enter your choice: ");
+
+        int choice = getIntInput(1, 3);
+        List<Loan> loansToDisplay = new ArrayList<>();
+
+        switch (choice) {
+            case 1:
+                System.out.print("Enter student name: ");
+                String studentName = scanner.nextLine();
+                loansToDisplay = librarySystem.getLoanManager().getLoans().stream()
+                        .filter(loan -> loan.getStudent().getName().toLowerCase().contains(studentName.toLowerCase()))
+                        .filter(loan -> loan.getStatus() == LoanStatus.BORROWED)
+                        .collect(Collectors.toList());
+                break;
+            case 2:
+                System.out.print("Enter book title: ");
+                String bookTitle = scanner.nextLine();
+                loansToDisplay = librarySystem.getLoanManager().getLoans().stream()
+                        .filter(loan -> loan.getBook().getTitle().toLowerCase().contains(bookTitle.toLowerCase()))
+                        .filter(loan -> loan.getStatus() == LoanStatus.BORROWED)
+                        .collect(Collectors.toList());
+                break;
+            case 3:
+                loansToDisplay = librarySystem.getLoanManager().getBorrowedLoans();
+                break;
+        }
+
+        if (loansToDisplay.isEmpty()) {
+            System.out.println("No borrowed books found.");
+            return;
+        }
+
+        System.out.println("\n--- Borrowed Books ---");
+        for (int i = 0; i < loansToDisplay.size(); i++) {
+            Loan loan = loansToDisplay.get(i);
+            System.out.println((i + 1) + ". " + loan.getStudent().getName() + " - " +
+                    loan.getBook().getTitle() + " (Due: " + loan.getReturnDate() + ")");
+        }
+
+        System.out.print("Enter the number of the loan to return (0 to cancel): ");
+        int loanChoice = getIntInput(0, loansToDisplay.size());
+
+        if (loanChoice == 0) {
+            return;
+        }
+
+        Loan selectedLoan = loansToDisplay.get(loanChoice - 1);
+        System.out.print("Are you sure you want to return this book? (yes/no): ");
+        String confirmation = scanner.nextLine();
+
+        if (confirmation.equalsIgnoreCase("yes")) {
+            boolean success = librarySystem.returnBook(selectedLoan, (Librarian) currentUser);
+            if (success) {
+                System.out.println("Book returned successfully!");
+            } else {
+                System.out.println("Failed to return the book.");
+            }
+        } else {
+            System.out.println("Return cancelled.");
         }
     }
 

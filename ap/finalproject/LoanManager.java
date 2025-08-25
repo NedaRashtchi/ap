@@ -59,6 +59,27 @@ public class LoanManager {
         return requestedLoans;
     }
 
+    public boolean returnLoan(Loan loan, Librarian librarian) {
+        if (loan.getStatus() != LoanStatus.BORROWED) {
+            return false;
+        }
+        loan.setStatus(LoanStatus.RETURNED);
+        loan.setReturnDate(LocalDate.now());
+        loan.getBook().setStatus("Available");
+        librarian.addBooksReturned();
+        return true;
+    }
+
+    public List<Loan> getBorrowedLoans() {
+        List<Loan> borrowedLoans = new ArrayList<>();
+        for (Loan loan : loans) {
+            if (loan.getStatus() == LoanStatus.BORROWED) {
+                borrowedLoans.add(loan);
+            }
+        }
+        return borrowedLoans;
+    }
+
     public List<Loan> getLoans() {
         return loans;
     }
