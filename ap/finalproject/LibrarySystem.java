@@ -161,6 +161,10 @@ public class LibrarySystem {
         return bookManager.isBookCodeTaken(bookCode, excludeBook);
     }
 
+    public List<Loan> getLoansInLastWeek() {
+        return loanManager.getLoansInLastWeek();
+    }
+
     public void saveData() {
         FileHandler.saveData(this);
     }

@@ -80,6 +80,19 @@ public class LoanManager {
         return borrowedLoans;
     }
 
+    public List<Loan> getLoansInLastWeek() {
+        List<Loan> recentLoans = new ArrayList<>();
+        LocalDate oneWeekAgo = LocalDate.now().minusDays(7);
+
+        for (Loan loan : loans) {
+            if (loan.getBorrowDate() != null &&
+                    !loan.getBorrowDate().isBefore(oneWeekAgo) &&
+                    !loan.getBorrowDate().isAfter(LocalDate.now())) {
+                recentLoans.add(loan);
+            }
+        } return recentLoans;
+    }
+
     public List<Loan> getLoans() {
         return loans;
     }

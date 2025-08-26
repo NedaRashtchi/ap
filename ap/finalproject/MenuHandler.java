@@ -63,10 +63,11 @@ public class MenuHandler {
             System.out.println("2. Search Books by Title");
             System.out.println("3. View Registered Student Count");
             System.out.println("4. View Book Count in Library");
-            System.out.println("5. Back to Main Menu");
+            System.out.println("5. View Recent Loans (Last Week)");
+            System.out.println("6. Back to Main Menu");
             System.out.print("Please enter your choice: ");
 
-            int choice = getIntInput(1, 5);
+            int choice = getIntInput(1, 6);
 
             switch (choice) {
                 case 1:
@@ -82,10 +83,32 @@ public class MenuHandler {
                     displayBookCount();
                     break;
                 case 5:
+                    handleRecentLoans();
+                    break;
+                case 6:
                     return;
                 default:
                     System.out.println("Invalid option! Please try again.");
             }
+        }
+    }
+
+    private void handleRecentLoans() {
+        List<Loan> recentLoans = librarySystem.getLoansInLastWeek();
+        int count = recentLoans.size();
+        System.out.println("\nNumber of loans in the last week: " + count);
+
+        if (count > 0) {
+            System.out.print("Do you want to view the list of recent loans? (yes/no): ");
+            String response = scanner.nextLine();
+            if (response.equalsIgnoreCase("yes")) {
+                System.out.println("\n--- Recent Loans (Last Week) ---");
+                for (Loan loan : recentLoans) {
+                    System.out.println(loan.getBook());
+                }
+            }
+        } else {
+            System.out.println("No loans found in the last week.");
         }
     }
 
