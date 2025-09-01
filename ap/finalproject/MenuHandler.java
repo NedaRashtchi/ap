@@ -305,10 +305,11 @@ public class MenuHandler {
             System.out.println("5. Edit Book Information");
             System.out.println("6. Approve Loan Requests");
             System.out.println("7. Return Book ");
-            System.out.println("8. Logout");
+            System.out.println("8. View Student Loan History");
+            System.out.println("9. Logout");
             System.out.print("Please enter your choice: ");
 
-            int choice = getIntInput(1, 8);
+            int choice = getIntInput(1, 9);
 
             switch (choice) {
                 case 1:
@@ -334,6 +335,9 @@ public class MenuHandler {
                     handleReturnBook();
                     break;
                 case 8:
+                    handleViewStudentLoanHistory();
+                    break;
+                case 9:
                     currentUser = null;
                     System.out.println("Logged out successfully.");
                     return;
@@ -410,6 +414,33 @@ public class MenuHandler {
         }
     }
 
+    private void handleViewStudentLoanHistory() {
+        System.out.println("\n--- View Student Loan History ---");
+        System.out.print("Enter student username: ");
+        String username = scanner.nextLine();
+
+        Student student = librarySystem.getStudentManager().getStudents().stream()
+                .filter(s -> s.getUsername().equals(username))
+                .findFirst()
+                .orElse(null);
+
+        if (student == null) {
+            System.out.println("Student not found.");
+            return;
+        }
+
+        System.out.println("\n--- Student Statistics ---");
+        System.out.println("Total Loans: " + student.getTotalLoans());
+        System.out.println("Pending Returns: " + student.getPendingReturns());
+        System.out.println("Delayed Returns: " + student.getDelayedReturns());
+
+        List<Loan> studentLoans = librarySystem.getLoanManager().getLoansByStudent(student);
+        System.out.println("\n--- Loan History ---");
+        for (Loan loan : studentLoans) {
+            System.out.println(loan);
+        }
+    }
+
     private void displayManagerMenu() {
         while (true) {
             System.out.println("\n=== Manager Dashboard ===");
@@ -470,6 +501,7 @@ public class MenuHandler {
 
         if (librarySystem.changeLibrarianPassword(currentUser.getUsername(), currentPassword, newPassword)) {
             System.out.println("Password changed successfully!");
+            librarySystem.saveData();
         } else {
             System.out.println("Failed to change password.");
         }

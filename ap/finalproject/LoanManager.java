@@ -35,6 +35,11 @@ public class LoanManager {
         loan.setBorrowDate(LocalDate.now());
         loan.setReturnDate(LocalDate.now().plusDays(10));
         loan.getBook().setStatus("Borrowed");
+
+        Student student = loan.getStudent();
+        student.increaseTotalLoans();
+        student.increasePendingReturns();
+
         librarian.addBooksLent();
         return true;
     }
@@ -63,9 +68,14 @@ public class LoanManager {
         if (loan.getStatus() != LoanStatus.BORROWED) {
             return false;
         }
+        if (LocalDate.now().isAfter(loan.getReturnDate())) {
+            loan.getStudent().increaseDelayedReturns();
+        }
+
         loan.setStatus(LoanStatus.RETURNED);
         loan.setReturnDate(LocalDate.now());
         loan.getBook().setStatus("Available");
+        loan.getStudent().decreasePendingReturns();
         librarian.addBooksReturned();
         return true;
     }
