@@ -430,17 +430,22 @@ public class MenuHandler {
         }
 
         System.out.println("\n--- Student Statistics ---");
+        System.out.println("Student Name: " + student.getName());
+        System.out.println("Student ID: " + student.getStudentId());
         System.out.println("Total Loans: " + student.getTotalLoans());
         System.out.println("Pending Returns: " + student.getPendingReturns());
         System.out.println("Delayed Returns: " + student.getDelayedReturns());
 
         List<Loan> studentLoans = librarySystem.getLoanManager().getLoansByStudent(student);
         System.out.println("\n--- Loan History ---");
-        for (Loan loan : studentLoans) {
-            System.out.println(loan);
+        if (studentLoans.isEmpty()) {
+            System.out.println("No loan history found for this student.");
+        } else {
+            for (Loan loan : studentLoans) {
+                System.out.println(loan);
+            }
         }
     }
-
     private void displayManagerMenu() {
         while (true) {
             System.out.println("\n=== Manager Dashboard ===");

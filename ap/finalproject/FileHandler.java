@@ -118,9 +118,7 @@ public class FileHandler {
                         );
                         system.getLoanManager().getLoans().add(loan);
 
-                        if (simplifiedLoan.status == LoanStatus.REQUESTED) {
-                            book.setStatus("Requested");
-                        } else if (simplifiedLoan.status == LoanStatus.BORROWED) {
+                        if (simplifiedLoan.status == LoanStatus.BORROWED) {
                             book.setStatus("Borrowed");
                         }
                     }

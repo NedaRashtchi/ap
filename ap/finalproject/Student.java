@@ -14,6 +14,9 @@ public class Student extends Person {
         this.delayedReturns = 0;
     }
 
+    public String getStudentId() {
+        return studentId;
+    }
 
     public int getTotalLoans() {
         return totalLoans;
