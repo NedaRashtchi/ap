@@ -5,7 +5,7 @@ public class Student extends Person {
     private int totalLoans;
     private int pendingReturns;
     private int delayedReturns;
-    private int totalDelayDays; // New field for total delay days
+    private int totalDelayDays;
 
     public Student(String name, String studentId, String username, String password) {
         super(name, username, password);

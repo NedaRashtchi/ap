@@ -120,6 +120,8 @@ public class FileHandler {
 
                         if (simplifiedLoan.status == LoanStatus.BORROWED) {
                             book.setStatus("Borrowed");
+                        } else if (simplifiedLoan.status == LoanStatus.REQUESTED) {
+                            book.setStatus("Requested");
                         }
                     }
                 }

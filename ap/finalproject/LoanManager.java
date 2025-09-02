@@ -20,6 +20,7 @@ public class LoanManager {
 
         Loan newLoan = new Loan(student, book, LocalDate.now(), null, null, LoanStatus.REQUESTED);
         loans.add(newLoan);
+        book.setStatus("Requested");
         return true;
     }
 
