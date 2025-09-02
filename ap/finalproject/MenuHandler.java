@@ -1,6 +1,5 @@
 package ap.finalproject;
 
-// MenuHandler.java
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -435,6 +434,7 @@ public class MenuHandler {
         System.out.println("Total Loans: " + student.getTotalLoans());
         System.out.println("Pending Returns: " + student.getPendingReturns());
         System.out.println("Delayed Returns: " + student.getDelayedReturns());
+        System.out.println("Total Delay Days: " + student.getTotalDelayDays());
 
         List<Loan> studentLoans = librarySystem.getLoanManager().getLoansByStudent(student);
         System.out.println("\n--- Loan History ---");
@@ -446,16 +446,34 @@ public class MenuHandler {
             }
         }
     }
+
+    private void handleTop10DelayedStudents() {
+        List<Student> topDelayedStudents = librarySystem.getTop10StudentsWithMostDelays();
+        System.out.println("\n--- Top 10 Students with Most Delays ---");
+        if (topDelayedStudents.isEmpty()) {
+            System.out.println("No students with delays found.");
+        } else {
+            for (Student student : topDelayedStudents) {
+                int delayedReturns = student.getDelayedReturns();
+                int totalDelayDays = student.getTotalDelayDays();
+                double averageDelayDays = delayedReturns > 0 ? (double) totalDelayDays / delayedReturns : 0;
+                System.out.printf("Name: %s | Delayed Returns: %d | Average Delay Days: %.2f%n",
+                        student.getName(), delayedReturns, averageDelayDays);
+            }
+        }
+    }
+
     private void displayManagerMenu() {
         while (true) {
             System.out.println("\n=== Manager Dashboard ===");
             System.out.println("1. Add New Librarian");
             System.out.println("2. View Librarian Performance Report");
             System.out.println("3. View Student Loan History");
-            System.out.println("4. Logout");
+            System.out.println("4. View Top 10 Students with Most Delays");
+            System.out.println("5. Logout");
             System.out.print("Please enter your choice: ");
 
-            int choice = getIntInput(1, 4);
+            int choice = getIntInput(1, 5);
 
             switch (choice) {
                 case 1:
@@ -468,6 +486,9 @@ public class MenuHandler {
                     handleViewStudentLoanHistory();
                     break;
                 case 4:
+                    handleTop10DelayedStudents();
+                    break;
+                case 5:
                     System.out.println("Logged out successfully.");
                     return;
                 default:

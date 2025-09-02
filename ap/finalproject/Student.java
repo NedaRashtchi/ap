@@ -5,6 +5,7 @@ public class Student extends Person {
     private int totalLoans;
     private int pendingReturns;
     private int delayedReturns;
+    private int totalDelayDays; // New field for total delay days
 
     public Student(String name, String studentId, String username, String password) {
         super(name, username, password);
@@ -12,6 +13,7 @@ public class Student extends Person {
         this.totalLoans = 0;
         this.pendingReturns = 0;
         this.delayedReturns = 0;
+        this.totalDelayDays = 0;
     }
 
     public String getStudentId() {
@@ -34,6 +36,10 @@ public class Student extends Person {
         return delayedReturns;
     }
 
+    public int getTotalDelayDays() {
+        return totalDelayDays;
+    }
+
     public void increaseTotalLoans() {
         this.totalLoans++;
     }
@@ -50,6 +56,10 @@ public class Student extends Person {
         this.delayedReturns++;
     }
 
+    public void addDelayDays(int days) {
+        this.totalDelayDays += days;
+    }
+
     @Override
     public String toString() {
         return "Name: " + name +
@@ -57,6 +67,7 @@ public class Student extends Person {
                 " | Username: " + username +
                 " | Total Loans: " + totalLoans +
                 " | Pending Returns: " + pendingReturns +
-                " | Delayed Returns: " + delayedReturns;
+                " | Delayed Returns: " + delayedReturns +
+                " | Total Delay Days: " + totalDelayDays;
     }
 }

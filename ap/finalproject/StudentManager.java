@@ -1,7 +1,9 @@
 package ap.finalproject;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class StudentManager {
     private List<Student> students;
@@ -39,6 +41,14 @@ public class StudentManager {
         for (Student student : students) {
             System.out.println(student);
         }
+    }
+
+    public List<Student> getTop10StudentsWithMostDelays() {
+        return students.stream()
+                .filter(s -> s.getDelayedReturns() > 0)
+                .sorted(Comparator.comparingInt(Student::getDelayedReturns).reversed())
+                .limit(10)
+                .collect(Collectors.toList());
     }
 
     private boolean isUsernameTaken(String username) {

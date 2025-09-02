@@ -1,6 +1,7 @@
 package ap.finalproject;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,7 +69,9 @@ public class LoanManager {
             return false;
         }
         if (LocalDate.now().isAfter(loan.getReturnDate())) {
+            int delayDays = (int) ChronoUnit.DAYS.between(loan.getReturnDate(), LocalDate.now());
             loan.getStudent().increaseDelayedReturns();
+            loan.getStudent().addDelayDays(delayDays);
         }
 
         loan.setStatus(LoanStatus.RETURNED);

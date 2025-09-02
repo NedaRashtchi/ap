@@ -165,6 +165,10 @@ public class LibrarySystem {
         return loanManager.getLoansInLastWeek();
     }
 
+    public List<Student> getTop10StudentsWithMostDelays() {
+        return studentManager.getTop10StudentsWithMostDelays();
+    }
+
     public void saveData() {
         FileHandler.saveData(this);
     }
