@@ -451,10 +451,11 @@ public class MenuHandler {
             System.out.println("\n=== Manager Dashboard ===");
             System.out.println("1. Add New Librarian");
             System.out.println("2. View Librarian Performance Report");
-            System.out.println("3. Logout");
+            System.out.println("3. View Student Loan History");
+            System.out.println("4. Logout");
             System.out.print("Please enter your choice: ");
 
-            int choice = getIntInput(1, 3);
+            int choice = getIntInput(1, 4);
 
             switch (choice) {
                 case 1:
@@ -464,6 +465,9 @@ public class MenuHandler {
                     handleLibrarianPerformanceReport();
                     break;
                 case 3:
+                    handleViewStudentLoanHistory();
+                    break;
+                case 4:
                     System.out.println("Logged out successfully.");
                     return;
                 default:
