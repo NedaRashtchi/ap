@@ -6,6 +6,7 @@ public class Student extends Person {
     private int pendingReturns;
     private int delayedReturns;
     private int totalDelayDays;
+    private boolean active;
 
     public Student(String name, String studentId, String username, String password) {
         super(name, username, password);
@@ -14,6 +15,7 @@ public class Student extends Person {
         this.pendingReturns = 0;
         this.delayedReturns = 0;
         this.totalDelayDays = 0;
+        this.active = true;
     }
 
     public String getStudentId() {
@@ -38,6 +40,14 @@ public class Student extends Person {
 
     public int getTotalDelayDays() {
         return totalDelayDays;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     public void increaseTotalLoans() {
@@ -68,6 +78,7 @@ public class Student extends Person {
                 " | Total Loans: " + totalLoans +
                 " | Pending Returns: " + pendingReturns +
                 " | Delayed Returns: " + delayedReturns +
-                " | Total Delay Days: " + totalDelayDays;
+                " | Total Delay Days: " + totalDelayDays +
+                " | Active: " + (active ? "Yes" : "No");
     }
 }

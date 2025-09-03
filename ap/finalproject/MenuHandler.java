@@ -305,10 +305,11 @@ public class MenuHandler {
             System.out.println("6. Approve Loan Requests");
             System.out.println("7. Return Book ");
             System.out.println("8. View Student Loan History");
-            System.out.println("9. Logout");
+            System.out.println("9. Deactivate Student");
+            System.out.println("10. Logout");
             System.out.print("Please enter your choice: ");
 
-            int choice = getIntInput(1, 9);
+            int choice = getIntInput(1, 10);
 
             switch (choice) {
                 case 1:
@@ -337,12 +338,47 @@ public class MenuHandler {
                     handleViewStudentLoanHistory();
                     break;
                 case 9:
+                    handleDeactivateStudent();
+                    break;
+                case 10:
                     currentUser = null;
                     System.out.println("Logged out successfully.");
                     return;
                 default:
                     System.out.println("Invalid option! Please try again.");
             }
+        }
+    }
+
+    private void handleDeactivateStudent() {
+        System.out.println("\n--- Deactivate Student ---");
+        System.out.print("Enter student username: ");
+        String username = scanner.nextLine();
+
+        Student student = librarySystem.getStudentManager().getStudents().stream()
+                .filter(s -> s.getUsername().equals(username))
+                .findFirst()
+                .orElse(null);
+
+        if (student == null) {
+            System.out.println("Student not found.");
+            return;
+        }
+        System.out.println("Student found: " + student.getName());
+        System.out.println("Number of delayed returns: " + student.getDelayedReturns());
+        System.out.print("Are you sure you want to deactivate this student? (yes/no): ");
+        String confirmation = scanner.nextLine();
+
+        if (confirmation.equalsIgnoreCase("yes")) {
+            boolean success = librarySystem.deactivateStudent(username);
+            if (success) {
+                System.out.println("Student deactivated successfully.");
+                librarySystem.saveData();
+            } else {
+                System.out.println("Failed to deactivate student.");
+            }
+        } else {
+            System.out.println("Deactivation cancelled.");
         }
     }
 

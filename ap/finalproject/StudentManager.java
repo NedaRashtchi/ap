@@ -66,4 +66,16 @@ public class StudentManager {
     public void setStudents(List<Student> students) {
         this.students = students;
     }
+
+    public boolean deactivateStudent(String username) {
+        Student student = students.stream()
+                .filter(s -> s.getUsername().equals(username))
+                .findFirst()
+                .orElse(null);
+        if (student != null) {
+            student.setActive(false);
+            return true;
+        }
+        return false;
+    }
 }

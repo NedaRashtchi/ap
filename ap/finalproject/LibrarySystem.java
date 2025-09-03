@@ -105,6 +105,14 @@ public class LibrarySystem {
         return result;
     }
 
+    public boolean deactivateStudent(String username) {
+        boolean success = studentManager.deactivateStudent(username);
+        if (success) {
+            saveData();
+        }
+        return success;
+    }
+
     public void editStudentInformation(Student student) {
         System.out.println("Not implemented.");
     }

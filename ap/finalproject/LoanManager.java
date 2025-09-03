@@ -13,6 +13,10 @@ public class LoanManager {
     }
 
     public boolean requestLoan(Student student, Book book) {
+        if (!student.isActive()) {
+            System.out.println("Student is deactivated and cannot borrow books.");
+            return false;
+        }
         if (!book.getStatus().equals("Available")) {
             System.out.println("Book is not available for loan.");
             return false;
