@@ -305,7 +305,7 @@ public class MenuHandler {
             System.out.println("6. Approve Loan Requests");
             System.out.println("7. Return Book ");
             System.out.println("8. View Student Loan History");
-            System.out.println("9. Deactivate Student");
+            System.out.println("9. Activate/Deactivate Student");
             System.out.println("10. Logout");
             System.out.print("Please enter your choice: ");
 
@@ -338,7 +338,7 @@ public class MenuHandler {
                     handleViewStudentLoanHistory();
                     break;
                 case 9:
-                    handleDeactivateStudent();
+                    handleActivateDeactivateStudent();
                     break;
                 case 10:
                     currentUser = null;
@@ -350,8 +350,13 @@ public class MenuHandler {
         }
     }
 
-    private void handleDeactivateStudent() {
-        System.out.println("\n--- Deactivate Student ---");
+    private void handleActivateDeactivateStudent() {
+        System.out.println("\n--- Activate/Deactivate Student ---");
+        System.out.println("1. Activate Student");
+        System.out.println("2. Deactivate Student");
+        System.out.print("Please enter your choice: ");
+        int actionChoice = getIntInput(1, 2);
+
         System.out.print("Enter student username: ");
         String username = scanner.nextLine();
 
@@ -364,21 +369,33 @@ public class MenuHandler {
             System.out.println("Student not found.");
             return;
         }
+
         System.out.println("Student found: " + student.getName());
+        System.out.println("Current status: " + (student.isActive() ? "Active" : "Inactive"));
         System.out.println("Number of delayed returns: " + student.getDelayedReturns());
-        System.out.print("Are you sure you want to deactivate this student? (yes/no): ");
+
+        if (actionChoice == 1) {
+            System.out.print("Are you sure you want to activate this student? (yes/no): ");
+        } else {
+            System.out.print("Are you sure you want to deactivate this student? (yes/no): ");
+        }
         String confirmation = scanner.nextLine();
 
         if (confirmation.equalsIgnoreCase("yes")) {
-            boolean success = librarySystem.deactivateStudent(username);
+            boolean success;
+            if (actionChoice == 1) {
+                success = librarySystem.activateStudent(username);
+            } else {
+                success = librarySystem.deactivateStudent(username);
+            }
             if (success) {
-                System.out.println("Student deactivated successfully.");
+                System.out.println("Student " + (actionChoice == 1 ? "activated" : "deactivated") + " successfully.");
                 librarySystem.saveData();
             } else {
-                System.out.println("Failed to deactivate student.");
+                System.out.println("Failed to " + (actionChoice == 1 ? "activate" : "deactivate") + " student.");
             }
         } else {
-            System.out.println("Deactivation cancelled.");
+            System.out.println("Operation cancelled.");
         }
     }
 

@@ -113,6 +113,14 @@ public class LibrarySystem {
         return success;
     }
 
+    public boolean activateStudent(String username) {
+        boolean success = studentManager.activateStudent(username);
+        if (success) {
+            saveData();
+        }
+        return success;
+    }
+
     public void editStudentInformation(Student student) {
         System.out.println("Not implemented.");
     }

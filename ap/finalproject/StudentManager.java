@@ -78,4 +78,16 @@ public class StudentManager {
         }
         return false;
     }
+
+    public boolean activateStudent(String username) {
+        Student student = students.stream()
+                .filter(s -> s.getUsername().equals(username))
+                .findFirst()
+                .orElse(null);
+        if (student != null) {
+            student.setActive(true);
+            return true;
+        }
+        return false;
+    }
 }
