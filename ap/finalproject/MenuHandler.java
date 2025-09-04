@@ -210,7 +210,7 @@ public class MenuHandler {
                     System.out.println(student);
                     break;
                 case 2:
-                    librarySystem.editStudentInformation(student);
+                    handleEditStudentInformation(student);
                     break;
                 case 3:
                     handleLoanRequest(student);
@@ -231,6 +231,34 @@ public class MenuHandler {
                 default:
                     System.out.println("Invalid option! Please try again.");
             }
+        }
+    }
+    private void handleEditStudentInformation(Student student) {
+        System.out.println("\n--- Edit My Information ---");
+        System.out.println("Current Information:");
+        System.out.println("Name: " + student.getName());
+        System.out.println("Student ID: " + student.getStudentId());
+        System.out.println("Username: " + student.getUsername());
+
+        System.out.print("Enter new name (leave blank if you don't want to change it): ");
+        String newName = scanner.nextLine();
+        System.out.print("Enter new student ID (leave blank if you don't want to change it): ");
+        String newStudentId = scanner.nextLine();
+        System.out.print("Enter new username (leave blank if you don't want to change it): ");
+        String newUsername = scanner.nextLine();
+        System.out.print("Enter new password (leave blank if you don't want to change it): ");
+        String newPassword = scanner.nextLine();
+
+        if (newName.isEmpty()) newName = student.getName();
+        if (newStudentId.isEmpty()) newStudentId = student.getStudentId();
+        if (newUsername.isEmpty()) newUsername = student.getUsername();
+        if (newPassword.isEmpty()) newPassword = student.getPassword();
+
+        boolean success = librarySystem.updateStudent(student, newName, newStudentId, newUsername, newPassword);
+        if (success) {
+            System.out.println("Information updated successfully.");
+        } else {
+            System.out.println("Failed to update information. Username might be taken.");
         }
     }
 

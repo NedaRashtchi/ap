@@ -90,4 +90,16 @@ public class StudentManager {
         }
         return false;
     }
+
+    public boolean updateStudent(Student student, String newName, String newStudentId, String newUsername, String newPassword) {
+        if (!student.getUsername().equals(newUsername) && isUsernameTaken(newUsername)) {
+            System.out.println("This username already exists. Please choose a different username.");
+            return false;
+        }
+        student.setName(newName);
+        student.setStudentId(newStudentId);
+        student.setUsername(newUsername);
+        student.setPassword(newPassword);
+        return true;
+    }
 }

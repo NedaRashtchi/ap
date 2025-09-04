@@ -121,8 +121,12 @@ public class LibrarySystem {
         return success;
     }
 
-    public void editStudentInformation(Student student) {
-        System.out.println("Not implemented.");
+    public boolean updateStudent(Student student, String newName, String newStudentId, String newUsername, String newPassword) {
+        boolean success = studentManager.updateStudent(student, newName, newStudentId, newUsername, newPassword);
+        if (success) {
+            saveData();
+        }
+        return success;
     }
 
     public boolean requestLoan(Student student, Book book) {

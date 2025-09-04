@@ -17,9 +17,19 @@ public class Student extends Person {
         this.totalDelayDays = 0;
         this.active = true;
     }
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
     public String getStudentId() {
         return studentId;
+    }
+    public void setStudentId(String studentId) {
+        this.studentId = studentId;
     }
 
     public int getTotalLoans() {
