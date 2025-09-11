@@ -18,7 +18,8 @@ public class FileHandler {
     private static final String LIBRARIANS_FILE = "librarians.json";
     private static final String MANAGER_FILE = "manager.json";
     private static final String BOOKS_FILE = "books.json";
-    private static final String LOANS_FILE = "loans.json";
+    private static final String LOAN_REQUESTS_FILE = "loan_requests.json";
+    private static final String LENT_BOOKS_FILE = "lent_books.json";
 
     private static final Gson gson = new GsonBuilder()
             .setPrettyPrinting()
@@ -50,10 +51,18 @@ public class FileHandler {
             e.printStackTrace();
         }
 
-        try (FileWriter writer = new FileWriter(LOANS_FILE)) {
+        try (FileWriter writer = new FileWriter(LOAN_REQUESTS_FILE)) {
             Type loanListType = new TypeToken<List<SimplifiedLoan>>(){}.getType();
-            List<SimplifiedLoan> simplifiedLoans = SimplifiedLoan.fromLoans(system.getLoanManager().getLoans());
-            gson.toJson(simplifiedLoans, writer);
+            List<SimplifiedLoan> simplifiedLoanRequests = SimplifiedLoan.fromLoans(system.getLoanManager().getLoanRequests());
+            gson.toJson(simplifiedLoanRequests, writer);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        try (FileWriter writer = new FileWriter(LENT_BOOKS_FILE)) {
+            Type loanListType = new TypeToken<List<SimplifiedLoan>>(){}.getType();
+            List<SimplifiedLoan> simplifiedLentBooks = SimplifiedLoan.fromLoans(system.getLoanManager().getLentBooks());
+            gson.toJson(simplifiedLentBooks, writer);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -91,12 +100,12 @@ public class FileHandler {
             }
         } catch (IOException e) {}
 
-        try (FileReader reader = new FileReader(LOANS_FILE)) {
+        try (FileReader reader = new FileReader(LOAN_REQUESTS_FILE)) {
             Type simplifiedLoanListType = new TypeToken<List<SimplifiedLoan>>(){}.getType();
-            List<SimplifiedLoan> simplifiedLoans = gson.fromJson(reader, simplifiedLoanListType);
+            List<SimplifiedLoan> simplifiedLoanRequests = gson.fromJson(reader, simplifiedLoanListType);
 
-            if (simplifiedLoans != null) {
-                for (SimplifiedLoan simplifiedLoan : simplifiedLoans) {
+            if (simplifiedLoanRequests != null) {
+                for (SimplifiedLoan simplifiedLoan : simplifiedLoanRequests) {
                     Student student = system.getStudentManager().getStudents().stream()
                             .filter(s -> s.getUsername().equals(simplifiedLoan.studentUsername))
                             .findFirst()
@@ -116,19 +125,49 @@ public class FileHandler {
                                 simplifiedLoan.returnDate,
                                 simplifiedLoan.status
                         );
-                        system.getLoanManager().getLoans().add(loan);
+                        system.getLoanManager().getLoanRequests().add(loan);
+                        book.setStatus("Requested");
+                    }
+                }
+            }
+        } catch (IOException e) {}
+
+        try (FileReader reader = new FileReader(LENT_BOOKS_FILE)) {
+            Type simplifiedLoanListType = new TypeToken<List<SimplifiedLoan>>(){}.getType();
+            List<SimplifiedLoan> simplifiedLentBooks = gson.fromJson(reader, simplifiedLoanListType);
+
+            if (simplifiedLentBooks != null) {
+                for (SimplifiedLoan simplifiedLoan : simplifiedLentBooks) {
+                    Student student = system.getStudentManager().getStudents().stream()
+                            .filter(s -> s.getUsername().equals(simplifiedLoan.studentUsername))
+                            .findFirst()
+                            .orElse(null);
+
+                    Book book = system.getBookManager().getBooks().stream()
+                            .filter(b -> b.getBookCode() == simplifiedLoan.bookCode)
+                            .findFirst()
+                            .orElse(null);
+
+                    if (student != null && book != null) {
+                        Loan loan = new Loan(
+                                student,
+                                book,
+                                simplifiedLoan.requestDate,
+                                simplifiedLoan.borrowDate,
+                                simplifiedLoan.returnDate,
+                                simplifiedLoan.status
+                        );
+                        system.getLoanManager().getLentBooks().add(loan);
 
                         if (simplifiedLoan.status == LoanStatus.BORROWED) {
                             book.setStatus("Borrowed");
-                        } else if (simplifiedLoan.status == LoanStatus.REQUESTED) {
-                            book.setStatus("Requested");
+                        } else if (simplifiedLoan.status == LoanStatus.RETURNED) {
+                            book.setStatus("Available");
                         }
                     }
                 }
             }
-        } catch (IOException e) {
-
-        }
+        } catch (IOException e) {}
     }
 
     private static class SimplifiedLoan {

@@ -441,7 +441,7 @@ public class MenuHandler {
             case 1:
                 System.out.print("Enter student name: ");
                 String studentName = scanner.nextLine();
-                loansToDisplay = librarySystem.getLoanManager().getLoans().stream()
+                loansToDisplay = librarySystem.getLoanManager().getLentBooks().stream()
                         .filter(loan -> loan.getStudent().getName().toLowerCase().contains(studentName.toLowerCase()))
                         .filter(loan -> loan.getStatus() == LoanStatus.BORROWED)
                         .collect(Collectors.toList());
@@ -449,7 +449,7 @@ public class MenuHandler {
             case 2:
                 System.out.print("Enter book title: ");
                 String bookTitle = scanner.nextLine();
-                loansToDisplay = librarySystem.getLoanManager().getLoans().stream()
+                loansToDisplay = librarySystem.getLoanManager().getLentBooks().stream()
                         .filter(loan -> loan.getBook().getTitle().toLowerCase().contains(bookTitle.toLowerCase()))
                         .filter(loan -> loan.getStatus() == LoanStatus.BORROWED)
                         .collect(Collectors.toList());

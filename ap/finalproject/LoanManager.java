@@ -6,10 +6,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LoanManager {
-    private List<Loan> loans;
+    private List<Loan> loanRequests;
+    private List<Loan> lentBooks;
 
     public LoanManager() {
-        this.loans = new ArrayList<>();
+        this.loanRequests = new ArrayList<>();
+        this.lentBooks = new ArrayList<>();
     }
 
     public boolean requestLoan(Student student, Book book) {
@@ -23,16 +25,16 @@ public class LoanManager {
         }
 
         Loan newLoan = new Loan(student, book, LocalDate.now(), null, null, LoanStatus.REQUESTED);
-        loans.add(newLoan);
+        loanRequests.add(newLoan);
         book.setStatus("Requested");
         return true;
     }
 
     public boolean approveLoan(int loanIndex, Librarian librarian) {
-        if (loanIndex < 0 || loanIndex >= loans.size()) {
+        if (loanIndex < 0 || loanIndex >= loanRequests.size()) {
             return false;
         }
-        Loan loan = loans.get(loanIndex);
+        Loan loan = loanRequests.get(loanIndex);
         if (loan.getStatus() != LoanStatus.REQUESTED) {
             return false;
         }
@@ -46,12 +48,20 @@ public class LoanManager {
         student.increasePendingReturns();
 
         librarian.addBooksLent();
+
+        loanRequests.remove(loanIndex);
+        lentBooks.add(loan);
         return true;
     }
 
     public List<Loan> getLoansByStudent(Student student) {
         List<Loan> studentLoans = new ArrayList<>();
-        for (Loan loan : loans) {
+        for (Loan loan : loanRequests) {
+            if (loan.getStudent().equals(student)) {
+                studentLoans.add(loan);
+            }
+        }
+        for (Loan loan : lentBooks) {
             if (loan.getStudent().equals(student)) {
                 studentLoans.add(loan);
             }
@@ -60,13 +70,7 @@ public class LoanManager {
     }
 
     public List<Loan> getRequestedLoans() {
-        List<Loan> requestedLoans = new ArrayList<>();
-        for (Loan loan : loans) {
-            if (loan.getStatus() == LoanStatus.REQUESTED) {
-                requestedLoans.add(loan);
-            }
-        }
-        return requestedLoans;
+        return new ArrayList<>(loanRequests);
     }
 
     public boolean returnLoan(Loan loan, Librarian librarian) {
@@ -89,7 +93,7 @@ public class LoanManager {
 
     public List<Loan> getBorrowedLoans() {
         List<Loan> borrowedLoans = new ArrayList<>();
-        for (Loan loan : loans) {
+        for (Loan loan : lentBooks) {
             if (loan.getStatus() == LoanStatus.BORROWED) {
                 borrowedLoans.add(loan);
             }
@@ -101,7 +105,7 @@ public class LoanManager {
         List<Loan> recentLoans = new ArrayList<>();
         LocalDate oneWeekAgo = LocalDate.now().minusDays(7);
 
-        for (Loan loan : loans) {
+        for (Loan loan : lentBooks) {
             if (loan.getBorrowDate() != null &&
                     !loan.getBorrowDate().isBefore(oneWeekAgo) &&
                     !loan.getBorrowDate().isAfter(LocalDate.now())) {
@@ -110,11 +114,32 @@ public class LoanManager {
         } return recentLoans;
     }
 
+    public List<Loan> getLoanRequests() {
+        return loanRequests;
+    }
+
+    public List<Loan> getLentBooks() {
+        return lentBooks;
+    }
+
     public List<Loan> getLoans() {
-        return loans;
+        List<Loan> allLoans = new ArrayList<>();
+        allLoans.addAll(loanRequests);
+        allLoans.addAll(lentBooks);
+        return allLoans;
     }
 
     public void setLoans(List<Loan> loans) {
-        this.loans = loans;
+
+        this.loanRequests.clear();
+        this.lentBooks.clear();
+
+        for (Loan loan : loans) {
+            if (loan.getStatus() == LoanStatus.REQUESTED) {
+                this.loanRequests.add(loan);
+            } else {
+                this.lentBooks.add(loan);
+            }
+        }
     }
 }
