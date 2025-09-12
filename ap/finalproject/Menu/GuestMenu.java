@@ -1,4 +1,8 @@
-package ap.finalproject;
+package ap.finalproject.Menu;
+
+import ap.finalproject.Book;
+import ap.finalproject.Loan;
+import ap.finalproject.ManageSystem.LibrarySystem;
 
 import java.util.List;
 import java.util.Scanner;

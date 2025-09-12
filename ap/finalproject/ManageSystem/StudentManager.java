@@ -1,4 +1,6 @@
-package ap.finalproject;
+package ap.finalproject.ManageSystem;
+
+import ap.finalproject.Student;
 
 import java.util.ArrayList;
 import java.util.Comparator;
