@@ -47,10 +47,6 @@ public class LibrarySystem {
         return loanManager;
     }
 
-    public void setLoanManager(LoanManager loanManager) {
-        this.loanManager = loanManager;
-    }
-
     public Manager getManager() {
         return manager;
     }
@@ -175,10 +171,6 @@ public class LibrarySystem {
 
     public List<Book> searchBooksByPublicationYear(int publicationYear) {
         return bookManager.searchBooksByPublicationYear(publicationYear);
-    }
-
-    public boolean isBookCodeTaken(int bookCode) {
-        return bookManager.isBookCodeTaken(bookCode);
     }
 
     public boolean isBookCodeTaken(int bookCode, Book excludeBook) {

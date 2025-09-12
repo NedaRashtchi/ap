@@ -124,24 +124,4 @@ public class LoanManager {
         return lentBooks;
     }
 
-    public List<Loan> getLoans() {
-        List<Loan> allLoans = new ArrayList<>();
-        allLoans.addAll(loanRequests);
-        allLoans.addAll(lentBooks);
-        return allLoans;
-    }
-
-    public void setLoans(List<Loan> loans) {
-
-        this.loanRequests.clear();
-        this.lentBooks.clear();
-
-        for (Loan loan : loans) {
-            if (loan.getStatus() == LoanStatus.REQUESTED) {
-                this.loanRequests.add(loan);
-            } else {
-                this.lentBooks.add(loan);
-            }
-        }
-    }
 }

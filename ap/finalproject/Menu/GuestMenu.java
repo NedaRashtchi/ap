@@ -5,14 +5,13 @@ import ap.finalproject.Loan;
 import ap.finalproject.ManageSystem.LibrarySystem;
 
 import java.util.List;
-import java.util.Scanner;
 
 public class GuestMenu {
-    private Scanner scanner;
+    private InputHandler inputHandler;
     private LibrarySystem librarySystem;
 
-    public GuestMenu(Scanner scanner, LibrarySystem librarySystem) {
-        this.scanner = scanner;
+    public GuestMenu(InputHandler inputHandler, LibrarySystem librarySystem) {
+        this.inputHandler = inputHandler;
         this.librarySystem = librarySystem;
     }
 
@@ -27,7 +26,7 @@ public class GuestMenu {
             System.out.println("6. Back to Main Menu");
             System.out.print("Please enter your choice: ");
 
-            int choice = getIntInput(1, 6);
+            int choice = inputHandler.getIntInput(1, 6);
 
             switch (choice) {
                 case 1:
@@ -60,7 +59,7 @@ public class GuestMenu {
 
         if (count > 0) {
             System.out.print("Do you want to view the list of recent loans? (yes/no): ");
-            String response = scanner.nextLine();
+            String response = inputHandler.getStringInput();
             if (response.equalsIgnoreCase("yes")) {
                 System.out.println("\n--- Recent Loans (Last Week) ---");
                 for (Loan loan : recentLoans) {
@@ -74,7 +73,7 @@ public class GuestMenu {
 
     private void handleBookSearch() {
         System.out.print("\nEnter book title to search: ");
-        String title = scanner.nextLine();
+        String title = inputHandler.getStringInput();
         List<Book> foundBooks = librarySystem.searchBooksByTitle(title);
 
         if (foundBooks.isEmpty()) {
@@ -93,19 +92,5 @@ public class GuestMenu {
     private void displayBookCount() {
         int bookCount = librarySystem.getBookCount();
         System.out.println("\nTotal registered books: " + bookCount);
-    }
-
-    private int getIntInput(int min, int max) {
-        while (true) {
-            try {
-                int input = Integer.parseInt(scanner.nextLine());
-                if (input >= min && input <= max) {
-                    return input;
-                }
-                System.out.printf("Please enter a number between %d and %d: ", min, max);
-            } catch (NumberFormatException e) {
-                System.out.print("Invalid input. Please enter a number: ");
-            }
-        }
     }
 }

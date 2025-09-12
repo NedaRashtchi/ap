@@ -6,14 +6,13 @@ import ap.finalproject.ManageSystem.LibrarySystem;
 import ap.finalproject.Student;
 
 import java.util.List;
-import java.util.Scanner;
 
 public class ManagerMenu {
-    private Scanner scanner;
+    private InputHandler inputHandler;
     private LibrarySystem librarySystem;
 
-    public ManagerMenu(Scanner scanner, LibrarySystem librarySystem) {
-        this.scanner = scanner;
+    public ManagerMenu(InputHandler inputHandler, LibrarySystem librarySystem) {
+        this.inputHandler = inputHandler;
         this.librarySystem = librarySystem;
     }
 
@@ -27,7 +26,7 @@ public class ManagerMenu {
             System.out.println("5. Logout");
             System.out.print("Please enter your choice: ");
 
-            int choice = getIntInput(1, 5);
+            int choice = inputHandler.getIntInput(1, 5);
 
             switch (choice) {
                 case 1:
@@ -54,7 +53,7 @@ public class ManagerMenu {
     private void handleLibrarianPerformanceReport() {
         System.out.println("\n--- Librarian Performance Report ---");
         System.out.print("Enter librarian username: ");
-        String username = scanner.nextLine();
+        String username = inputHandler.getStringInput();
 
         Librarian librarian = librarySystem.getLibrarianByUsername(username);
         if (librarian != null) {
@@ -70,18 +69,18 @@ public class ManagerMenu {
     private void handleLibrarianRegistration() {
         System.out.println("\n--- New Librarian Registration ---");
         System.out.print("Librarian name: ");
-        String name = scanner.nextLine();
+        String name = inputHandler.getStringInput();
         System.out.print("Username: ");
-        String username = scanner.nextLine();
+        String username = inputHandler.getStringInput();
         System.out.print("Password: ");
-        String password = scanner.nextLine();
+        String password = inputHandler.getStringInput();
         librarySystem.registerLibrarian(name, username, password);
     }
 
     private void handleViewStudentLoanHistory() {
         System.out.println("\n--- View Student Loan History ---");
         System.out.print("Enter student username: ");
-        String username = scanner.nextLine();
+        String username = inputHandler.getStringInput();
 
         Student student = librarySystem.getStudentManager().getStudents().stream()
                 .filter(s -> s.getUsername().equals(username))
@@ -122,20 +121,6 @@ public class ManagerMenu {
                 double averageDelayDays = delayedReturns > 0 ? (double) totalDelayDays / delayedReturns : 0;
                 System.out.printf("Name: %s | Delayed Returns: %d | Average Delay Days: %.2f%n",
                         student.getName(), delayedReturns, averageDelayDays);
-            }
-        }
-    }
-
-    private int getIntInput(int min, int max) {
-        while (true) {
-            try {
-                int input = Integer.parseInt(scanner.nextLine());
-                if (input >= min && input <= max) {
-                    return input;
-                }
-                System.out.printf("Please enter a number between %d and %d: ", min, max);
-            } catch (NumberFormatException e) {
-                System.out.print("Invalid input. Please enter a number: ");
             }
         }
     }

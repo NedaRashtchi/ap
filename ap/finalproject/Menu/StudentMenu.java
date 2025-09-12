@@ -7,15 +7,14 @@ import ap.finalproject.ManageSystem.LibrarySystem;
 import ap.finalproject.Student;
 
 import java.util.List;
-import java.util.Scanner;
 
 public class StudentMenu {
-    private Scanner scanner;
+    private InputHandler inputHandler;
     private LibrarySystem librarySystem;
     private Student student;
 
-    public StudentMenu(Scanner scanner, LibrarySystem librarySystem, Student student) {
-        this.scanner = scanner;
+    public StudentMenu(InputHandler inputHandler, LibrarySystem librarySystem, Student student) {
+        this.inputHandler = inputHandler;
         this.librarySystem = librarySystem;
         this.student = student;
     }
@@ -32,7 +31,7 @@ public class StudentMenu {
             System.out.println("7. Logout");
             System.out.print("Please enter your choice: ");
 
-            int choice = getIntInput(1, 7);
+            int choice = inputHandler.getIntInput(1, 7);
 
             switch (choice) {
                 case 1:
@@ -71,13 +70,13 @@ public class StudentMenu {
         System.out.println("Username: " + student.getUsername());
 
         System.out.print("Enter new name (leave blank if you don't want to change it): ");
-        String newName = scanner.nextLine();
+        String newName = inputHandler.getStringInput();
         System.out.print("Enter new student ID (leave blank if you don't want to change it): ");
-        String newStudentId = scanner.nextLine();
+        String newStudentId = inputHandler.getStringInput();
         System.out.print("Enter new username (leave blank if you don't want to change it): ");
-        String newUsername = scanner.nextLine();
+        String newUsername = inputHandler.getStringInput();
         System.out.print("Enter new password (leave blank if you don't want to change it): ");
-        String newPassword = scanner.nextLine();
+        String newPassword = inputHandler.getStringInput();
 
         if (newName.isEmpty()) newName = student.getName();
         if (newStudentId.isEmpty()) newStudentId = student.getStudentId();
@@ -99,23 +98,23 @@ public class StudentMenu {
         System.out.println("3. Search by Publication Year");
         System.out.print("Please enter your choice: ");
 
-        int searchType = getIntInput(1, 3);
+        int searchType = inputHandler.getIntInput(1, 3);
         List<Book> foundBooks = null;
 
         switch (searchType) {
             case 1:
                 System.out.print("Enter book title: ");
-                String title = scanner.nextLine();
+                String title = inputHandler.getStringInput();
                 foundBooks = librarySystem.searchBooksByTitle(title);
                 break;
             case 2:
                 System.out.print("Enter author name: ");
-                String author = scanner.nextLine();
+                String author = inputHandler.getStringInput();
                 foundBooks = librarySystem.searchBooksByAuthor(author);
                 break;
             case 3:
                 System.out.print("Enter publication year: ");
-                int year = getIntInput(1000, 2025);
+                int year = inputHandler.getIntInput(1000, 2025);
                 foundBooks = librarySystem.searchBooksByPublicationYear(year);
                 break;
         }
@@ -131,7 +130,7 @@ public class StudentMenu {
     private void handleLoanRequest() {
         System.out.println("\n--- Borrow a Book ---");
         System.out.print("Enter the book code of the book you want to borrow: ");
-        int bookCode = getIntInput(1, 99999);
+        int bookCode = inputHandler.getIntInput(1, 99999);
 
         Book book = librarySystem.searchBookByBookCode(bookCode);
         if (book == null) {
@@ -164,20 +163,6 @@ public class StudentMenu {
                 loanInfo += " (delayed)";
             }
             System.out.println(loanInfo);
-        }
-    }
-
-    private int getIntInput(int min, int max) {
-        while (true) {
-            try {
-                int input = Integer.parseInt(scanner.nextLine());
-                if (input >= min && input <= max) {
-                    return input;
-                }
-                System.out.printf("Please enter a number between %d and %d: ", min, max);
-            } catch (NumberFormatException e) {
-                System.out.print("Invalid input. Please enter a number: ");
-            }
         }
     }
 }

@@ -5,16 +5,15 @@ import ap.finalproject.ManageSystem.LibrarySystem;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 import java.util.stream.Collectors;
 
 public class LibrarianMenu {
-    private Scanner scanner;
+    private InputHandler inputHandler;
     private LibrarySystem librarySystem;
     private Librarian librarian;
 
-    public LibrarianMenu(Scanner scanner, LibrarySystem librarySystem, Librarian librarian) {
-        this.scanner = scanner;
+    public LibrarianMenu(InputHandler inputHandler, LibrarySystem librarySystem, Librarian librarian) {
+        this.inputHandler = inputHandler;
         this.librarySystem = librarySystem;
         this.librarian = librarian;
     }
@@ -34,7 +33,7 @@ public class LibrarianMenu {
             System.out.println("10. Logout");
             System.out.print("Please enter your choice: ");
 
-            int choice = getIntInput(1, 10);
+            int choice = inputHandler.getIntInput(1, 10);
 
             switch (choice) {
                 case 1:
@@ -79,10 +78,10 @@ public class LibrarianMenu {
         System.out.println("1. Activate Student");
         System.out.println("2. Deactivate Student");
         System.out.print("Please enter your choice: ");
-        int actionChoice = getIntInput(1, 2);
+        int actionChoice = inputHandler.getIntInput(1, 2);
 
         System.out.print("Enter student username: ");
-        String username = scanner.nextLine();
+        String username = inputHandler.getStringInput();
 
         Student student = librarySystem.getStudentManager().getStudents().stream()
                 .filter(s -> s.getUsername().equals(username))
@@ -103,7 +102,7 @@ public class LibrarianMenu {
         } else {
             System.out.print("Are you sure you want to deactivate this student? (yes/no): ");
         }
-        String confirmation = scanner.nextLine();
+        String confirmation = inputHandler.getStringInput();
         if (confirmation.equalsIgnoreCase("yes")) {
             boolean success;
             if (actionChoice == 1) {
@@ -129,13 +128,13 @@ public class LibrarianMenu {
         System.out.println("3. Show All Borrowed Books");
         System.out.print("Please enter your choice: ");
 
-        int choice = getIntInput(1, 3);
+        int choice = inputHandler.getIntInput(1, 3);
         List<Loan> loansToDisplay = new ArrayList<>();
 
         switch (choice) {
             case 1:
                 System.out.print("Enter student name: ");
-                String studentName = scanner.nextLine();
+                String studentName = inputHandler.getStringInput();
                 loansToDisplay = librarySystem.getLoanManager().getLentBooks().stream()
                         .filter(loan -> loan.getStudent().getName().toLowerCase().contains(studentName.toLowerCase()))
                         .filter(loan -> loan.getStatus() == LoanStatus.BORROWED)
@@ -143,7 +142,7 @@ public class LibrarianMenu {
                 break;
             case 2:
                 System.out.print("Enter book title: ");
-                String bookTitle = scanner.nextLine();
+                String bookTitle = inputHandler.getStringInput();
                 loansToDisplay = librarySystem.getLoanManager().getLentBooks().stream()
                         .filter(loan -> loan.getBook().getTitle().toLowerCase().contains(bookTitle.toLowerCase()))
                         .filter(loan -> loan.getStatus() == LoanStatus.BORROWED)
@@ -167,7 +166,7 @@ public class LibrarianMenu {
         }
 
         System.out.print("Enter the number of the loan to return (0 to cancel): ");
-        int loanChoice = getIntInput(0, loansToDisplay.size());
+        int loanChoice = inputHandler.getIntInput(0, loansToDisplay.size());
 
         if (loanChoice == 0) {
             return;
@@ -175,7 +174,7 @@ public class LibrarianMenu {
 
         Loan selectedLoan = loansToDisplay.get(loanChoice - 1);
         System.out.print("Are you sure you want to return this book? (yes/no): ");
-        String confirmation = scanner.nextLine();
+        String confirmation = inputHandler.getStringInput();
 
         if (confirmation.equalsIgnoreCase("yes")) {
             boolean success = librarySystem.returnBook(selectedLoan, librarian);
@@ -192,7 +191,7 @@ public class LibrarianMenu {
     private void handleViewStudentLoanHistory() {
         System.out.println("\n--- View Student Loan History ---");
         System.out.print("Enter student username: ");
-        String username = scanner.nextLine();
+        String username = inputHandler.getStringInput();
 
         Student student = librarySystem.getStudentManager().getStudents().stream()
                 .filter(s -> s.getUsername().equals(username))
@@ -226,13 +225,13 @@ public class LibrarianMenu {
     private void handleChangeLibrarianPassword() {
         System.out.println("\n--- Change Password ---");
         System.out.print("Current Password: ");
-        String currentPassword = scanner.nextLine();
+        String currentPassword = inputHandler.getStringInput();
 
         System.out.print("New Password: ");
-        String newPassword = scanner.nextLine();
+        String newPassword = inputHandler.getStringInput();
 
         System.out.print("Confirm New Password: ");
-        String confirmPassword = scanner.nextLine();
+        String confirmPassword = inputHandler.getStringInput();
 
         if (!newPassword.equals(confirmPassword)) {
             System.out.println("New passwords do not match!");
@@ -249,24 +248,24 @@ public class LibrarianMenu {
     private void handleAddBook() {
         System.out.println("\n--- Add New Book ---");
         System.out.print("Book Title: ");
-        String title = scanner.nextLine();
+        String title = inputHandler.getStringInput();
         System.out.print("Author: ");
-        String author = scanner.nextLine();
+        String author = inputHandler.getStringInput();
 
         System.out.print("Publication Year: ");
-        int year = getIntInput(1000, 2025);
+        int year = inputHandler.getIntInput(1000, 2025);
 
         System.out.print("Page Count: ");
-        int pages = getIntInput(1, 9999);
+        int pages = inputHandler.getIntInput(1, 9999);
 
         System.out.print("Book Code: ");
-        int code = getIntInput(1, 99999);
+        int code = inputHandler.getIntInput(1, 99999);
 
         boolean success = librarySystem.addBook(title, author, year, pages, code);
 
         while (!success) {
             System.out.print("Please enter a different book code: ");
-            code = getIntInput(1, 99999);
+            code = inputHandler.getIntInput(1, 99999);
             success = librarySystem.addBook(title, author, year, pages, code);
         }
         if (success) {
@@ -281,12 +280,12 @@ public class LibrarianMenu {
         System.out.println("1. By Title");
         System.out.println("2. By Book Code");
         System.out.print("Enter your choice: ");
-        int searchChoice = getIntInput(1, 2);
+        int searchChoice = inputHandler.getIntInput(1, 2);
 
         Book bookToEdit = null;
         if (searchChoice == 1) {
             System.out.print("Enter book title: ");
-            String title = scanner.nextLine();
+            String title = inputHandler.getStringInput();
             List<Book> books = librarySystem.searchBooksByTitle(title);
             if (books.isEmpty()) {
                 System.out.println("No books found with that title.");
@@ -299,7 +298,7 @@ public class LibrarianMenu {
                     System.out.println(book);
                 }
                 System.out.print("Enter the book code of the book you want to edit: ");
-                int code = getIntInput(1, 99999);
+                int code = inputHandler.getIntInput(1, 99999);
                 bookToEdit = librarySystem.searchBookByBookCode(code);
                 if (bookToEdit == null) {
                     System.out.println("Invalid book code.");
@@ -308,7 +307,7 @@ public class LibrarianMenu {
             }
         } else {
             System.out.print("Enter book code: ");
-            int code = getIntInput(1, 99999);
+            int code = inputHandler.getIntInput(1, 99999);
             bookToEdit = librarySystem.searchBookByBookCode(code);
             if (bookToEdit == null) {
                 System.out.println("No book found with that code.");
@@ -331,36 +330,36 @@ public class LibrarianMenu {
             System.out.println("6. Finish Editing");
             System.out.print("Enter your choice: ");
 
-            int choice = getIntInput(1, 6);
+            int choice = inputHandler.getIntInput(1, 6);
 
             switch (choice) {
                 case 1:
                     System.out.print("Enter new title: ");
-                    String newTitle = scanner.nextLine();
+                    String newTitle = inputHandler.getStringInput();
                     book.setTitle(newTitle);
                     System.out.println("Title updated.");
                     break;
                 case 2:
                     System.out.print("Enter new author: ");
-                    String newAuthor = scanner.nextLine();
+                    String newAuthor = inputHandler.getStringInput();
                     book.setAuthor(newAuthor);
                     System.out.println("Author updated.");
                     break;
                 case 3:
                     System.out.print("Enter new publication year: ");
-                    int newYear = getIntInput(1000, 2025);
+                    int newYear = inputHandler.getIntInput(1000, 2025);
                     book.setPublicationYear(newYear);
                     System.out.println("Publication year updated.");
                     break;
                 case 4:
                     System.out.print("Enter new page count: ");
-                    int newPages = getIntInput(1, 9999);
+                    int newPages = inputHandler.getIntInput(1, 9999);
                     book.setPageCount(newPages);
                     System.out.println("Page count updated.");
                     break;
                 case 5:
                     System.out.print("Enter new book code: ");
-                    int newCode = getIntInput(1, 99999);
+                    int newCode = inputHandler.getIntInput(1, 99999);
                     if (librarySystem.isBookCodeTaken(newCode, book)) {
                         System.out.println("This book code already exist. Please choose a different code.");
                     } else {
@@ -389,7 +388,7 @@ public class LibrarianMenu {
             System.out.println((i+1) + ". " + loan.getStudent().getName() + " - " + loan.getBook().getTitle());
         }
         System.out.print("Enter the number of the loan to approve (0 to cancel): ");
-        int choice = getIntInput(0, requestedLoans.size());
+        int choice = inputHandler.getIntInput(0, requestedLoans.size());
 
         if (choice == 0) {
             return;
@@ -400,20 +399,6 @@ public class LibrarianMenu {
             librarySystem.saveData();
         } else {
             System.out.println("Failed to approve the loan.");
-        }
-    }
-
-    private int getIntInput(int min, int max) {
-        while (true) {
-            try {
-                int input = Integer.parseInt(scanner.nextLine());
-                if (input >= min && input <= max) {
-                    return input;
-                }
-                System.out.printf("Please enter a number between %d and %d: ", min, max);
-            } catch (NumberFormatException e) {
-                System.out.print("Invalid input. Please enter a number: ");
-            }
         }
     }
 }

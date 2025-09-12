@@ -40,10 +40,6 @@ public class Student extends Person {
         return pendingReturns;
     }
 
-    public void setPendingReturns(int pendingReturns) {
-        this.pendingReturns = pendingReturns;
-    }
-
     public int getDelayedReturns() {
         return delayedReturns;
     }
