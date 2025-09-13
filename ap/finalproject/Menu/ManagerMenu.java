@@ -7,18 +7,16 @@ import ap.finalproject.Student;
 
 import java.util.List;
 
-public class ManagerMenu {
-    private InputHandler inputHandler;
-    private LibrarySystem librarySystem;
+public class ManagerMenu extends AbstractMenu {
 
     public ManagerMenu(InputHandler inputHandler, LibrarySystem librarySystem) {
-        this.inputHandler = inputHandler;
-        this.librarySystem = librarySystem;
+        super(inputHandler, librarySystem);
     }
 
-    public void displayManagerMenu() {
+    @Override
+    public void displayUserMenu() {
         while (true) {
-            System.out.println("\n=== Manager Dashboard ===");
+            printHeader("Manager Dashboard");
             System.out.println("1. Add New Librarian");
             System.out.println("2. View Librarian Performance Report");
             System.out.println("3. View Student Loan History");

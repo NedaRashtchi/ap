@@ -7,20 +7,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class LibrarianMenu {
-    private InputHandler inputHandler;
-    private LibrarySystem librarySystem;
+public class LibrarianMenu extends AbstractMenu {
     private Librarian librarian;
 
     public LibrarianMenu(InputHandler inputHandler, LibrarySystem librarySystem, Librarian librarian) {
-        this.inputHandler = inputHandler;
-        this.librarySystem = librarySystem;
+        super(inputHandler, librarySystem);
         this.librarian = librarian;
     }
 
-    public void displayLibrarianMenu() {
+    @Override
+    public void displayUserMenu() {
         while (true) {
-            System.out.println("\n=== Librarian Dashboard ===");
+            printHeader("Librarian Dashboard");
             System.out.println("1. View My Information");
             System.out.println("2. Change Password");
             System.out.println("3. Add New Book");

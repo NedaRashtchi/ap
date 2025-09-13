@@ -44,7 +44,7 @@ public class MenuHandler {
                     break;
                 case 5:
                     GuestMenu guestMenu = new GuestMenu(inputHandler, librarySystem);
-                    guestMenu.displayGuestMenu();
+                    guestMenu.displayUserMenu();
                     break;
                 case 6:
                     librarySystem.exit();
@@ -79,7 +79,7 @@ public class MenuHandler {
         if (currentUser != null) {
             System.out.println("Login successful! Welcome, " + currentUser.getName());
             StudentMenu studentMenu = new StudentMenu(inputHandler, librarySystem, (Student) currentUser);
-            studentMenu.displayStudentMenu();
+            studentMenu.displayUserMenu();
             currentUser = null;
         } else {
             System.out.println("Invalid username or password. Please try again.");
@@ -96,7 +96,7 @@ public class MenuHandler {
         if (currentUser != null) {
             System.out.println("Login successful! Welcome, " + currentUser.getName());
             LibrarianMenu librarianMenu = new LibrarianMenu(inputHandler, librarySystem, (Librarian) currentUser);
-            librarianMenu.displayLibrarianMenu();
+            librarianMenu.displayUserMenu();
             currentUser = null;
         } else {
             System.out.println("Invalid username or password. Please try again.");
@@ -112,7 +112,7 @@ public class MenuHandler {
         if (librarySystem.authenticateManager(username, password)) {
             System.out.println("Login successful! Welcome, Manager");
             ManagerMenu managerMenu = new ManagerMenu(inputHandler, librarySystem);
-            managerMenu.displayManagerMenu();
+            managerMenu.displayUserMenu();
         }
     }
 }

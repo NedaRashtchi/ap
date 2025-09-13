@@ -6,18 +6,16 @@ import ap.finalproject.ManageSystem.LibrarySystem;
 
 import java.util.List;
 
-public class GuestMenu {
-    private InputHandler inputHandler;
-    private LibrarySystem librarySystem;
+public class GuestMenu extends AbstractMenu {
 
     public GuestMenu(InputHandler inputHandler, LibrarySystem librarySystem) {
-        this.inputHandler = inputHandler;
-        this.librarySystem = librarySystem;
+        super(inputHandler, librarySystem);
     }
 
-    public void displayGuestMenu() {
+    @Override
+    public void displayUserMenu() {
         while (true) {
-            System.out.println("\n=== Guest Menu ===");
+            printHeader("Guest Menu");
             System.out.println("1. View Available Books");
             System.out.println("2. Search Books by Title");
             System.out.println("3. View Registered Student Count");

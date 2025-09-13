@@ -8,20 +8,18 @@ import ap.finalproject.Student;
 
 import java.util.List;
 
-public class StudentMenu {
-    private InputHandler inputHandler;
-    private LibrarySystem librarySystem;
+public class StudentMenu extends AbstractMenu {
     private Student student;
 
     public StudentMenu(InputHandler inputHandler, LibrarySystem librarySystem, Student student) {
-        this.inputHandler = inputHandler;
-        this.librarySystem = librarySystem;
+        super(inputHandler, librarySystem);
         this.student = student;
     }
 
-    public void displayStudentMenu() {
+    @Override
+    public void displayUserMenu() {
         while (true) {
-            System.out.println("\n=== Student Dashboard ===");
+            printHeader("Student Dashboard");
             System.out.println("1. View My Information");
             System.out.println("2. Edit My Information");
             System.out.println("3. Borrow a Book");
