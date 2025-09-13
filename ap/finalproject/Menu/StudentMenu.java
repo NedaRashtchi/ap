@@ -39,19 +39,19 @@ public class StudentMenu {
                     System.out.println(student);
                     break;
                 case 2:
-                    handleEditStudentInformation();
+                    editStudentInformation();
                     break;
                 case 3:
-                    handleLoanRequest();
+                    loanRequest();
                     break;
                 case 4:
                     librarySystem.displayAvailableBooks();
                     break;
                 case 5:
-                    handleBookSearchForStudent();
+                    bookSearchForStudent();
                     break;
                 case 6:
-                    handleViewStudentLoans();
+                    viewStudentLoans();
                     break;
                 case 7:
                     System.out.println("Logged out successfully.");
@@ -62,7 +62,7 @@ public class StudentMenu {
         }
     }
 
-    private void handleEditStudentInformation() {
+    private void editStudentInformation() {
         System.out.println("\n--- Edit My Information ---");
         System.out.println("Current Information:");
         System.out.println("Name: " + student.getName());
@@ -91,7 +91,7 @@ public class StudentMenu {
         }
     }
 
-    private void handleBookSearchForStudent() {
+    private void bookSearchForStudent() {
         System.out.println("\n--- Search for Books ---");
         System.out.println("1. Search by Title");
         System.out.println("2. Search by Author");
@@ -127,7 +127,7 @@ public class StudentMenu {
         }
     }
 
-    private void handleLoanRequest() {
+    private void loanRequest() {
         System.out.println("\n--- Borrow a Book ---");
         System.out.print("Enter the book code of the book you want to borrow: ");
         int bookCode = inputHandler.getIntInput(1, 99999);
@@ -149,7 +149,7 @@ public class StudentMenu {
         }
     }
 
-    private void handleViewStudentLoans() {
+    private void viewStudentLoans() {
         List<Loan> studentLoans = librarySystem.getLoanManager().getLoansByStudent(student);
         if (studentLoans.isEmpty()) {
             System.out.println("You have no loans.");

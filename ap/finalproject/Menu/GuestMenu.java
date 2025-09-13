@@ -42,7 +42,7 @@ public class GuestMenu {
                     displayBookCount();
                     break;
                 case 5:
-                    handleRecentLoans();
+                    viewRecentLoans();
                     break;
                 case 6:
                     return;
@@ -52,7 +52,7 @@ public class GuestMenu {
         }
     }
 
-    private void handleRecentLoans() {
+    private void viewRecentLoans() {
         List<Loan> recentLoans = librarySystem.getLoansInLastWeek();
         int count = recentLoans.size();
         System.out.println("\nNumber of loans in the last week: " + count);

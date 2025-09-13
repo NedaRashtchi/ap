@@ -41,28 +41,28 @@ public class LibrarianMenu {
                     System.out.println(librarian);
                     break;
                 case 2:
-                    handleChangeLibrarianPassword();
+                    changeLibrarianPassword();
                     break;
                 case 3:
-                    handleAddBook();
+                    addBook();
                     break;
                 case 4:
                     librarySystem.displayAvailableBooks();
                     break;
                 case 5:
-                    handleEditBook();
+                    editBookInfo();
                     break;
                 case 6:
-                    handleApproveLoanRequests();
+                    approveLoanRequests();
                     break;
                 case 7:
-                    handleReturnBook();
+                    returnBook();
                     break;
                 case 8:
-                    handleViewStudentLoanHistory();
+                    viewStudentLoanHistory();
                     break;
                 case 9:
-                    handleActivateDeactivateStudent();
+                    activateDeactivateStudent();
                     break;
                 case 10:
                     System.out.println("Logged out successfully.");
@@ -73,7 +73,7 @@ public class LibrarianMenu {
         }
     }
 
-    private void handleActivateDeactivateStudent() {
+    private void activateDeactivateStudent() {
         System.out.println("\n--- Activate/Deactivate Student ---");
         System.out.println("1. Activate Student");
         System.out.println("2. Deactivate Student");
@@ -121,7 +121,7 @@ public class LibrarianMenu {
         }
     }
 
-    private void handleReturnBook() {
+    private void returnBook() {
         System.out.println("\n--- Return a Book ---");
         System.out.println("1. Search by Student Name");
         System.out.println("2. Search by Book Title");
@@ -188,7 +188,7 @@ public class LibrarianMenu {
         }
     }
 
-    private void handleViewStudentLoanHistory() {
+    private void viewStudentLoanHistory() {
         System.out.println("\n--- View Student Loan History ---");
         System.out.print("Enter student username: ");
         String username = inputHandler.getStringInput();
@@ -222,7 +222,7 @@ public class LibrarianMenu {
         }
     }
 
-    private void handleChangeLibrarianPassword() {
+    private void changeLibrarianPassword() {
         System.out.println("\n--- Change Password ---");
         System.out.print("Current Password: ");
         String currentPassword = inputHandler.getStringInput();
@@ -245,7 +245,7 @@ public class LibrarianMenu {
         }
     }
 
-    private void handleAddBook() {
+    private void addBook() {
         System.out.println("\n--- Add New Book ---");
         System.out.print("Book Title: ");
         String title = inputHandler.getStringInput();
@@ -274,7 +274,7 @@ public class LibrarianMenu {
         }
     }
 
-    private void handleEditBook() {
+    private void editBookInfo() {
         System.out.println("\n--- Edit Book Information ---");
         System.out.println("How do you want to search for the book?");
         System.out.println("1. By Title");
@@ -375,7 +375,7 @@ public class LibrarianMenu {
         }
     }
 
-    private void handleApproveLoanRequests() {
+    private void approveLoanRequests() {
         List<Loan> requestedLoans = librarySystem.getLoanManager().getRequestedLoans();
 
         if (requestedLoans.isEmpty()) {

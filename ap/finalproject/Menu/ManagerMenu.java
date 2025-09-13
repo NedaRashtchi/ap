@@ -33,13 +33,13 @@ public class ManagerMenu {
                     handleLibrarianRegistration();
                     break;
                 case 2:
-                    handleLibrarianPerformanceReport();
+                    librarianPerformanceReport();
                     break;
                 case 3:
-                    handleViewStudentLoanHistory();
+                    viewStudentLoanHistory();
                     break;
                 case 4:
-                    handleTop10DelayedStudents();
+                    viewTop10DelayedStudents();
                     break;
                 case 5:
                     System.out.println("Logged out successfully.");
@@ -50,7 +50,7 @@ public class ManagerMenu {
         }
     }
 
-    private void handleLibrarianPerformanceReport() {
+    private void librarianPerformanceReport() {
         System.out.println("\n--- Librarian Performance Report ---");
         System.out.print("Enter librarian username: ");
         String username = inputHandler.getStringInput();
@@ -77,7 +77,7 @@ public class ManagerMenu {
         librarySystem.registerLibrarian(name, username, password);
     }
 
-    private void handleViewStudentLoanHistory() {
+    private void viewStudentLoanHistory() {
         System.out.println("\n--- View Student Loan History ---");
         System.out.print("Enter student username: ");
         String username = inputHandler.getStringInput();
@@ -109,7 +109,7 @@ public class ManagerMenu {
         }
     }
 
-    private void handleTop10DelayedStudents() {
+    private void viewTop10DelayedStudents() {
         List<Student> topDelayedStudents = librarySystem.getTop10StudentsWithMostDelays();
         System.out.println("\n--- Top 10 Students with Most Delays ---");
         if (topDelayedStudents.isEmpty()) {
