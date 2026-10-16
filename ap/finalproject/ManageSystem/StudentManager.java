@@ -32,19 +32,6 @@ public class StudentManager {
                 .orElse(null);
     }
 
-    public void displayStudents() {
-        System.out.println("\n--- List of Registered Students ---");
-
-        if (students.isEmpty()) {
-            System.out.println("No students have registered yet.");
-            return;
-        }
-
-        for (Student student : students) {
-            System.out.println(student);
-        }
-    }
-
     public List<Student> getTop10StudentsWithMostDelays() {
         return students.stream()
                 .filter(s -> s.getDelayedReturns() > 0)
