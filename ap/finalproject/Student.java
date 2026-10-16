@@ -81,7 +81,7 @@ public class Student extends Person {
         return "Name: " + name +
                 " | Student ID: " + studentId +
                 " | Username: " + username +
-                " | Total Loans: " + totalLoans +
+                " |\n \t  Total Loans: " + totalLoans +
                 " | Pending Returns: " + pendingReturns +
                 " | Delayed Returns: " + delayedReturns +
                 " | Total Delay Days: " + totalDelayDays +
