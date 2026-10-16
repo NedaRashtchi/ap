@@ -39,7 +39,7 @@ public class Loan {
     public String toString() {
         return "Student: " + student.getName() +
                 " | Book: " + book.getTitle() +
-                " | Request Date: " + requestDate +
+                " |\n\t\t Request Date: " + requestDate +
                 " | Borrow Date: " + borrowDate +
                 " | Return Date: " + returnDate +
                 " | Status: " + status;
