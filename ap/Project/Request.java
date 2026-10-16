@@ -15,6 +15,15 @@ public class Request extends Action {
     public Librarian getLibrarian(){
         return librarian;
     }
+    public void setBook(Book book) {
+        this.book = book;
+    }
+    public void setStudent(Student student) {
+        this.student = student;
+    }
+    public void setLibrarian(Librarian librarian) {
+        this.librarian = librarian;
+    }
     public Student getStudent(){
         return super.getStudent();
     }

@@ -36,4 +36,16 @@ public class Book {
         return "[ Title: " + title + ", Author: " + author + ", Year: " + publicationYear +
                 ", Pages: " + pageCount + ", Code: " + bookCode + " ]";
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof Book)) return false;
+        return this.bookCode == ((Book) obj).bookCode;
+    }
+
+    @Override
+    public int hashCode() {
+        return Integer.hashCode(bookCode);
+    }
 }

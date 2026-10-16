@@ -115,14 +115,6 @@ public class JsonStorage implements DataStorageStrategy {
         if (borrows != null) {
             for (Borrow borrow : borrows) {
                 library.addBorrow(borrow);
-
-                // Link to student if it's an active borrow
-                if (borrow.getReturnDate() == null) {
-                    Student student = library.searchStudent(borrow.getStudent().getStdNumber());
-                    if (student != null) {
-                        student.addBorrowedBook(borrow.getBook());
-                    }
-                }
             }
         }
     }

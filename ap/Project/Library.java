@@ -128,6 +128,15 @@ public class Library {
         return books.get(code);
     }
 
+    public Librarian findLibrarianById(int id) {
+        for (Librarian librarian : librarians) {
+            if (librarian.getId() == id) {
+                return librarian;
+            }
+        }
+        return null;
+    }
+
     public List<Book> searchBooksByTitle(String title) {
         List<Book> result = new ArrayList<>();
         for (Book b : books.values()) {

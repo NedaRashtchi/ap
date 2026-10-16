@@ -29,8 +29,7 @@ public class Menu {
         System.out.println("1. Add Book");
         System.out.println("2. Edit Personal Info");
         System.out.println("3. View and Approve Requests");
-//        System.out.println("4. View Activity Report");
-        System.out.println("5. Back to Main Menu");
+        System.out.println("4. Back to Main Menu");
 
         return inputHandler.getInt("");
     }

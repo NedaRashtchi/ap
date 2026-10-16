@@ -34,6 +34,12 @@ public class TabSplitStorage implements DataStorageStrategy {
             System.err.println("Error loading data: " + e.getMessage());
         }
     }
+
+    private String[] splitName(String name) {
+        String[] parts = name.split(" ", 2);
+        String lastName = parts.length > 1 ? parts[1] : "";
+        return new String[]{parts[0], lastName};
+    }
     private void saveBooks(Library library) throws IOException {
         try (PrintWriter writer = new PrintWriter(new FileWriter("books.tsv"))) {
             for (Book book : library.getBooks().values()) {
@@ -72,7 +78,7 @@ public class TabSplitStorage implements DataStorageStrategy {
         List<String> lines = Files.readAllLines(Paths.get("students.tsv"));
         for (String line : lines) {
             String[] parts = line.split("\t");
-            String[] nameParts = parts[1].split(" ");
+            String[] nameParts = splitName(parts[1]);
             Student student = new Student(nameParts[0], nameParts[1],
                     Integer.parseInt(parts[0]), parts[2]);
             student.setRegisterDate(LocalDate.parse(parts[3]));
@@ -95,7 +101,7 @@ public class TabSplitStorage implements DataStorageStrategy {
         List<String> lines = Files.readAllLines(Paths.get("librarians.tsv"));
         for (String line : lines) {
             String[] parts = line.split("\t");
-            String[] nameParts = parts[1].split(" ");
+            String[] nameParts = splitName(parts[1]);
             Librarian librarian = new Librarian(nameParts[0], nameParts[1],
                     Integer.parseInt(parts[0]),
                     Integer.parseInt(parts[3]),
@@ -117,7 +123,7 @@ public class TabSplitStorage implements DataStorageStrategy {
         List<String> lines = Files.readAllLines(Paths.get("manager.tsv"));
         if (lines.isEmpty()) return;
         String[] parts = lines.get(0).split("\t");
-        String[] nameParts = parts[1].split(" ");
+        String[] nameParts = splitName(parts[1]);
         Manager manager = new Manager(nameParts[0], nameParts[1],
                 Education.valueOf(parts[2]), Integer.parseInt(parts[0]));
         library.setManager(manager);
@@ -158,8 +164,13 @@ public class TabSplitStorage implements DataStorageStrategy {
         }
     }
     private void saveBorrows(Library library) throws IOException {
-        try (PrintWriter writer = new PrintWriter(new FileWriter("borrows.tsv"))) {
-            for (Borrow borrow : library.getBorrows()) {
+        saveBorrowList(library.getBorrows(), "borrows.tsv");
+        saveBorrowList(library.getBorrowedRecords(), "borrowedRecords.tsv");
+        saveBorrowList(library.getDelayedReturns(), "delayedReturns.tsv");
+    }
+    private void saveBorrowList(List<Borrow> borrows, String fileName) throws IOException {
+        try (PrintWriter writer = new PrintWriter(new FileWriter(fileName))) {
+            for (Borrow borrow : borrows) {
                 writer.println(borrow.getStudent().getStdNumber() + "\t" +
                                 borrow.getBook().getBookCode() + "\t" +
                                 borrow.getBorrowDate() + "\t" +
@@ -171,8 +182,13 @@ public class TabSplitStorage implements DataStorageStrategy {
         }
     }
     private void loadBorrows(Library library) throws IOException {
-        if (!Files.exists(Paths.get("borrows.tsv"))) return;
-        List<String> lines = Files.readAllLines(Paths.get("borrows.tsv"));
+        loadBorrowList(library, "borrows.tsv", "borrows");
+        loadBorrowList(library, "borrowedRecords.tsv", "records");
+        loadBorrowList(library, "delayedReturns.tsv", "delayed");
+    }
+    private void loadBorrowList(Library library, String fileName, String kind) throws IOException {
+        if (!Files.exists(Paths.get(fileName))) return;
+        List<String> lines = Files.readAllLines(Paths.get(fileName));
         for (String line : lines) {
             String[] parts = line.split("\t");
             if (parts.length < 6) continue;
@@ -197,10 +213,12 @@ public class TabSplitStorage implements DataStorageStrategy {
                 if (returner != null) {
                     borrow.setReturner(returner);
                 }
-                library.addBorrow(borrow);
-
-                if (returnDate == null) {
-                    student.addBorrowedBook(book);
+                if (kind.equals("borrows")) {
+                    library.addBorrow(borrow);
+                } else if (kind.equals("records")) {
+                    library.addBorrowRecord(borrow);
+                } else {
+                    library.addDelayedReturn(borrow);
                 }
             }
         }

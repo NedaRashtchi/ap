@@ -7,7 +7,8 @@ import java.util.List;
 public class Student extends Person implements Loginable {
     private int stdNumber;
     private String major;
-    private List<Book> borrowedBooks;
+    // rebuilt from active borrows on load; must not be serialized (would duplicate entries)
+    private transient List<Book> borrowedBooks;
     private LocalDate registerDate;
 
     public Student(String firstName, String lastName, int stdNumber, String major) {
@@ -32,13 +33,16 @@ public class Student extends Person implements Loginable {
     }
 
     public void addBorrowedBook(Book book) {
+        if (borrowedBooks == null) borrowedBooks = new ArrayList<>();
         borrowedBooks.add(book);
     }
 
     public void removeBorrowedBook(Book book) {
+        if (borrowedBooks == null) return;
         borrowedBooks.remove(book);
     }
     public List<Book> getBorrowedBooks() {
+        if (borrowedBooks == null) borrowedBooks = new ArrayList<>();
         return borrowedBooks;
     }
 

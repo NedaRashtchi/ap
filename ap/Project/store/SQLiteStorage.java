@@ -97,6 +97,7 @@ public class SQLiteStorage implements DataStorageStrategy {
                         "studentStdNumber INTEGER, " +
                         "bookCode INTEGER, " +
                         "borrowDate TEXT, " +
+                        "dueDate TEXT, " +
                         "returnDate TEXT, " +
                         "borrowerId INTEGER, " +
                         "returnerId INTEGER, " +
@@ -110,6 +111,7 @@ public class SQLiteStorage implements DataStorageStrategy {
                         "studentStdNumber INTEGER, " +
                         "bookCode INTEGER, " +
                         "borrowDate TEXT, " +
+                        "dueDate TEXT, " +
                         "returnDate TEXT, " +
                         "borrowerId INTEGER, " +
                         "returnerId INTEGER, " +
@@ -123,6 +125,7 @@ public class SQLiteStorage implements DataStorageStrategy {
                         "studentStdNumber INTEGER, " +
                         "bookCode INTEGER, " +
                         "borrowDate TEXT, " +
+                        "dueDate TEXT, " +
                         "returnDate TEXT, " +
                         "borrowerId INTEGER, " +
                         "returnerId INTEGER, " +
@@ -135,6 +138,15 @@ public class SQLiteStorage implements DataStorageStrategy {
         try (Statement stmt = connection.createStatement()) {
             for (String sql : createStatements) {
                 stmt.execute(sql);
+            }
+            // migrate databases created before the dueDate column existed
+            String[] borrowTables = {"borrows", "borrowed_records", "delayed_returns"};
+            for (String table : borrowTables) {
+                try {
+                    stmt.execute("ALTER TABLE " + table + " ADD COLUMN dueDate TEXT");
+                } catch (SQLException ignored) {
+                    // column already exists
+                }
             }
         }
     }
@@ -150,6 +162,12 @@ public class SQLiteStorage implements DataStorageStrategy {
                 stmt.execute("DELETE FROM " + table);
             }
         }
+    }
+
+    private String[] splitName(String name) {
+        String[] parts = name.split(" ", 2);
+        String lastName = parts.length > 1 ? parts[1] : "";
+        return new String[]{parts[0], lastName};
     }
 
     private void saveBooks(Library library) throws SQLException {
@@ -170,9 +188,10 @@ public class SQLiteStorage implements DataStorageStrategy {
         String sql = "INSERT INTO students(stdNumber, firstName, lastName, major, registerDate) VALUES(?,?,?,?,?)";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             for (Student student : library.getStudents().values()) {
+                String[] nameParts = splitName(student.getName());
                 pstmt.setInt(1, student.getStdNumber());
-                pstmt.setString(2, student.getName().split(" ")[0]);
-                pstmt.setString(3, student.getName().split(" ")[1]);
+                pstmt.setString(2, nameParts[0]);
+                pstmt.setString(3, nameParts[1]);
                 pstmt.setString(4, student.getMajor());
                 pstmt.setString(5, student.getRegisterDate().toString());
                 pstmt.executeUpdate();
@@ -184,9 +203,10 @@ public class SQLiteStorage implements DataStorageStrategy {
         String sql = "INSERT INTO librarians(id, firstName, lastName, registerDate, borrowCount, returnCount) VALUES(?,?,?,?,?,?)";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             for (Librarian librarian : library.getLibrarians()) {
+                String[] nameParts = splitName(librarian.getName());
                 pstmt.setInt(1, librarian.getId());
-                pstmt.setString(2, librarian.getName().split(" ")[0]);
-                pstmt.setString(3, librarian.getName().split(" ")[1]);
+                pstmt.setString(2, nameParts[0]);
+                pstmt.setString(3, nameParts[1]);
                 pstmt.setString(4, librarian.getRegisterDate().toString());
                 pstmt.setInt(5, librarian.getBorrowCount());
                 pstmt.setInt(6, librarian.getReturnCount());
@@ -199,9 +219,10 @@ public class SQLiteStorage implements DataStorageStrategy {
         String sql = "INSERT INTO manager(id, firstName, lastName, education) VALUES(?,?,?,?)";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             Manager manager = library.getManager();
+            String[] nameParts = splitName(manager.getName());
             pstmt.setInt(1, manager.getId());
-            pstmt.setString(2, manager.getName().split(" ")[0]);
-            pstmt.setString(3, manager.getName().split(" ")[1]);
+            pstmt.setString(2, nameParts[0]);
+            pstmt.setString(3, nameParts[1]);
             pstmt.setString(4, manager.getEducation().toString());
             pstmt.executeUpdate();
         }
@@ -232,15 +253,16 @@ public class SQLiteStorage implements DataStorageStrategy {
 
         if (borrows.isEmpty()) return;
 
-        String sql = "INSERT INTO " + tableName + "(studentStdNumber, bookCode, borrowDate, returnDate, borrowerId, returnerId) VALUES(?,?,?,?,?,?)";
+        String sql = "INSERT INTO " + tableName + "(studentStdNumber, bookCode, borrowDate, dueDate, returnDate, borrowerId, returnerId) VALUES(?,?,?,?,?,?,?)";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             for (Borrow borrow : borrows) {
                 pstmt.setInt(1, borrow.getStudent().getStdNumber());
                 pstmt.setInt(2, borrow.getBook().getBookCode());
                 pstmt.setString(3, borrow.getBorrowDate().toString());
-                pstmt.setString(4, borrow.getReturnDate() != null ? borrow.getReturnDate().toString() : null);
-                pstmt.setInt(5, borrow.getBorrower().getId());
-                pstmt.setObject(6, borrow.getReturner() != null ? borrow.getReturner().getId() : null);
+                pstmt.setString(4, borrow.getDueDate().toString());
+                pstmt.setString(5, borrow.getReturnDate() != null ? borrow.getReturnDate().toString() : null);
+                pstmt.setInt(6, borrow.getBorrower().getId());
+                pstmt.setObject(7, borrow.getReturner() != null ? borrow.getReturner().getId() : null);
                 pstmt.executeUpdate();
             }
         }
@@ -343,6 +365,7 @@ public class SQLiteStorage implements DataStorageStrategy {
                 Student student = library.searchStudent(rs.getInt("studentStdNumber"));
                 Book book = library.searchBook(rs.getInt("bookCode"));
                 LocalDate borrowDate = LocalDate.parse(rs.getString("borrowDate"));
+                String dueDateStr = rs.getString("dueDate");
                 LocalDate returnDate = rs.getString("returnDate") == null ?
                         null : LocalDate.parse(rs.getString("returnDate"));
 
@@ -356,6 +379,9 @@ public class SQLiteStorage implements DataStorageStrategy {
 
                 if (student != null && book != null && borrower != null) {
                     Borrow borrow = new Borrow(book, student, borrowDate, borrower);
+                    if (dueDateStr != null) {
+                        borrow.setDueDate(LocalDate.parse(dueDateStr));
+                    }
                     if (returnDate != null) {
                         borrow.setReturnDate(returnDate);
                     }
@@ -365,9 +391,6 @@ public class SQLiteStorage implements DataStorageStrategy {
 
                     if (tableName.equals("borrows")) {
                         library.addBorrow(borrow);
-                        if (returnDate == null) {
-                            student.addBorrowedBook(book);
-                        }
                     } else if (tableName.equals("borrowed_records")) {
                         library.addBorrowRecord(borrow);
                     } else if (tableName.equals("delayed_returns")) {

@@ -85,6 +85,7 @@ public class LibrarySystem {
                         listBorrowRecord();
                         break;
                     case 6:
+                        fileHandler.saveLibraryData(library);
                         currentStudent = null;
                         return;
                     default:
@@ -101,7 +102,12 @@ public class LibrarySystem {
         String firstName = inputHandler.getLine("First Name: ");
         String lastName = inputHandler.getLine("Last Name: ");
         String major = inputHandler.getLine("Major: ");
-        int stdNumber = 140301 + library.getStudents().size();
+
+        int stdNumber = 140300;
+        for (Student s : library.getStudents().values()) {
+            stdNumber = Math.max(stdNumber, s.getStdNumber());
+        }
+        stdNumber++;
 
         Student newStudent = new Student(firstName, lastName, stdNumber, major);
         library.addStudent(newStudent);
@@ -129,10 +135,8 @@ public class LibrarySystem {
                         case 3:
                             handleLibrarianRequests();
                             break;
-//                    case 4:
-//                        listLibrarianActivity();
-//                        break;
-                        case 5:
+                        case 4:
+                            fileHandler.saveLibraryData(library);
                             currentLibrarian = null;
                             return;
                         default:
@@ -170,6 +174,7 @@ public class LibrarySystem {
                         viewPopularBooks(library);
                         break;
                     case 6:
+                        fileHandler.saveLibraryData(library);
                         return;
                     default:
                         System.out.println("Invalid choice.");
@@ -186,6 +191,15 @@ public class LibrarySystem {
         int year = inputHandler.getInt("Publish year: ");
         int pages = inputHandler.getInt("Page count: ");
         int code = inputHandler.getInt("Book code: ");
+
+        if (year <= 0 || pages <= 0) {
+            System.out.println("Publish year and page count must be positive.");
+            return;
+        }
+        if (library.searchBook(code) != null) {
+            System.out.println("A book with this code already exists.");
+            return;
+        }
 
         Book book = new Book(title, author, year, pages, code);
         library.addBook(book);
@@ -204,21 +218,35 @@ public class LibrarySystem {
         String lastName = inputHandler.getLine("Last name: ");
         int id = inputHandler.getInt("ID: ");
 
+        if (library.searchLibrarian(id) != -1) {
+            System.out.println("A librarian with this ID already exists.");
+            return;
+        }
+
         library.addLibrarian(new Librarian(firstName, lastName, id, 0, 0));
         System.out.println("Librarian added successfully.");
     }
 
     private void viewDelayedReturns(Library library) {
         List<Borrow> delayedList = library.getDelayedReturns();
-        if (delayedList.isEmpty()) {
-            System.out.println("No delayed returns found.");
-            return;
-        }
+        boolean found = false;
 
         System.out.println("\nDelayed Return Books:");
+        for (Borrow borrow : library.getBorrows()) {
+            if (LocalDate.now().isAfter(borrow.getDueDate())) {
+                found = true;
+                System.out.println(borrow.toString());
+                System.out.println("Overdue by " + ChronoUnit.DAYS.between(borrow.getDueDate(), LocalDate.now()) + " days (not returned yet)");
+            }
+        }
         for (Borrow borrow : delayedList) {
+            found = true;
             System.out.println(borrow.toString());
-            System.out.println("Days Delayed: " + ChronoUnit.DAYS.between(borrow.getReturnDate(), LocalDate.now()));
+            long daysLate = ChronoUnit.DAYS.between(borrow.getDueDate(), borrow.getReturnDate());
+            System.out.println("Returned " + Math.max(daysLate, 0) + " days late");
+        }
+        if (!found) {
+            System.out.println("No delayed returns found.");
         }
     }
 
@@ -237,7 +265,7 @@ public class LibrarySystem {
             borrowCount = 0;
 
             for (Borrow borrow : library.getBorrowedRecords()) {
-                if (borrow.getBook().equals(book) && borrow.getBorrowDate().isAfter(LocalDate.now().minusYears(1))) {
+                if (borrow.getBook().getBookCode() == book.getBookCode() && borrow.getBorrowDate().isAfter(LocalDate.now().minusYears(1))) {
                     borrowCount++;
                 }
             }
@@ -325,6 +353,18 @@ public class LibrarySystem {
                 return;
             }
         }
+        for (Request request : library.getRequests()) {
+            if (request.getStudent().equals(currentStudent)
+                    && request.getBook().getBookCode() == code
+                    && request.getType() == type) {
+                System.out.println("You already have a pending request for this book.");
+                return;
+            }
+        }
+        if (library.getLibrarians().isEmpty()) {
+            System.out.println("No librarians are available to handle requests.");
+            return;
+        }
         Random random = new Random();
 
         library.addRequest(new Request(b, this.currentStudent,
@@ -352,12 +392,23 @@ public class LibrarySystem {
         for (int i = 0; i < requests.size(); i++) {
             System.out.println((i + 1) + ". " + requests.get(i));
         }
-        int choice = inputHandler.getInt("Enter request number to approve: ");
+        int choice = inputHandler.getInt("Enter request number: ");
         if (choice < 1 || choice > requests.size()) {
             System.out.println("Invalid selection.");
             return;
         }
         Request selectedRequest = requests.get(choice - 1);
+
+        int action = inputHandler.getInt("1. Approve\n2. Reject\n");
+        if (action == 2) {
+            library.getRequests().remove(selectedRequest);
+            System.out.println("Request rejected.");
+            return;
+        }
+        if (action != 1) {
+            System.out.println("Invalid choice.");
+            return;
+        }
 
         if (selectedRequest.getType() == RequestType.BORROW) {
             Borrow borrow = new Borrow(
@@ -378,22 +429,26 @@ public class LibrarySystem {
 
             Borrow foundBorrow = null;
             for (Borrow b : library.getBorrows()) {
-                if (b.getBook().equals(book) && b.getStudent().equals(student)) {
+                if (b.getBook().getBookCode() == book.getBookCode()
+                        && b.getStudent().getStdNumber() == student.getStdNumber()) {
                     foundBorrow = b;
                     break;
                 }
             }
             if (foundBorrow != null) {
-                if (LocalDate.now().isAfter(foundBorrow.getReturnDate())) {
+                long daysLate = ChronoUnit.DAYS.between(foundBorrow.getDueDate(), LocalDate.now());
+                if (daysLate > 0) {
                     library.addDelayedReturn(foundBorrow);
-                    System.out.println("Delayed Return");
+                    System.out.println("Delayed Return: " + daysLate + " days late.");
                 }
                 foundBorrow.setReturner(currentLibrarian);
                 foundBorrow.setReturnDate(LocalDate.now());
                 library.getBorrows().remove(foundBorrow);
                 library.addBorrowRecord(foundBorrow);
+                currentLibrarian.addReturnCount();
+            } else {
+                System.out.println("Warning: no active borrow record found for this return.");
             }
-            currentLibrarian.addReturnCount();
             System.out.println("Return request approved successfully.");
         }
         library.getRequests().remove(selectedRequest);
