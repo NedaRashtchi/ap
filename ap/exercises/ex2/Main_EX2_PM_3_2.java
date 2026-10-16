@@ -13,7 +13,6 @@ public class Main_EX2_PM_3_2 extends JFrame implements KeyListener {
       static int width;
       static int height;
       static final int boxSize = 10;
-      static int direction = 0;
 
     public Main_EX2_PM_3_2(int k) {
         addKeyListener(this);
